@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+    <header class='PageTitle'>
+        <h1>{ config }</h1>
+    </header>
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2017/12/18/Hexo配置文件详细说明/">Hexo配置文件详细说明</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2017-12-18T14:16:19.000Z" itemprop="datePublished">
+    2017-12-18
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/hexo/">hexo</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/blog/">blog</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/config/">config</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/IT/">IT</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div>
+      
+        <h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>您可以在 _config.yml 中修改大部份的配置。</p>
+<h3 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">title</td>
+<td style="text-align:center">网站标题</td>
+</tr>
+<tr>
+<td style="text-align:center">subtitle</td>
+<td style="text-align:center">网站副标题</td>
+</tr>
+<tr>
+<td style="text-align:center">description</td>
+<td style="text-align:center">网站描述</td>
+</tr>
+<tr>
+<td style="text-align:center">author</td>
+<td style="text-align:center">您的名字</td>
+</tr>
+<tr>
+<td style="text-align:center">language</td>
+<td style="text-align:center">网站使用的语言</td>
+</tr>
+<tr>
+<td style="text-align:center">timezone</td>
+<td style="text-align:center">网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。</td>
+</tr>
+</tbody>
+</table>
+<p>其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。</p>
+<h3 id="网址"><a href="#网址" class="headerlink" title="网址"></a>网址</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">url</td>
+<td style="text-align:center">网址</td>
+</tr>
+<tr>
+<td style="text-align:center">root</td>
+<td style="text-align:center">网站根目录</td>
+</tr>
+<tr>
+<td style="text-align:center">permalink</td>
+<td style="text-align:center">文章的永久链接格式</td>
+<td style="text-align:center">:year/:month/:day/:title/</td>
+</tr>
+<tr>
+<td style="text-align:center">permalink_defaults</td>
+<td style="text-align:center">永久链接中各部分的默认值</td>
+</tr>
+</tbody>
+</table>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">source_dir</td>
+<td style="text-align:center">资源文件夹，这个文件夹用来存放内容。</td>
+</tr>
+<tr>
+<td style="text-align:center">public_dir</td>
+<td style="text-align:center">公共文件夹，这个文件夹用于存放生成的站点文件。</td>
+</tr>
+<tr>
+<td style="text-align:center">tag_dir</td>
+<td style="text-align:center">标签文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">archive_dir</td>
+<td style="text-align:center">归档文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">category_dir</td>
+<td style="text-align:center">分类文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">code_dir</td>
+<td style="text-align:center">Include code 文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">i18n_dir</td>
+<td style="text-align:center">国际化（i18n）文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">skip_render</td>
+<td style="text-align:center">跳过指定文件的渲染，您可使用 glob 表达式来匹配路径。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">new_post_name</td>
+<td style="text-align:center">新文章的文件名称</td>
+</tr>
+<tr>
+<td style="text-align:center">default_layout</td>
+<td style="text-align:center">预设布局</td>
+</tr>
+<tr>
+<td style="text-align:center">auto_spacing</td>
+<td style="text-align:center">在中文和英文之间加入空格</td>
+</tr>
+<tr>
+<td style="text-align:center">titlecase</td>
+<td style="text-align:center">把标题转换为 title case</td>
+</tr>
+<tr>
+<td style="text-align:center">external_link</td>
+<td style="text-align:center">在新标签中打开链接</td>
+</tr>
+<tr>
+<td style="text-align:center">filename_case</td>
+<td style="text-align:center">把文件名称转换为 (1) 小写或 (2) 大写</td>
+</tr>
+<tr>
+<td style="text-align:center">render_drafts</td>
+<td style="text-align:center">显示草稿</td>
+</tr>
+<tr>
+<td style="text-align:center">post_asset_folder</td>
+<td style="text-align:center">启动 Asset 文件夹</td>
+</tr>
+<tr>
+<td style="text-align:center">relative_link</td>
+<td style="text-align:center">把链接改为与根目录的相对位址</td>
+</tr>
+<tr>
+<td style="text-align:center">future</td>
+<td style="text-align:center">显示未来的文章</td>
+</tr>
+<tr>
+<td style="text-align:center">highlight</td>
+<td style="text-align:center">代码块的设置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="分类-amp-标签"><a href="#分类-amp-标签" class="headerlink" title="分类&amp;标签"></a>分类&amp;标签</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">default_category</td>
+<td style="text-align:center">默认分类</td>
+<td style="text-align:center">uncategorized</td>
+</tr>
+<tr>
+<td style="text-align:center">category_map</td>
+<td style="text-align:center">分类别名</td>
+</tr>
+<tr>
+<td style="text-align:center">tag_map</td>
+<td style="text-align:center">标签别名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="时间-日期格式"><a href="#时间-日期格式" class="headerlink" title="时间/日期格式"></a>时间/日期格式</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">date_format</td>
+<td style="text-align:center">日期格式</td>
+<td style="text-align:center">YYYY-MM-DD</td>
+</tr>
+<tr>
+<td style="text-align:center">time_format</td>
+<td style="text-align:center">时间格式</td>
+<td style="text-align:center">H:mm:ss</td>
+</tr>
+</tbody>
+</table>
+<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">per_page</td>
+<td style="text-align:center">每页显示的文章量 (0 = 关闭分页功能)</td>
+<td style="text-align:center">10</td>
+</tr>
+<tr>
+<td style="text-align:center">pagination_dir</td>
+<td style="text-align:center">分页目录</td>
+<td style="text-align:center">page</td>
+</tr>
+</tbody>
+</table>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">theme</td>
+<td style="text-align:center">当前主题名称。值为false时禁用主题</td>
+</tr>
+<tr>
+<td style="text-align:center">deploy</td>
+<td style="text-align:center">部署部分的设置</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+
+
+            <footer>
+    <div>© 2016 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>
