@@ -51,26 +51,8 @@
     <section class="media">
         
             
-                <a href="https://github.com/dicheng52119">
-                    <img src="/assets/github.svg" />
-                </a>
-            
-        
-            
                 <a href="https://www.facebook.com/profile.php?id=100023446571362">
                     <img src="/assets/facebook.svg" />
-                </a>
-            
-        
-            
-                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
-                    <img src="/assets/zhihu.svg" />
-                </a>
-            
-        
-            
-                <a href="https://www.csdn.net/">
-                    <img src="/assets/csdn.svg" />
                 </a>
             
         
@@ -99,6 +81,10 @@
   <ul>
     
   <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
   { <a href="/tags/hexo/">hexo</a> }
   </li>
 
@@ -108,10 +94,6 @@
 
   <li class="meta-text">
   { <a href="/tags/config/">config</a> }
-  </li>
-
-  <li class="meta-text">
-  { <a href="/tags/technology/">technology</a> }
   </li>
 
 
@@ -133,250 +115,89 @@
     </header>
     <div>
       
-        <h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>您可以在 _config.yml 中修改大部份的配置。</p>
-<h3 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">title</td>
-<td style="text-align:center">网站标题</td>
-</tr>
-<tr>
-<td style="text-align:center">subtitle</td>
-<td style="text-align:center">网站副标题</td>
-</tr>
-<tr>
-<td style="text-align:center">description</td>
-<td style="text-align:center">网站描述</td>
-</tr>
-<tr>
-<td style="text-align:center">author</td>
-<td style="text-align:center">您的名字</td>
-</tr>
-<tr>
-<td style="text-align:center">language</td>
-<td style="text-align:center">网站使用的语言</td>
-</tr>
-<tr>
-<td style="text-align:center">timezone</td>
-<td style="text-align:center">网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。</td>
-</tr>
-</tbody>
-</table>
-<p>其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。</p>
-<h3 id="网址"><a href="#网址" class="headerlink" title="网址"></a>网址</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-<th style="text-align:center">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">url</td>
-<td style="text-align:center">网址</td>
-</tr>
-<tr>
-<td style="text-align:center">root</td>
-<td style="text-align:center">网站根目录</td>
-</tr>
-<tr>
-<td style="text-align:center">permalink</td>
-<td style="text-align:center">文章的永久链接格式</td>
-<td style="text-align:center">:year/:month/:day/:title/</td>
-</tr>
-<tr>
-<td style="text-align:center">permalink_defaults</td>
-<td style="text-align:center">永久链接中各部分的默认值</td>
-</tr>
-</tbody>
-</table>
-<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">source_dir</td>
-<td style="text-align:center">资源文件夹，这个文件夹用来存放内容。</td>
-</tr>
-<tr>
-<td style="text-align:center">public_dir</td>
-<td style="text-align:center">公共文件夹，这个文件夹用于存放生成的站点文件。</td>
-</tr>
-<tr>
-<td style="text-align:center">tag_dir</td>
-<td style="text-align:center">标签文件夹</td>
-</tr>
-<tr>
-<td style="text-align:center">archive_dir</td>
-<td style="text-align:center">归档文件夹</td>
-</tr>
-<tr>
-<td style="text-align:center">category_dir</td>
-<td style="text-align:center">分类文件夹</td>
-</tr>
-<tr>
-<td style="text-align:center">code_dir</td>
-<td style="text-align:center">Include code 文件夹</td>
-</tr>
-<tr>
-<td style="text-align:center">i18n_dir</td>
-<td style="text-align:center">国际化（i18n）文件夹</td>
-</tr>
-<tr>
-<td style="text-align:center">skip_render</td>
-<td style="text-align:center">跳过指定文件的渲染，您可使用 glob 表达式来匹配路径。</td>
-</tr>
-</tbody>
-</table>
-<h3 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">new_post_name</td>
-<td style="text-align:center">新文章的文件名称</td>
-</tr>
-<tr>
-<td style="text-align:center">default_layout</td>
-<td style="text-align:center">预设布局</td>
-</tr>
-<tr>
-<td style="text-align:center">auto_spacing</td>
-<td style="text-align:center">在中文和英文之间加入空格</td>
-</tr>
-<tr>
-<td style="text-align:center">titlecase</td>
-<td style="text-align:center">把标题转换为 title case</td>
-</tr>
-<tr>
-<td style="text-align:center">external_link</td>
-<td style="text-align:center">在新标签中打开链接</td>
-</tr>
-<tr>
-<td style="text-align:center">filename_case</td>
-<td style="text-align:center">把文件名称转换为 (1) 小写或 (2) 大写</td>
-</tr>
-<tr>
-<td style="text-align:center">render_drafts</td>
-<td style="text-align:center">显示草稿</td>
-</tr>
-<tr>
-<td style="text-align:center">post_asset_folder</td>
-<td style="text-align:center">启动 Asset 文件夹</td>
-</tr>
-<tr>
-<td style="text-align:center">relative_link</td>
-<td style="text-align:center">把链接改为与根目录的相对位址</td>
-</tr>
-<tr>
-<td style="text-align:center">future</td>
-<td style="text-align:center">显示未来的文章</td>
-</tr>
-<tr>
-<td style="text-align:center">highlight</td>
-<td style="text-align:center">代码块的设置</td>
-</tr>
-</tbody>
-</table>
-<h3 id="分类-amp-标签"><a href="#分类-amp-标签" class="headerlink" title="分类&amp;标签"></a>分类&amp;标签</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-<th style="text-align:center">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">default_category</td>
-<td style="text-align:center">默认分类</td>
-<td style="text-align:center">uncategorized</td>
-</tr>
-<tr>
-<td style="text-align:center">category_map</td>
-<td style="text-align:center">分类别名</td>
-</tr>
-<tr>
-<td style="text-align:center">tag_map</td>
-<td style="text-align:center">标签别名</td>
-</tr>
-</tbody>
-</table>
-<h3 id="时间-日期格式"><a href="#时间-日期格式" class="headerlink" title="时间/日期格式"></a>时间/日期格式</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-<th style="text-align:center">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">date_format</td>
-<td style="text-align:center">日期格式</td>
-<td style="text-align:center">YYYY-MM-DD</td>
-</tr>
-<tr>
-<td style="text-align:center">time_format</td>
-<td style="text-align:center">时间格式</td>
-<td style="text-align:center">H:mm:ss</td>
-</tr>
-</tbody>
-</table>
-<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-<th style="text-align:center">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">per_page</td>
-<td style="text-align:center">每页显示的文章量 (0 = 关闭分页功能)</td>
-<td style="text-align:center">10</td>
-</tr>
-<tr>
-<td style="text-align:center">pagination_dir</td>
-<td style="text-align:center">分页目录</td>
-<td style="text-align:center">page</td>
-</tr>
-</tbody>
-</table>
-<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><table>
-<thead>
-<tr>
-<th style="text-align:center">参数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">theme</td>
-<td style="text-align:center">当前主题名称。值为false时禁用主题</td>
-</tr>
-<tr>
-<td style="text-align:center">deploy</td>
-<td style="text-align:center">部署部分的设置</td>
-</tr>
-</tbody>
-</table>
+        <!-- # 配置
+
+您可以在 _config.yml 中修改大部份的配置。
+
+### 网站
+
+| 参数 | 描述 |
+| :------: | :-----: |
+| title | 网站标题 |
+| subtitle | 网站副标题 |
+| description | 网站描述 |
+| author | 您的名字 |
+| language | 网站使用的语言 |
+| timezone | 网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。|
+
+其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。
+
+### 网址
+
+| 参数 | 描述 | 默认值 |
+| :------: | :-----: | :-----: |                     
+| url | 网址 |
+| root | 网站根目录 |    
+| permalink | 文章的永久链接格式 | :year/:month/:day/:title/ |
+| permalink_defaults | 永久链接中各部分的默认值 | 
+
+### 目录
+
+| 参数 | 描述 |
+| :------: | :-----: |   
+| source_dir | 资源文件夹，这个文件夹用来存放内容。| 
+| public_dir | 公共文件夹，这个文件夹用于存放生成的站点文件。| 
+| tag_dir | 标签文件夹 | 
+| archive_dir | 归档文件夹 | 
+| category_dir | 分类文件夹 | 
+| code_dir | Include code 文件夹 | 
+| i18n_dir | 国际化（i18n）文件夹 | 
+| skip_render | 跳过指定文件的渲染，您可使用 glob 表达式来匹配路径。|
+
+### 文章
+
+| 参数 | 描述 |
+| :------: | :-----: |
+| new_post_name | 新文章的文件名称 | 
+| default_layout | 预设布局 | 
+| auto_spacing | 在中文和英文之间加入空格 | 
+| titlecase | 把标题转换为 title case | 
+| external_link | 在新标签中打开链接 | 
+| filename_case | 把文件名称转换为 (1) 小写或 (2) 大写 | 
+| render_drafts | 显示草稿 | 
+| post_asset_folder | 启动 Asset 文件夹 | 
+| relative_link | 把链接改为与根目录的相对位址 | 
+| future | 显示未来的文章 | 
+| highlight | 代码块的设置 | 
+
+### 分类&标签
+
+| 参数 | 描述 | 默认值 |
+| :------: | :-----: | :-----: |
+| default_category | 默认分类 | uncategorized |
+| category_map | 分类别名 | 
+| tag_map | 标签别名 | 
+
+### 时间/日期格式
+
+| 参数 | 描述 | 默认值 |
+| :------: | :-----: | :-----: |
+| date_format | 日期格式 | YYYY-MM-DD |
+| time_format | 时间格式 | H:mm:ss |
+
+### 分页
+
+| 参数 | 描述 | 默认值 |
+| :------: | :-----: | :-----: |
+| per_page | 每页显示的文章量 (0 = 关闭分页功能) | 10 |
+| pagination_dir | 分页目录 | page | 
+
+### 扩展
+
+| 参数 | 描述 |
+| :------: | :-----: |
+| theme | 当前主题名称。值为false时禁用主题 | 
+| deploy | 部署部分的设置 | -->
 
       
     </div>
@@ -401,15 +222,15 @@
   <ul>
     
   <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
   { <a href="/tags/hexo/">hexo</a> }
   </li>
 
   <li class="meta-text">
   { <a href="/tags/blog/">blog</a> }
-  </li>
-
-  <li class="meta-text">
-  { <a href="/tags/technology/">technology</a> }
   </li>
 
   <li class="meta-text">
@@ -435,45 +256,151 @@
     </header>
     <div>
       
-        <h3 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤:"></a>搭建步骤:</h3><ul>
-<li><p>申请github账号,步骤此处省略一万字</p>
+        <!-- ### 搭建步骤:
+* 申请github账号,步骤此处省略一万字
+
+* 新建仓库，仓库名称定义格式:访问主页时的用户名.github.io
+
+* 仓库添加README.md文件，修改为index.html,添加内容"hello world"
+
+* 访问步骤二定义的地址，即https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成
+
+* 访问hexo官网，可按照步骤进行创建本地hexo项目，也可继续按照本篇文档继续完成设置
+
+* 安装nvm和npm,步骤此处省略一万字，安装完成后，可通过命令行指令nvm -v 和npm -v查看是否安装成功
+
+* 命令行运行npm install hexo-cli -g，运行命令hexo -v查看安装是否成功
+
+* 选择一个目录位置，运行hexo init blog 命令，创建hexo项目文件，cd blog进入项目
+
+* 使用文本编辑器，这里推荐使用vscode,打开blog项目，修改根目录下的config配置文件，将title和author自定义进行修改，将文件最下方的发布信息type的值修改为git,添加属性repo，并赋值为第二步你所定义的仓库地址
+
+* 命令行运行npm install hexo-deployer-git —save 命令
+
+* 运行hexo && hexo g && hexo s在本地运行，查看博客的部署情况
+
+* 运行hexo clean && hexo g && hexo d,分别代表着hexo clean，hexo generate，hexo deploy，hexo server，部署到github 上进行运行，访问第二步你所定义的仓库名称，查看效果
+
+* hexo官网已开源大量主题，可根据需要进行使用，进入相关主题的github项目中，复制仓库地址，进入本地blog项目的theme文件夹中，clone 复制的仓库地址，然后在根配置文件中修改theme的值，为clone下来的主题文件夹名称，至于不同主题下的详细配置，这里不再做一一介绍，详见每个主题的配置说明。配置完成后，同样使用步骤12的命令查看效果
+
+* 运行hexo new "文章名称"命令进行创建新的文章
+
+<br/>
+
+### 说明:
+* 使用步骤12命令时，需要注意，如果github上配置了本机生成的ssh key ，则需要在步骤9中，配置你仓库的ssh地址。反之，需要配置仓库的http地址，此时需要你每次发布的时候，输入github的用户名和密码，使用命令git config --global credential.helper store ，即可实现一次输入，以后免输的功能
+
+* 如果npm install 模块，失败的话，可以尝试使用命令npm cache clean -f命令，先清除安装缓存，然后npm install，最后再次尝试安装命令
+
+<br/>
+
+### <font color=red><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接</br></font> -->
+
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2017/12/18/Git常用命令总结/">Git常用命令总结(自己总结 超实用)</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2017-12-18T13:28:31.000Z" itemprop="datePublished">
+    2017-12-18
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/git/">git</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/terminal-command/">terminal command</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/IT/">IT</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div>
+      
+        <!-- ### 将本地代码关联到远程git仓库步骤：
+* 初始化一个仓库
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>将github上项目与本地项目进行关联</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote add origin github仓库地址</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>新建仓库，仓库名称定义格式:访问主页时的用户名.github.io</p>
+<li><p>添加本地代码到暂存区</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>仓库添加README.md文件，修改为index.html,添加内容”hello world”</p>
+<li><p>提交本地代码到本地</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">"提交信息"</span></span><br></pre></td></tr></table></figure>
 </li>
-<li><p>访问步骤二定义的地址，即<a href="https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成" target="_blank" rel="noopener">https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成</a></p>
+<li><p>拉取远程仓库代码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull origin 分支名称（如果报错的话，就添加后缀--allow unrelated histories）</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>访问hexo官网，可按照步骤进行创建本地hexo项目，也可继续按照本篇文档继续完成设置</p>
-</li>
-<li><p>安装nvm和npm,步骤此处省略一万字，安装完成后，可通过命令行指令nvm -v 和npm -v查看是否安装成功</p>
-</li>
-<li><p>命令行运行npm install hexo-cli -g，运行命令hexo -v查看安装是否成功</p>
-</li>
-<li><p>选择一个目录位置，运行hexo init blog 命令，创建hexo项目文件，cd blog进入项目</p>
-</li>
-<li><p>使用文本编辑器，这里推荐使用vscode,打开blog项目，修改根目录下的config配置文件，将title和author自定义进行修改，将文件最下方的发布信息type的值修改为git,添加属性repo，并赋值为第二步你所定义的仓库地址</p>
-</li>
-<li><p>命令行运行npm install hexo-deployer-git —save 命令</p>
-</li>
-<li><p>运行hexo &amp;&amp; hexo g &amp;&amp; hexo s在本地运行，查看博客的部署情况</p>
-</li>
-<li><p>运行hexo clean &amp;&amp; hexo g &amp;&amp; hexo d,分别代表着hexo clean，hexo generate，hexo deploy，hexo server，部署到github 上进行运行，访问第二步你所定义的仓库名称，查看效果</p>
-</li>
-<li><p>hexo官网已开源大量主题，可根据需要进行使用，进入相关主题的github项目中，复制仓库地址，进入本地blog项目的theme文件夹中，clone 复制的仓库地址，然后在根配置文件中修改theme的值，为clone下来的主题文件夹名称，至于不同主题下的详细配置，这里不再做一一介绍，详见每个主题的配置说明。配置完成后，同样使用步骤12的命令查看效果</p>
-</li>
-<li><p>运行hexo new “文章名称”命令进行创建新的文章</p>
+<li><p>提交本地代码到远程仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push -u origin 分支名称</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p><br></p>
-<h3 id="说明"><a href="#说明" class="headerlink" title="说明:"></a>说明:</h3><ul>
-<li><p>使用步骤12命令时，需要注意，如果github上配置了本机生成的ssh key ，则需要在步骤9中，配置你仓库的ssh地址。反之，需要配置仓库的http地址，此时需要你每次发布的时候，输入github的用户名和密码，使用命令git config –global credential.helper store ，即可实现一次输入，以后免输的功能</p>
+<p><br/></p>
+<h3 id="其他常用的命令总结"><a href="#其他常用的命令总结" class="headerlink" title="其他常用的命令总结"></a>其他常用的命令总结</h3><ul>
+<li><p>查看本地代码的状态信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>如果npm install 模块，失败的话，可以尝试使用命令npm cache clean -f命令，先清除安装缓存，然后npm install，最后再次尝试安装命令</p>
+<li><p>查看本地代码当前的分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看远程仓库的所有分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -a</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个新的分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>合并分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git merge origin <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看提交记录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回退到历史版本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git reset --hard <span class="string">"某一版本号"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用https方式提交本地代码，避免重复登录用户名与密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p><br></p>
-<h3 id="nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接"><a href="#nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接" class="headerlink" title="| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接"></a><font color="red"><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接<br></b></font></h3>
+<p><br/></p>
+<h3 id="nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接-–-gt"><a href="#nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接-–-gt" class="headerlink" title="| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接 –&gt;"></a><font color=red><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接</br></font> –&gt;</h3>-->
       
     </div>
 </article>
@@ -531,21 +458,36 @@
     </header>
     <div>
       
-        <p>掐指一算，来北京已经有两年时光。恍惚间，头顶多了几根白发，少了一撮黑发。</p>
-<p>这是一趟开往北京南站的列车，此行的任务是接待本人媳妇的闺蜜，可谓是任重而道远。</p>
-<p>对于一个刚踏入社会，即将开启北漂生活的妹子来说，这简直可以说是一种天上掉馅饼被爽死的幸福。行李托运、温馨提示、行程导航、美食招待、住所安排、行李托管、安全护送…</p>
-<p>一切的一切，让本人的眼光不再清澈，恍然间，回到过去的某个时刻。</p>
-<p>遥想铖哥当年，回到了解放前的某一天，也就是两年前的那一天，本人携内人初来帝都，可谓是人生地不熟，行李放到一个不靠谱的托管处，然后凭借高德地图强大的导航能力，拖着坐酸了一夜的老腰，来到了帝都恢弘气势的天安门广场。</p>
-<p>匆匆过客，来不及欣赏百年沉淀的文化，便已踏入寻房苦途，经过了一番折腾和斗智斗勇的完美体验后，与次日凌晨入驻几平的小房间，期间包括与房东一窝战斗的情形，与中介讨价还价的心跳，这里不必细谈，因为均以战败告终。一把伤心泪，从此，开启了梦幻的北漂之旅。</p>
-<p>房间的憋屈，环境的脏乱，地铁的拥堵，人与人之间的嫌弃，人心的浮躁，工作的忙碌等等，使得生活在这个灯红酒绿城市的人们看似没有光鲜亮丽外表的美好，使得人生观一度发生改变和扭曲。</p>
-<p>时间在流逝，世界在变化！这个世界难道就因此而变得不美好了吗？答案是你知道。</p>
-<p>细数一下，短短两年时光，住所已更换了数次，在每一次的迭代更新中，都慢慢熟悉了这里面满满的套路，经济实惠舒适的房子已然出现（相对而言)。十九大的顺利召开，蓝天白云不再是普通人心目中的完美车标，奢饰品你也值得拥有！每日运载上千万乘客的庞大地铁系统，承载了太多太多人的辛勤和汗水，共同维护着这座城中城。童叟无欺，主动让出身边的座位时常发生。同事的帮助和关怀，让你感觉自己不是一个人在奋斗！皎洁月光下的深夜，是如此的宁静，宁静的可以听到工位上微微的心跳，向仍在此刻奋斗的同僚们致敬！你们是专业的，你们是敬业的，你们是爱业的！沉淀自己，你们会成功的！</p>
-<p>生活在这个城市是痛苦的，但是无数人却迷恋这个曾让他们痛恨和责骂的城市，并为之疯狂。因为这个城市是有魔力的，吸引着他们不忍离去。他们始终坚信，通过自己的不懈努力，自己不再是在这座城市生存，而是生活！</p>
-<p>有喜欢做并激发内心强大欲望的事，是美好的;有计划并付诸实践，点滴实现的过程，是美好的;有一群志同道合，兴趣相投的朋友相互追随，是美好的。如果所有美好的事情相互碰撞与摩擦，那必定会有美好的事情发生！</p>
-<p>感慨万千，也抵不过寥寥数笔。其中的辛酸苦辣，唯镜中人冷暖自知。谨以此，献给奋斗在一线的朋友们，心中所想，所盼之事，有朝一日，必会实现！</p>
-<p>所以说，这位妹子是幸福的，是幸运的…</p>
-<p><br></p>
-<h3 id="nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接"><a href="#nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接" class="headerlink" title="| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接"></a><font color="red"><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接<br></b></font></h3>
+        <!-- 掐指一算，来北京已经有两年时光。恍惚间，头顶多了几根白发，少了一撮黑发。
+
+这是一趟开往北京南站的列车，此行的任务是接待本人媳妇的闺蜜，可谓是任重而道远。
+
+对于一个刚踏入社会，即将开启北漂生活的妹子来说，这简直可以说是一种天上掉馅饼被爽死的幸福。行李托运、温馨提示、行程导航、美食招待、住所安排、行李托管、安全护送...
+
+一切的一切，让本人的眼光不再清澈，恍然间，回到过去的某个时刻。
+
+遥想铖哥当年，回到了解放前的某一天，也就是两年前的那一天，本人携内人初来帝都，可谓是人生地不熟，行李放到一个不靠谱的托管处，然后凭借高德地图强大的导航能力，拖着坐酸了一夜的老腰，来到了帝都恢弘气势的天安门广场。
+
+匆匆过客，来不及欣赏百年沉淀的文化，便已踏入寻房苦途，经过了一番折腾和斗智斗勇的完美体验后，与次日凌晨入驻几平的小房间，期间包括与房东一窝战斗的情形，与中介讨价还价的心跳，这里不必细谈，因为均以战败告终。一把伤心泪，从此，开启了梦幻的北漂之旅。
+
+房间的憋屈，环境的脏乱，地铁的拥堵，人与人之间的嫌弃，人心的浮躁，工作的忙碌等等，使得生活在这个灯红酒绿城市的人们看似没有光鲜亮丽外表的美好，使得人生观一度发生改变和扭曲。
+
+时间在流逝，世界在变化！这个世界难道就因此而变得不美好了吗？答案是你知道。
+
+细数一下，短短两年时光，住所已更换了数次，在每一次的迭代更新中，都慢慢熟悉了这里面满满的套路，经济实惠舒适的房子已然出现（相对而言)。十九大的顺利召开，蓝天白云不再是普通人心目中的完美车标，奢饰品你也值得拥有！每日运载上千万乘客的庞大地铁系统，承载了太多太多人的辛勤和汗水，共同维护着这座城中城。童叟无欺，主动让出身边的座位时常发生。同事的帮助和关怀，让你感觉自己不是一个人在奋斗！皎洁月光下的深夜，是如此的宁静，宁静的可以听到工位上微微的心跳，向仍在此刻奋斗的同僚们致敬！你们是专业的，你们是敬业的，你们是爱业的！沉淀自己，你们会成功的！
+
+生活在这个城市是痛苦的，但是无数人却迷恋这个曾让他们痛恨和责骂的城市，并为之疯狂。因为这个城市是有魔力的，吸引着他们不忍离去。他们始终坚信，通过自己的不懈努力，自己不再是在这座城市生存，而是生活！
+
+有喜欢做并激发内心强大欲望的事，是美好的;有计划并付诸实践，点滴实现的过程，是美好的;有一群志同道合，兴趣相投的朋友相互追随，是美好的。如果所有美好的事情相互碰撞与摩擦，那必定会有美好的事情发生！
+
+感慨万千，也抵不过寥寥数笔。其中的辛酸苦辣，唯镜中人冷暖自知。谨以此，献给奋斗在一线的朋友们，心中所想，所盼之事，有朝一日，必会实现！
+
+所以说，这位妹子是幸福的，是幸运的...
+
+<br/>
+
+### <font color=red><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接</br></font> -->
+
       
     </div>
 </article>

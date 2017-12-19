@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Git常用命令总结(自己总结 超实用) | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>Git常用命令总结(自己总结 超实用)</h1>
+    </header>
+
+    <section>
+      <!-- ### 将本地代码关联到远程git仓库步骤：
+* 初始化一个仓库
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>将github上项目与本地项目进行关联</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote add origin github仓库地址</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加本地代码到暂存区</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>提交本地代码到本地</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">"提交信息"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>拉取远程仓库代码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull origin 分支名称（如果报错的话，就添加后缀--allow unrelated histories）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>提交本地代码到远程仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push -u origin 分支名称</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><br/></p>
+<h3 id="其他常用的命令总结"><a href="#其他常用的命令总结" class="headerlink" title="其他常用的命令总结"></a>其他常用的命令总结</h3><ul>
+<li><p>查看本地代码的状态信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看本地代码当前的分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看远程仓库的所有分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -a</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个新的分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>合并分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git merge origin <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看提交记录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>回退到历史版本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git reset --hard <span class="string">"某一版本号"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用https方式提交本地代码，避免重复登录用户名与密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><br/></p>
+<h3 id="nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接-–-gt"><a href="#nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接-–-gt" class="headerlink" title="| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接 –&gt;"></a><font color=red><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接</br></font> –&gt;</h3>-->
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2017-12-18T13:28:31.000Z" itemprop="datePublished">
+              2017-12-18
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/git/">git</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/terminal-command/">terminal command</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2016 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>
