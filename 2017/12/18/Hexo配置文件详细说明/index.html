@@ -42,6 +42,10 @@
               <li>Categories</li>
             </a>  
           
+            <a href="/404.html" class="Btn">
+              <li>Commonweal</li>
+            </a>  
+          
             <a href="/about/" class="Btn">
               <li>About</li>
             </a>  
@@ -51,8 +55,26 @@
     <section class="media">
         
             
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
                 <a href="https://www.facebook.com/profile.php?id=100023446571362">
                     <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
                 </a>
             
         
@@ -68,89 +90,251 @@
     </header>
 
     <section>
-      <!-- # 配置
-
-您可以在 _config.yml 中修改大部份的配置。
-
-### 网站
-
-| 参数 | 描述 |
-| :------: | :-----: |
-| title | 网站标题 |
-| subtitle | 网站副标题 |
-| description | 网站描述 |
-| author | 您的名字 |
-| language | 网站使用的语言 |
-| timezone | 网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。|
-
-其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。
-
-### 网址
-
-| 参数 | 描述 | 默认值 |
-| :------: | :-----: | :-----: |                     
-| url | 网址 |
-| root | 网站根目录 |    
-| permalink | 文章的永久链接格式 | :year/:month/:day/:title/ |
-| permalink_defaults | 永久链接中各部分的默认值 | 
-
-### 目录
-
-| 参数 | 描述 |
-| :------: | :-----: |   
-| source_dir | 资源文件夹，这个文件夹用来存放内容。| 
-| public_dir | 公共文件夹，这个文件夹用于存放生成的站点文件。| 
-| tag_dir | 标签文件夹 | 
-| archive_dir | 归档文件夹 | 
-| category_dir | 分类文件夹 | 
-| code_dir | Include code 文件夹 | 
-| i18n_dir | 国际化（i18n）文件夹 | 
-| skip_render | 跳过指定文件的渲染，您可使用 glob 表达式来匹配路径。|
-
-### 文章
-
-| 参数 | 描述 |
-| :------: | :-----: |
-| new_post_name | 新文章的文件名称 | 
-| default_layout | 预设布局 | 
-| auto_spacing | 在中文和英文之间加入空格 | 
-| titlecase | 把标题转换为 title case | 
-| external_link | 在新标签中打开链接 | 
-| filename_case | 把文件名称转换为 (1) 小写或 (2) 大写 | 
-| render_drafts | 显示草稿 | 
-| post_asset_folder | 启动 Asset 文件夹 | 
-| relative_link | 把链接改为与根目录的相对位址 | 
-| future | 显示未来的文章 | 
-| highlight | 代码块的设置 | 
-
-### 分类&标签
-
-| 参数 | 描述 | 默认值 |
-| :------: | :-----: | :-----: |
-| default_category | 默认分类 | uncategorized |
-| category_map | 分类别名 | 
-| tag_map | 标签别名 | 
-
-### 时间/日期格式
-
-| 参数 | 描述 | 默认值 |
-| :------: | :-----: | :-----: |
-| date_format | 日期格式 | YYYY-MM-DD |
-| time_format | 时间格式 | H:mm:ss |
-
-### 分页
-
-| 参数 | 描述 | 默认值 |
-| :------: | :-----: | :-----: |
-| per_page | 每页显示的文章量 (0 = 关闭分页功能) | 10 |
-| pagination_dir | 分页目录 | page | 
-
-### 扩展
-
-| 参数 | 描述 |
-| :------: | :-----: |
-| theme | 当前主题名称。值为false时禁用主题 | 
-| deploy | 部署部分的设置 | -->
+      <h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>您可以在 _config.yml 中修改大部份的配置。</p>
+<h3 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">title</td>
+<td style="text-align:left">网站标题</td>
+</tr>
+<tr>
+<td style="text-align:left">subtitle</td>
+<td style="text-align:left">网站副标题</td>
+</tr>
+<tr>
+<td style="text-align:left">description</td>
+<td style="text-align:left">网站描述</td>
+</tr>
+<tr>
+<td style="text-align:left">author</td>
+<td style="text-align:left">您的名字</td>
+</tr>
+<tr>
+<td style="text-align:left">language</td>
+<td style="text-align:left">网站使用的语言</td>
+</tr>
+<tr>
+<td style="text-align:left">timezone</td>
+<td style="text-align:left">网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。</td>
+</tr>
+</tbody>
+</table>
+<p>其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。</p>
+<h3 id="网址"><a href="#网址" class="headerlink" title="网址"></a>网址</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">url</td>
+<td style="text-align:left">网址</td>
+</tr>
+<tr>
+<td style="text-align:left">root</td>
+<td style="text-align:left">网站根目录</td>
+</tr>
+<tr>
+<td style="text-align:left">permalink</td>
+<td style="text-align:left">文章的永久链接格式</td>
+<td style="text-align:left">:year/:month/:day/:title/</td>
+</tr>
+<tr>
+<td style="text-align:left">permalink_defaults</td>
+<td style="text-align:left">永久链接中各部分的默认值</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">source_dir</td>
+<td style="text-align:left">资源文件夹，这个文件夹用来存放内容。</td>
+</tr>
+<tr>
+<td style="text-align:left">public_dir</td>
+<td style="text-align:left">公共文件夹，这个文件夹用于存放生成的站点文件。</td>
+</tr>
+<tr>
+<td style="text-align:left">tag_dir</td>
+<td style="text-align:left">标签文件夹</td>
+</tr>
+<tr>
+<td style="text-align:left">archive_dir</td>
+<td style="text-align:left">归档文件夹</td>
+</tr>
+<tr>
+<td style="text-align:left">category_dir</td>
+<td style="text-align:left">分类文件夹</td>
+</tr>
+<tr>
+<td style="text-align:left">code_dir</td>
+<td style="text-align:left">Include code 文件夹</td>
+</tr>
+<tr>
+<td style="text-align:left">i18n_dir</td>
+<td style="text-align:left">国际化（i18n）文件夹</td>
+</tr>
+<tr>
+<td style="text-align:left">skip_render</td>
+<td style="text-align:left">跳过指定文件的渲染，您可使用 glob 表达式来匹配路径。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">new_post_name</td>
+<td style="text-align:left">新文章的文件名称</td>
+</tr>
+<tr>
+<td style="text-align:left">default_layout</td>
+<td style="text-align:left">预设布局</td>
+</tr>
+<tr>
+<td style="text-align:left">auto_spacing</td>
+<td style="text-align:left">在中文和英文之间加入空格</td>
+</tr>
+<tr>
+<td style="text-align:left">titlecase</td>
+<td style="text-align:left">把标题转换为 title case</td>
+</tr>
+<tr>
+<td style="text-align:left">external_link</td>
+<td style="text-align:left">在新标签中打开链接</td>
+</tr>
+<tr>
+<td style="text-align:left">filename_case</td>
+<td style="text-align:left">把文件名称转换为 (1) 小写或 (2) 大写</td>
+</tr>
+<tr>
+<td style="text-align:left">render_drafts</td>
+<td style="text-align:left">显示草稿</td>
+</tr>
+<tr>
+<td style="text-align:left">post_asset_folder</td>
+<td style="text-align:left">启动 Asset 文件夹</td>
+</tr>
+<tr>
+<td style="text-align:left">relative_link</td>
+<td style="text-align:left">把链接改为与根目录的相对位址</td>
+</tr>
+<tr>
+<td style="text-align:left">future</td>
+<td style="text-align:left">显示未来的文章</td>
+</tr>
+<tr>
+<td style="text-align:left">highlight</td>
+<td style="text-align:left">代码块的设置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="分类-amp-标签"><a href="#分类-amp-标签" class="headerlink" title="分类&amp;标签"></a>分类&amp;标签</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">default_category</td>
+<td style="text-align:left">默认分类</td>
+<td style="text-align:left">uncategorized</td>
+</tr>
+<tr>
+<td style="text-align:left">category_map</td>
+<td style="text-align:left">分类别名</td>
+</tr>
+<tr>
+<td style="text-align:left">tag_map</td>
+<td style="text-align:left">标签别名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="时间-日期格式"><a href="#时间-日期格式" class="headerlink" title="时间/日期格式"></a>时间/日期格式</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">date_format</td>
+<td style="text-align:left">日期格式</td>
+<td style="text-align:left">YYYY-MM-DD</td>
+</tr>
+<tr>
+<td style="text-align:left">time_format</td>
+<td style="text-align:left">时间格式</td>
+<td style="text-align:left">H:mm:ss</td>
+</tr>
+</tbody>
+</table>
+<h3 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">per_page</td>
+<td style="text-align:left">每页显示的文章量 (0 = 关闭分页功能)</td>
+<td style="text-align:left">10</td>
+</tr>
+<tr>
+<td style="text-align:left">pagination_dir</td>
+<td style="text-align:left">分页目录</td>
+<td style="text-align:left">page</td>
+</tr>
+</tbody>
+</table>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">theme</td>
+<td style="text-align:left">当前主题名称。值为false时禁用主题</td>
+</tr>
+<tr>
+<td style="text-align:left">deploy</td>
+<td style="text-align:left">部署部分的设置</td>
+</tr>
+</tbody>
+</table>
 
 
       
@@ -168,15 +352,15 @@
             <div>
               tags: 
   <li class="meta-text">
-  { <a href="/tags/technology/">technology</a> }
-  </li>
-
-  <li class="meta-text">
   { <a href="/tags/hexo/">hexo</a> }
   </li>
 
   <li class="meta-text">
   { <a href="/tags/blog/">blog</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
   </li>
 
   <li class="meta-text">
@@ -195,7 +379,7 @@
 </div>
 
             <footer>
-    <div>© 2016 - Mr.CrazyDC </div>
+    <div>© 2015 - Mr.CrazyDC </div>
     <div>
     Powered by Hexo
     </div>

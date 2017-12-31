@@ -901,6 +901,9 @@ blockquote {
 li.meta-text {
   display: inline-block;
 }
+.more-link {
+  text-align: center;
+}
 .more-link a {
   border-bottom-width: 2px;
 }

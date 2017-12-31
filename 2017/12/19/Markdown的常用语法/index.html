@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Markdown的常用语法(个人总结) | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/404.html" class="Btn">
+              <li>Commonweal</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>Markdown的常用语法(个人总结)</h1>
+    </header>
+
+    <section>
+      <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Markdown 是一种轻量级标记语言，它用简洁的语法代替排版，使我们专心于码字。它的目标是实现易读易写，成为一种适用于网络的书写语言。同时，Markdown支持嵌入html标签。</p>
+<p>注意：</p>
+<ul>
+<li>Markdown使用#、+、*等符号来标记， 符号后面必须跟上 至少1个 空格才有效！</li>
+<li>markdown中如果遇到有字符与markdown语法冲突,可以使用 反引号包裹  <code>需要转移的内容</code> </li>
+<li>markdown中如何让# * &gt;等符号原样显示，不被解析成对应的markdown语法，前加\转义</li>
+</ul>
+<p><br></p>
+<h2 id="Markdown的常用语法"><a href="#Markdown的常用语法" class="headerlink" title="Markdown的常用语法"></a>Markdown的常用语法</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>Markdown 标题支持两种形式：</p>
+<h4 id="1-用-标记"><a href="#1-用-标记" class="headerlink" title="1. 用#标记"></a>1. 用#标记</h4><p>在 <strong>标题开头</strong> 加上1~6个#，依次代表一级标题、二级标题….六级标题</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 一级标题 </span><br><span class="line">## 二级标题</span><br><span class="line">### 三级标题</span><br><span class="line">##### 四级标题</span><br><span class="line">###### 五级标题</span><br><span class="line">###### 六级标题</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h4 id="2-用-和-标记"><a href="#2-用-和-标记" class="headerlink" title="2. 用=和-标记"></a>2. 用=和-标记</h4><p>在 <strong>标题底下</strong> 加上任意个=代表一级标题，-代表二级标题</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">一级标题</span><br><span class="line">======</span><br><span class="line"></span><br><span class="line">二级标题</span><br><span class="line">----------</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h5 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h5><h6 id="五级标题"><a href="#五级标题" class="headerlink" title="五级标题"></a>五级标题</h6><h6 id="六级标题"><a href="#六级标题" class="headerlink" title="六级标题"></a>六级标题</h6><hr>
+<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><p>Markdown 支持有序列表和无序列表。</p>
+<p><strong>无序列表使用-、+和<code>*</code>作为列表标记：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">- Red</span><br><span class="line">- Green</span><br><span class="line">- Blue</span><br><span class="line"></span><br><span class="line">* Red</span><br><span class="line">* Green</span><br><span class="line">* Blue</span><br><span class="line"></span><br><span class="line">+ Red</span><br><span class="line">+ Green</span><br><span class="line">+ Blue</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<p><strong>有序列表则使用数字加英文句点.来表示(注意空格)：</strong></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. Red</span><br><span class="line">2. Green</span><br><span class="line">3. Blue</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<ol>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ol>
+<hr>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p>引用以&gt;来表示，引用中支持多级引用、标题、列表、代码块、分割线等常规语法。</p>
+<p>常见的引用写法：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; 这是一段引用    //在`&gt;`后面有 1 个空格</span><br><span class="line">&gt; </span><br><span class="line">&gt;     这是引用的代码块形式    //在`&gt;`后面有5个空格</span><br><span class="line">&gt;     </span><br><span class="line">&gt; 代码例子：</span><br><span class="line">&gt;   </span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&gt; 一级引用</span><br><span class="line">&gt; &gt; 二级引用</span><br><span class="line">&gt; &gt; &gt; 三级引用</span><br><span class="line"></span><br><span class="line">&gt; #### 这是一个四级标题</span><br><span class="line">&gt; </span><br><span class="line">&gt; 1. 这是第一行列表项</span><br><span class="line">&gt; 2. 这是第二行列表项</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<blockquote>
+<p>这是一段引用</p>
+<pre><code>这是引用的代码块形式
+</code></pre><p>代码例子：</p>
+<pre><code>protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+}
+</code></pre><p>一级引用</p>
+<blockquote>
+<p>二级引用</p>
+<blockquote>
+<p>三级引用</p>
+</blockquote>
+</blockquote>
+<h4 id="这是一个四级标题"><a href="#这是一个四级标题" class="headerlink" title="这是一个四级标题"></a>这是一个四级标题</h4><ol>
+<li>这是第一行列表项</li>
+<li>这是第二行列表项</li>
+</ol>
+</blockquote>
+<hr>
+<h3 id="强调"><a href="#强调" class="headerlink" title="强调"></a>强调</h3><p>两个<code>*</code>或<code>_</code>代表加粗，一个<code>*</code>或<code>_</code>代表斜体，<code>~~</code>代表删除。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">**加粗文本** 或者 __加粗文本__</span><br><span class="line"></span><br><span class="line">*斜体文本*  或者_斜体文本_</span><br><span class="line"></span><br><span class="line">~~删除文本~~</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><strong>加粗文本</strong> 或者 <strong>加粗文本</strong></p>
+<p><em>斜体文本</em> 或者 <em>斜体文本</em></p>
+<p><del>删除文本</del></p>
+<hr>
+<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><p>图片与链接的语法很像，区别在一个 ! 号。二者格式：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">图片：![]()    ![图片文本(可忽略)](图片地址)</span><br><span class="line"></span><br><span class="line">链接：[]()     [链接文本](链接地址)</span><br></pre></td></tr></table></figure>
+<p>链接又分为行内式、参考式和自动链接：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这是行内式链接：[CrazyIT&apos;s Blog](http://dicheng52119.github.io)。</span><br><span class="line"></span><br><span class="line">这是参考式链接：[CrazyIT&apos;s Blog][url]，其中url为链接标记，可置于文中任意位置。</span><br><span class="line"></span><br><span class="line">[url]: http://dicheng52119.github.io/ &quot;CrazyIT&apos;s Blog&quot;</span><br><span class="line"></span><br><span class="line">链接标记格式为：[链接标记文本]:  链接地址  链接title(可忽略)</span><br><span class="line"></span><br><span class="line">这是自动链接：直接使用`&lt;&gt;`括起来&lt;http://dicheng52119.github.io&gt;</span><br><span class="line"></span><br><span class="line">这是图片：![][avatar]</span><br><span class="line"></span><br><span class="line">[avatar]: https://github.com/dicheng52119/dicheng52119.github.io/blob/master/assets/tree_small.png?raw=true</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p>这是行内式链接：<a href="https://dicheng52119.github.io" target="_blank" rel="noopener">CrazyIT’s Blog</a>。</p>
+<p>这是参考式链接：<a href="https://dicheng52119.github.io/" title="CrazyIT&#39;s Blog" target="_blank" rel="noopener">CrazyIT’s Blog</a>，其中url为链接标记，可置于文中任意位置。</p>
+<p>链接标记格式为：[链接标记文本]:  链接地址  链接title(可忽略)</p>
+<p>这是自动链接：直接使用<code>&lt;&gt;</code>括起来<a href="https://dicheng52119.github.io" target="_blank" rel="noopener">https://dicheng52119.github.io</a></p>
+<p>这是图片：<img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/assets/tree_small.png?raw=true" alt=""></p>
+<hr>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>代码分为行内代码和代码块。</p>
+<ul>
+<li><p>行内代码使用 `` 标识，可嵌入文字中</p>
+</li>
+<li><p>代码块使用4个空格或<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">\</span><br></pre></td></tr></table></figure></p>
+<p>这里是代码</p>
+<p>\<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">* 代码语法高亮在 ```后面加上空格和语言名称即可</span><br><span class="line"></span><br><span class="line">  \``` 语言</span><br><span class="line"></span><br><span class="line">  ``//注意语言前面有空格``</span><br><span class="line">  </span><br><span class="line">  这里是代码</span><br><span class="line"></span><br><span class="line">  \</span><br></pre></td></tr></table></figure></p>
+</li>
+</ul>
+<p>例如：</p>
+<blockquote>
+<p>这是行内代码<code>onCreate(Bundle savedInstanceState)</code>的例子。</p>
+<p>这是代码块和语法高亮：</p>
+<p>\<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&gt;</span><br><span class="line">&gt;<span class="comment">// 注意java前面有空格</span></span><br><span class="line">&gt;</span><br><span class="line">&gt;  </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line">&gt;</span><br><span class="line">&gt;\</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>效果如下：</p>
+<p>这是行内代码onCreate(Bundle savedInstanceState)的例子。</p>
+<p>这是代码块和语法高亮：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 注意java前面有空格</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_main);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><p>表格对齐格式</p>
+<ul>
+<li>居左： <code>:----</code></li>
+<li>居中：<code>:----: 或 -----</code></li>
+<li>居右：<code>----:</code></li>
+</ul>
+<p>例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">|标题|标题|标题|</span><br><span class="line">|:---|:---:|---:|</span><br><span class="line">|居左测试文本|居中测试文本|居右测试文本|</span><br><span class="line">|居左测试文本1|居中测试文本2|居右测试文本3|</span><br><span class="line">|居左测试文本11|居中测试文本22|居右测试文本33|</span><br><span class="line">|居左测试文本111|居中测试文本222|居右测试文本333|</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">标题</th>
+<th style="text-align:center">标题</th>
+<th style="text-align:right">标题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">居左测试文本</td>
+<td style="text-align:center">居中测试文本</td>
+<td style="text-align:right">居右测试文本</td>
+</tr>
+<tr>
+<td style="text-align:left">居左测试文本1</td>
+<td style="text-align:center">居中测试文本2</td>
+<td style="text-align:right">居右测试文本3</td>
+</tr>
+<tr>
+<td style="text-align:left">居左测试文本11</td>
+<td style="text-align:center">居中测试文本22</td>
+<td style="text-align:right">居右测试文本33</td>
+</tr>
+<tr>
+<td style="text-align:left">居左测试文本111</td>
+<td style="text-align:center">居中测试文本222</td>
+<td style="text-align:right">居右测试文本333</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><p>在一行中用三个以上的*、-、_来建立一个分隔线，行内不能有其他东西。也可以在符号间插入空格。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">***</span><br><span class="line">---</span><br><span class="line">___</span><br><span class="line">* * *</span><br></pre></td></tr></table></figure>
+<p>效果均为一条分割线：</p>
+<hr>
+<h3 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h3><p>在行尾添加两个空格加回车表示换行：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这是一行后面加两个空格  换行</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p>这是一行后面加两个空格<br>换行</p>
+<hr>
+<h3 id="脚注-注解"><a href="#脚注-注解" class="headerlink" title="脚注(注解)"></a>脚注(注解)</h3><p>使用[^]来定义脚注：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这是一个脚注的例子[^1]</span><br><span class="line"></span><br><span class="line">[^1]: 这里是脚注</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p>这是一个脚注的例子<a href="这里是脚注">^1</a></p>
+<hr>
+<p><br></p>
+<h2 id="常用弥补Markdown的Html标签"><a href="#常用弥补Markdown的Html标签" class="headerlink" title="常用弥补Markdown的Html标签"></a>常用弥补Markdown的Html标签</h2><h3 id="字体"><a href="#字体" class="headerlink" title="字体"></a>字体</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;font face=&quot;微软雅黑&quot; color=&quot;red&quot; size=&quot;6&quot;&gt;字体及字体颜色和大小&lt;/font&gt;</span><br><span class="line">&lt;font color=&quot;#0000ff&quot;&gt;字体颜色&lt;/font&gt;</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<font face="微软雅黑" color="red" size="6">字体及字体颜色和大小</font><br><font color="#0000ff">字体颜色</font>
+
+<hr>
+<h3 id="换行-1"><a href="#换行-1" class="headerlink" title="换行"></a>换行</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">使用html标签`&lt;br/&gt;`&lt;br/&gt;换行</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p>使用html标签<br><br>换行</p>
+<hr>
+<h3 id="文本对齐方式"><a href="#文本对齐方式" class="headerlink" title="文本对齐方式"></a>文本对齐方式</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;p align=&quot;left&quot;&gt;居左文本&lt;/p&gt;</span><br><span class="line">&lt;p align=&quot;center&quot;&gt;居中文本&lt;/p&gt;</span><br><span class="line">&lt;p align=&quot;right&quot;&gt;居右文本&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p align="left">居左文本</p><br><p align="center">居中文本</p><br><p align="right">居右文本</p>
+
+<hr>
+<p>下划线</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;u&gt;下划线文本&lt;/u&gt;</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><u>下划线文本</u></p>
+<p><strong>That’s all, Enjoy it!</strong></p>
+<p><strong>备注：文末有些html标签在有道云上不支持</strong></p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2017-12-19T06:02:02.000Z" itemprop="datePublished">
+              2017-12-19
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/markdown/">markdown</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/html/">html</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/command/">command</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/grammer/">grammer</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>
