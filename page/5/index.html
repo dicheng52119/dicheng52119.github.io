@@ -87,23 +87,31 @@
     <header class="title">
       
         <h1>
-          <a href="/2018/01/07/Semaphore信号量学习笔记/">Semaphore信号量学习笔记</a>
+          <a href="/2017/12/24/岁月如光，时光静好/">岁月如光，时光静好</a>
         </h1>
       
       <div class='ListMeta'>
-  <time datetime="2018-01-07T12:02:39.000Z" itemprop="datePublished">
-    2018-01-07
+  <time datetime="2017-12-24T04:44:21.000Z" itemprop="datePublished">
+    2017-12-24
   </time>
   
   | 
   <ul>
     
   <li class="meta-text">
-  { <a href="/tags/technology/">technology</a> }
+  { <a href="/tags/失眠/">失眠</a> }
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/Semaphore/">Semaphore</a> }
+  { <a href="/tags/夜晚/">夜晚</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/音乐/">音乐</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/历史/">历史</a> }
   </li>
 
 
@@ -114,7 +122,7 @@
   <ul>
     
   <li class="meta-text">
-  { <a href="/categories/Thread/">Thread</a> }
+  { <a href="/categories/情感/">情感</a> }
   </li>
 
 
@@ -125,11 +133,15 @@
     </header>
     <div >
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在多线程程序设计中有三个同步工具需要我们掌握，分别是Semaphore(信号量)，countDownLatch（倒计数门闸锁），CyclicBarrier(可重用栅栏)</p>
-<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Semaphore是一种基于计数的信号量。它可以设定一个阈值，基于此，多个线程竞争获取许可信号，做完自己的申请后归还，超过阈值后，线程申请许可信号将会被阻塞。Semaphore可以用来构建一些对象池，资源池之类的，比如数据库连接池，我们也可以创建计数为1的Semaphore，将其作为一种类似互斥锁的机制，这也叫二元信号量，表示两种互斥状态。它的用法如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个计数阈值为5的信号量对象  </span></span><br><span class="line"><span class="comment">// 只能5个线程同时访问  </span></span><br><span class="line">Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="comment">// 申请许可  </span></span><br><span class="line">    semp.acquire();  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="comment">// 业务逻辑  </span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">  </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;  </span><br><span class="line">        <span class="comment">// 释放许可  </span></span><br><span class="line">        semp.release();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <p>不知道，失眠是否是对一个人意志上的考验，然而，此刻，在这个静谧深邃、月光如水的夜晚，我却辗转反侧。</p>
+<p>有时候，一支优美的音乐，或是因为它的旋律动人，或是因为它的伤感离愁，总是勾勒起对过去的往往。这种微妙的情感，唯泪流满面不止。因为，它触动的是你内心最柔弱的那一点。</p>
+<p>创作的源泉，或者说是素材，来源于不平凡的点点滴滴。心跳般的跌宕人生，必是一段刻骨铭心的经历。</p>
+<p>忆千年久远，古有勇赴鸿门宴，逼至西楚霸王乌江自刎，开创大汉王朝的汉高祖刘邦。亦有耻受胯下之辱，一雪前耻的西汉开国名将韩信。亦有令汉朝皇室皇叔刘备三顾茅庐、令号称拥有百万雄狮的丞相曹操心不甘，情不愿草船借箭、令东吴最为倚重的大都督周瑜感叹既生瑜，何生亮、北征前作催人泪下，留芳百世，肺腑之言绝笔出师表、于城上敌楼前，凭栏而坐，焚香抚琴，不费一兵一卒击退魏国军师司马懿十万大军，坐唱空城计的三国诸葛孔明。亦有放荡不羁，把酒吟月，钟鼓馔玉不足贵，但愿长醉不复醒，留下千古绝唱的李白。数风流人物，还看今朝。指挥红军万里长征，八年抗战，三年内战的辉煌胜利，开国伟大的领袖毛泽东同志亦是最可爱的人。</p>
+<p>如果说在这个静谧深邃、月光如水的夜晚，配上一支优美的音乐，浮现不平凡的点点滴滴，你的内心是否还依然如此平静，你是否被这个寂静的深夜所深深吸引而无法入睡。</p>
+<p>明天，是美好的一天。</p>
         
           <div class="more-link">
-            <a href="/2018/01/07/Semaphore信号量学习笔记/#more">阅读全文 »</a>
+            <a href="/2017/12/24/岁月如光，时光静好/#more">阅读全文 »</a>
           </div>
         
       
@@ -143,12 +155,12 @@
     <header class="title">
       
         <h1>
-          <a href="/2018/01/07/CyclicBarrier学习笔记/">CyclicBarrier学习笔记</a>
+          <a href="/2017/12/24/Spring Cloud之Hystrix学习笔记/">Spring Cloud之Hystrix学习笔记</a>
         </h1>
       
       <div class='ListMeta'>
-  <time datetime="2018-01-07T11:56:26.000Z" itemprop="datePublished">
-    2018-01-07
+  <time datetime="2017-12-24T04:15:05.000Z" itemprop="datePublished">
+    2017-12-24
   </time>
   
   | 
@@ -159,7 +171,19 @@
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/CyclicBarrier/">CyclicBarrier</a> }
+  { <a href="/tags/springboot/">springboot</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/spring-cloud/">spring cloud</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/hystrix/">hystrix</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/turbine/">turbine</a> }
   </li>
 
 
@@ -170,7 +194,7 @@
   <ul>
     
   <li class="meta-text">
-  { <a href="/categories/Thread/">Thread</a> }
+  { <a href="/categories/Spring-Cloud/">Spring Cloud</a> }
   </li>
 
 
@@ -181,18 +205,25 @@
     </header>
     <div >
       
-        <h3 id="类说明"><a href="#类说明" class="headerlink" title="类说明"></a>类说明</h3><p>一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环的 barrier。比如有一组线程，都要往数据库里面写入操作，只有当所有的线程都往数据库里面写入数据之后，这些线程才能继续往下执行，这时候就可以使用CyclicBarrier了。当所有的等待线程释放之后,CyclicBarrier是可重用的。</p>
-<p>CyclicBarrier有两个构造函数：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties, Runnable barrierAction)</span></span></span><br></pre></td></tr></table></figure></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties)</span></span></span><br></pre></td></tr></table></figure>
-<p>参数parties指让多少个线程或者任务等待至barrier状态；参数barrierAction为当这些线程都达到barrier状态时会执行的内容。</p>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>需要所有的子任务都完成时，才执行主任务，这个时候就可以选择使用CyclicBarrier。</p>
-<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><p>对于CyclicBarrier来说，最重要的是await()方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, BrokenBarrierException</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br></pre></td></tr></table></figure>
-<p>第一个版本比较常用，用来挂起当前线程，直至所有线程都到达barrier状态再同时执行后续任务；</p>
+        <h3 id="Hystrix介绍"><a href="#Hystrix介绍" class="headerlink" title="Hystrix介绍"></a>Hystrix介绍</h3><p>Spring Cloud Hystrix实现了断路器、线程隔离等一系列服务保护功能。它是基于Netflix的开源框架Hystrix实现的，该框架的目标在于通过控制那些访问远程系统、服务和第三方库的节点，从而对延迟和故障提供更强大的容错能力。Hystrix具备服务降级、服务熔断、线程和信号隔离、请求缓存、请求合并以及服务监控等强大功能。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ul>
+<li>需要启动的工程：<ol>
+<li>eureka-server工程：服务注册中心。</li>
+<li>hello-service工程：HELLO-SERVICE的服务单元，启动两个不同端口的服务实例。</li>
+<li>ribbon-consume工程：使用Ribbon实现的服务消费者。</li>
+</ol>
+</li>
+</ul>
+<h3 id="引入Spring-Cloud-Hystrix"><a href="#引入Spring-Cloud-Hystrix" class="headerlink" title="引入Spring Cloud Hystrix"></a>引入Spring Cloud Hystrix</h3><ul>
+<li><p>在ribbon-consumer工程的pom.xml的dependency节点中引入spring-cloud-starter-hystrix依赖</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-cloud-starter-hystrix&lt;/artifactId&gt;</span><br><span class="line">dependency&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在ribbon-consumer工程的主类中使用@EnableCircuitBreaker注解开启断路器功能</p>
+</li>
+</ul>
         
           <div class="more-link">
-            <a href="/2018/01/07/CyclicBarrier学习笔记/#more">阅读全文 »</a>
+            <a href="/2017/12/24/Spring Cloud之Hystrix学习笔记/#more">阅读全文 »</a>
           </div>
         
       
@@ -206,12 +237,12 @@
     <header class="title">
       
         <h1>
-          <a href="/2018/01/07/CountDownLatch学习笔记/">CountDownLatch学习笔记</a>
+          <a href="/2017/12/19/Markdown的常用语法/">Markdown的常用语法(个人总结)</a>
         </h1>
       
       <div class='ListMeta'>
-  <time datetime="2018-01-07T11:50:08.000Z" itemprop="datePublished">
-    2018-01-07
+  <time datetime="2017-12-19T06:02:02.000Z" itemprop="datePublished">
+    2017-12-19
   </time>
   
   | 
@@ -222,7 +253,19 @@
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/CountDownLatch/">CountDownLatch</a> }
+  { <a href="/tags/markdown/">markdown</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/html/">html</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/command/">command</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/grammer/">grammer</a> }
   </li>
 
 
@@ -233,7 +276,7 @@
   <ul>
     
   <li class="meta-text">
-  { <a href="/categories/Thread/">Thread</a> }
+  { <a href="/categories/Markdown/">Markdown</a> }
   </li>
 
 
@@ -244,15 +287,240 @@
     </header>
     <div >
       
-        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>CountDownLatch是一个同步的辅助类，它可以允许一个或多个线程等待，直到一组在其它线程中的操作执行完成。</p>
-<p>一个CountDownLatch会通过一个给定的count数来被初始化。其中await()方法会一直阻塞，直到当前的count被减到0，而这个过程是通过调用countDown()方法来实现的。在await()方法不再阻塞以后，所有等待的线程都会被释放，并且任何await()的子调用都会立刻返回。这是一次性的－－count不能被重置。如果你需要一种能重置count的版本，请考虑使用CyclicBarrier。</p>
-<p>CountDownlatch是一个多功能的同步工具，可以被用于各种目的。一个CountDownLatch通过一个值为1的count被初始化，来作为一个开/关的门或门闩：所有调用了await()的线程都会在门前等待，直到门被一个线程通过调用countDown()打开。一个被初始化为N的CountDownLatch可以被用来“在N个线程都完成了某种操作（或者一些操作已经被完成了N次）之后创建一个线程”。</p>
-<p>CountDownLatch一个有用的属性就是它不需要线程们在继续执行之前，调用countDown来等待count被减到0。它简单地阻止了任何调用了await()的线程继续，直到所有的线程都能够通过。</p>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>下面请看一个应用场景：<br>有1个driver和5个worker，需要满足以下两点要求：</p>
-<p>当driver完成了全部的工作之后才允许worker们开始工作；<br>当所有的worker都完成了自己的工作之后，driver主线程才能结束。</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Markdown 是一种轻量级标记语言，它用简洁的语法代替排版，使我们专心于码字。它的目标是实现易读易写，成为一种适用于网络的书写语言。同时，Markdown支持嵌入html标签。</p>
+<p>注意：</p>
+<ul>
+<li>Markdown使用#、+、*等符号来标记， 符号后面必须跟上 至少1个 空格才有效！</li>
+<li>markdown中如果遇到有字符与markdown语法冲突,可以使用 反引号包裹  <code>需要转移的内容</code> </li>
+<li>markdown中如何让# * &gt;等符号原样显示，不被解析成对应的markdown语法，前加\转义</li>
+</ul>
+<p><br></p>
+<h2 id="Markdown的常用语法"><a href="#Markdown的常用语法" class="headerlink" title="Markdown的常用语法"></a>Markdown的常用语法</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>Markdown 标题支持两种形式：</p>
+<h4 id="1-用-标记"><a href="#1-用-标记" class="headerlink" title="1. 用#标记"></a>1. 用#标记</h4><p>在 <strong>标题开头</strong> 加上1~6个#，依次代表一级标题、二级标题….六级标题</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 一级标题 </span><br><span class="line">## 二级标题</span><br><span class="line">### 三级标题</span><br><span class="line">##### 四级标题</span><br><span class="line">###### 五级标题</span><br><span class="line">###### 六级标题</span><br></pre></td></tr></table></figure>
         
           <div class="more-link">
-            <a href="/2018/01/07/CountDownLatch学习笔记/#more">阅读全文 »</a>
+            <a href="/2017/12/19/Markdown的常用语法/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2017/12/18/Hexo配置文件详细说明/">Hexo配置文件详细说明</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2017-12-18T14:16:19.000Z" itemprop="datePublished">
+    2017-12-18
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/hexo/">hexo</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/blog/">blog</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/config/">config</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Hexo/">Hexo</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>您可以在 _config.yml 中修改大部份的配置。</p>
+<h3 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">title</td>
+<td style="text-align:left">网站标题</td>
+</tr>
+<tr>
+<td style="text-align:left">subtitle</td>
+<td style="text-align:left">网站副标题</td>
+</tr>
+<tr>
+<td style="text-align:left">description</td>
+<td style="text-align:left">网站描述</td>
+</tr>
+<tr>
+<td style="text-align:left">author</td>
+<td style="text-align:left">您的名字</td>
+</tr>
+<tr>
+<td style="text-align:left">language</td>
+<td style="text-align:left">网站使用的语言</td>
+</tr>
+<tr>
+<td style="text-align:left">timezone</td>
+<td style="text-align:left">网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。</td>
+</tr>
+</tbody>
+</table>
+<p>其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。</p>
+<h3 id="网址"><a href="#网址" class="headerlink" title="网址"></a>网址</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+<th style="text-align:left">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">url</td>
+<td style="text-align:left">网址</td>
+</tr>
+<tr>
+<td style="text-align:left">root</td>
+<td style="text-align:left">网站根目录</td>
+</tr>
+<tr>
+<td style="text-align:left">permalink</td>
+<td style="text-align:left">文章的永久链接格式</td>
+<td style="text-align:left">:year/:month/:day/:title/</td>
+</tr>
+<tr>
+<td style="text-align:left">permalink_defaults</td>
+<td style="text-align:left">永久链接中各部分的默认值</td>
+</tr>
+</tbody>
+</table>
+        
+          <div class="more-link">
+            <a href="/2017/12/18/Hexo配置文件详细说明/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2017/12/18/Hexo-Blog搭建步骤详解/">Hexo Blog搭建步骤详解</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2017-12-18T13:42:07.000Z" itemprop="datePublished">
+    2017-12-18
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/hexo/">hexo</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/blog/">blog</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/node/">node</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Hexo/">Hexo</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤:"></a>搭建步骤:</h3><ul>
+<li><p>申请github账号,步骤此处省略一万字</p>
+</li>
+<li><p>新建仓库，仓库名称定义格式:访问主页时的用户名.github.io</p>
+</li>
+<li><p>仓库添加README.md文件，修改为index.html,添加内容”hello world”</p>
+</li>
+<li><p>访问步骤二定义的地址，即<a href="https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成" target="_blank" rel="noopener">https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成</a></p>
+</li>
+<li><p>访问hexo官网，可按照步骤进行创建本地hexo项目，也可继续按照本篇文档继续完成设置</p>
+</li>
+<li><p>安装nvm和npm,步骤此处省略一万字，安装完成后，可通过命令行指令nvm -v 和npm -v查看是否安装成功</p>
+</li>
+<li><p>命令行运行npm install hexo-cli -g，运行命令hexo -v查看安装是否成功</p>
+</li>
+<li><p>选择一个目录位置，运行hexo init blog 命令，创建hexo项目文件，cd blog进入项目</p>
+</li>
+<li><p>使用文本编辑器，这里推荐使用vscode,打开blog项目，修改根目录下的config配置文件，将title和author自定义进行修改，将文件最下方的发布信息type的值修改为git,添加属性repo，并赋值为第二步你所定义的仓库地址</p>
+</li>
+<li><p>命令行运行npm install hexo-deployer-git —save 命令</p>
+</li>
+<li><p>运行hexo &amp;&amp; hexo g &amp;&amp; hexo s在本地运行，查看博客的部署情况</p>
+</li>
+<li><p>运行hexo clean &amp;&amp; hexo g &amp;&amp; hexo d,分别代表着hexo clean，hexo generate，hexo deploy，hexo server，部署到github 上进行运行，访问第二步你所定义的仓库名称，查看效果</p>
+</li>
+<li><p>hexo官网已开源大量主题，可根据需要进行使用，进入相关主题的github项目中，复制仓库地址，进入本地blog项目的theme文件夹中，clone 复制的仓库地址，然后在根配置文件中修改theme的值，为clone下来的主题文件夹名称，至于不同主题下的详细配置，这里不再做一一介绍，详见每个主题的配置说明。配置完成后，同样使用步骤12的命令查看效果</p>
+</li>
+<li><p>运行hexo new “文章名称”命令进行创建新的文章</p>
+</li>
+<li><p>如果不想博文在首页全部显示, 并能出现阅读全文按钮效果, 需要在你想在首页显示的部分下添加 <code>&lt;!--more--&gt;</code></p>
+</li>
+</ul>
+        
+          <div class="more-link">
+            <a href="/2017/12/18/Hexo-Blog搭建步骤详解/#more">阅读全文 »</a>
           </div>
         
       
@@ -265,7 +533,7 @@
 
   <section id="nav-wrapper">
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/4/">« prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">next »</a>
+      <a class="extend prev" rel="prev" href="/page/4/">« prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">next »</a>
     </nav>
   </section>
 
