@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>工厂设计模式 | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>工厂设计模式</h1>
+    </header>
+
+    <section>
+      <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>主要用来实例化有共同接口的类，工厂模式可以动态决定应该实例化那一个类。</p>
+<h3 id="工厂模式的形态"><a href="#工厂模式的形态" class="headerlink" title="工厂模式的形态"></a>工厂模式的形态</h3><ol>
+<li>简单工厂（Simple Factory）。又称为静态工厂方法(Static Factory Method)模式</li>
+<li>工厂方法（Factory Method）。</li>
+<li>抽象工厂（Abstract Factory）。</li>
+</ol>
+<h3 id="简单工厂-（Simple-Factory）"><a href="#简单工厂-（Simple-Factory）" class="headerlink" title="简单工厂 （Simple Factory）"></a>简单工厂 （Simple Factory）</h3><p>又叫静态工厂，是工厂模式三中状态中结构最为简单的。主要有一个静态方法，用来接受参数，并根据参数来决定返回实现同一接口的不同类的实例。我们来看一个具体的例子：</p>
+<p>假设一家工厂，有生产洗衣机，有生产冰箱，还有空调等等..</p>
+<p>我们先为所有产品定义一个共同的产品接口<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着我们让这个工厂的所有产品都必须实现此接口</p>
+<a id="more"></a>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Washer</span> <span class="keyword">implements</span> <span class="title">Product</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Washer</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"洗衣机被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Icebox</span> <span class="keyword">implements</span> <span class="title">Product</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Icebox</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"冰箱被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AirCondition</span> <span class="keyword">implements</span> <span class="title">Product</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Icebox</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"空调被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来我们来写一个工厂类，由它来负责生产以上的产品<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleFactory</span> </span>&#123; </span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Product <span class="title">factory</span><span class="params">(String productName)</span> <span class="keyword">throws</span> Exception</span>&#123; </span><br><span class="line">        <span class="keyword">if</span>(productName.equals(<span class="string">"Washer"</span>))&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Washer(); </span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(productName.equals(<span class="string">"Icebox"</span>))&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Icebox(); </span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(productName.equals(<span class="string">"AirCondition"</span>))&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> AirCondition(); </span><br><span class="line">        &#125;<span class="keyword">else</span>&#123; </span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"没有该产品"</span>); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>好了，有了这个工厂类，我们就可以开始下定单了，SimpleFactory将根据不同的定单类决定生产什么产品。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123; </span><br><span class="line">    <span class="keyword">try</span> &#123; </span><br><span class="line">              SimpleFactory.factory(<span class="string">"Washer"</span>); </span><br><span class="line">              SimpleFactory.factory(<span class="string">"Icebox"</span>); </span><br><span class="line">              SimpleFactory.factory(<span class="string">"AirCondition"</span>); </span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123; </span><br><span class="line">        e.printStackTrace(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由上面的代码可以看出，简单工厂的核心就是一个SimpleFactory类，他拥有必要的逻辑判断能力和所有产品的创建权利，我们只需要向把定单给他，就能得到我们想要的产品。这使用起来似乎非常方便。</p>
+<p>但，实际上，这个SimpleFactory有很多的局限。首先，我们每次想要增加一种新产品的时候，都必须修改SimpleFactory的原代码。其次，当我们拥有很多很多产品的时候，而且产品之间又存在复杂的层次关系的时候，这个类必须拥有复杂的逻辑判断能力，其代码量也将不断地激增，这对以后的维护简直就是恐怖两个字…<br>还有就是，整个系统都严重依赖SimpleFactory类，只要SimpleFactory类一出问题，系统就进入不能工作的状态，这也是最为致命的一点….</p>
+<p>以上的不足将在工厂模式的另外两种状态中得到解决。</p>
+<h3 id="工厂方法（Factory-Method）"><a href="#工厂方法（Factory-Method）" class="headerlink" title="工厂方法（Factory Method）"></a>工厂方法（Factory Method）</h3><p>上面的代码告诉我们，简单工厂并不简单，它是整个模式的核心，一旦他出了问题，整个模式都将受影响而不能工作，为了降低风险和为日后的维护、扩展做准备，我们需要对它进行重构，引入工厂方法。</p>
+<p>工厂方法为工厂类定义了接口，用多态来削弱了工厂类的职能，以下是工厂接口的定义：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">  <span class="function"><span class="keyword">public</span> Product <span class="title">create</span><span class="params">()</span></span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们再来定义一个产品接口<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>以下是实现了产品接口的产品类<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Washer</span> <span class="keyword">implements</span> <span class="title">Product</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Washer</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"洗衣机被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Icebox</span> <span class="keyword">implements</span> <span class="title">Product</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Icebox</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"冰箱被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AirCondition</span> <span class="keyword">implements</span> <span class="title">Product</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">Icebox</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"空调被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来，就是工厂方法的核心部分，也就是具体创建产品对象的具体工厂类<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建洗衣机的工厂 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateWasher</span> <span class="keyword">implements</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Product <span class="title">create</span><span class="params">()</span></span>&#123; </span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Washer(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="comment">//创建冰箱的工厂 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateIcebox</span> <span class="keyword">implements</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Product <span class="title">create</span><span class="params">()</span></span>&#123; </span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> Icebox(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="comment">//创建空调的工厂 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateAirCondition</span> <span class="keyword">implements</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Product <span class="title">create</span><span class="params">()</span></span>&#123; </span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">new</span> AirCondition(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上面创建产品对象的代码可以看出，工厂方法和简单工厂的主要区别是，简单工厂是把创建产品的职能都放在一个类里面，而工厂方法则把不同的产品放在实现了工厂接口的不同工厂类里面，这样就算其中一个工厂类出了问题，其他工厂类也能正常工作，互相不受影响，以后增加新产品，也只需要新增一个实现工厂接口工厂类，就能达到，不用修改已有的代码。但工厂方法也有他局限的地方，那就是当面对的产品有复杂的等级结构的时候，例如，工厂除了生产家电外产品，还生产手机产品，这样一来家电是手机就是两大产品家族了，这两大家族下面包含了数量众多的产品，每个产品又有多个型号，这样就形成了一个复杂的产品树了。如果用工厂方法来设计这个产品家族系统，就必须为每个型号的产品创建一个对应的工厂类，当有数百种甚至上千种产品的时候，也必须要有对应的上百成千个工厂类，这就出现了传说的类爆炸，对于以后的维护来说，简直就是一场灾难…..</p>
+<h3 id="抽象工厂（Factory-Method）"><a href="#抽象工厂（Factory-Method）" class="headerlink" title="抽象工厂（Factory Method）"></a>抽象工厂（Factory Method）</h3><p>抽象工厂：目的意图在于创建一系列互相关联或互相依赖的对象。</p>
+<p>我自己觉得抽象工厂是在工厂方法的基础上引进了分类管理的概念….</p>
+<p>工厂方法用来创建一个产品，它没有分类的概念，而抽象工厂则用于创建一系列产品，所以产品分类成了抽象工厂的重点。</p>
+<p>我们继续用上面的例子来说明：<br>工厂生产的所有产品都用都用大写字母来标明它们的型号，比如冰箱，就有“冰箱-A”,“冰箱-B”,同样，其他的产品也都是遵守这个编号规则，于是就有了一下产品家族树。</p>
+<p>冰箱：</p>
+<ol>
+<li>冰箱-A</li>
+<li>冰箱-B</li>
+</ol>
+<p>洗衣机：</p>
+<ol>
+<li>洗衣机-A</li>
+<li>洗衣机-B</li>
+</ol>
+<p>我们可以为冰箱和洗衣机分别定义两个产品接口，以对他们进行分类。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//洗衣机接口 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Washer</span></span>&#123; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="comment">//冰箱接口 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Icebox</span></span>&#123; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着，我们分别创建这两个接口的具体产品<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//洗衣机-A </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WasherA</span> <span class="keyword">implements</span> <span class="title">Washer</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">WasherA</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"洗衣机-A被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="comment">//洗衣机-B </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WasherB</span> <span class="keyword">implements</span> <span class="title">Washer</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">WasherB</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"洗衣机-B被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="comment">//冰箱-A </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IceboxA</span> <span class="keyword">implements</span> <span class="title">Icebox</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">IceboxA</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"冰箱-A被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"><span class="comment">//冰箱-B </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IceboxB</span> <span class="keyword">implements</span> <span class="title">Icebox</span></span>&#123; </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="title">IceboxB</span><span class="params">()</span></span>&#123; </span><br><span class="line">       System.out.println(<span class="string">"冰箱-B被制造了"</span>); </span><br><span class="line">   &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>到此，产品部分我们准备好了，接下来我们来处理工厂部分，我们先来定义工厂行为接口<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">       <span class="function"><span class="keyword">public</span> Washer <span class="title">createWasher</span><span class="params">()</span></span>; </span><br><span class="line">       <span class="function"><span class="keyword">public</span> Icebox <span class="title">createIcebox</span><span class="params">()</span></span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来我创造具体的工厂类，我们根据上面产品的接口，把型号A的产品分为一类，由一个工厂来管理，把型号为B的产品有另一个工厂管理，根据这个分类，我们可以实现如下的两个具体工厂类<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建型号为A的产品工厂 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FactoryA</span> <span class="keyword">implements</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">       <span class="comment">//创建洗衣机-A </span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Washer <span class="title">createWasher</span><span class="params">()</span></span>&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> WasherA(); </span><br><span class="line">       &#125; </span><br><span class="line"> </span><br><span class="line">       <span class="comment">//创建冰箱-A </span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Icebox <span class="title">createIcebox</span><span class="params">()</span></span>&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> IceboxA(); </span><br><span class="line">       &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//创建型号为B的产品工厂 </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FactoryB</span> <span class="keyword">implements</span> <span class="title">Factory</span></span>&#123; </span><br><span class="line">       <span class="comment">//创建洗衣机-B </span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Washer <span class="title">createWasher</span><span class="params">()</span></span>&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> WasherB(); </span><br><span class="line">       &#125; </span><br><span class="line"> </span><br><span class="line">       <span class="comment">//创建冰箱-B </span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> Icebox <span class="title">createIcebox</span><span class="params">()</span></span>&#123; </span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> IceboxB(); </span><br><span class="line">       &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样，我们的抽象工厂就完成了。有上面可以看出，在运用上我觉得工厂方法和抽象工厂，都有自己的应用场景，并没有什么优劣之分，但在应用抽象工厂之前，要先对创建的对象进行系统的分类，这点很重要，好的产品分类规则能为具体工厂类的选择调用和以后的扩展提供清晰的思路。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ol>
+<li>静态工厂：一个共同的产品接口，所有产品实现这个接口。一个工厂类，内有一个静态方法，负责生产以上的商品。</li>
+<li>工厂方法：一个共同的产品接口，所有产品实现这个接口。一个工厂接口，生产不同产品的工厂实现这个接口。</li>
+<li>抽象工厂：定义不同产品的接口，分别创建不同产品接口下的多个具体产品类。一个工厂接口，定义工厂行为方法，根据具体产品类的分类创建对应的实现工厂接口的工厂实现类。</li>
+</ol>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-01-07T12:37:33.000Z" itemprop="datePublished">
+              2018-01-07
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/design-pattern/">design pattern</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Simple-Factory/">Simple Factory</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Factory-Method/">Factory Method</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Abstract-Factory/">Abstract Factory</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>MySQL事务隔离级别详解 | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>MySQL事务隔离级别详解</h1>
+    </header>
+
+    <section>
+      <h3 id="四大特性"><a href="#四大特性" class="headerlink" title="四大特性"></a>四大特性</h3><ul>
+<li><strong>原子性</strong><br>事务必须是原子工作单元；对于其数据修改，要么全都执行，要么全都不执行。通常，与某个事务关联的操作具有共同的目标，并且是相互依赖的。如果系统只执行这些操作的一个子集，则可能会破坏事务的总体目标。原子性消除了系统处理操作子集的可能性。  </li>
+<li><strong>一致性</strong><br>事务在完成时，必须使所有的数据都保持一致状态。在相关数据库中，所有规则都必须应用于事务的修改，以保持所有数据的完整性。事务结束时，所有的内部数据结构（如 B 树索引或双向链表）都必须是正确的。某些维护一致性的责任由应用程序开发人员承担，他们必须确保应用程序已强制所有已知的完整性约束。例如，当开发用于转帐的应用程序时，应避免在转帐过程中任意移动小数点。  </li>
+<li><strong>隔离性</strong><br>由并发事务所作的修改必须与任何其它并发事务所作的修改隔离。事务查看数据时数据所处的状态，要么是另一并发事务修改它之前的状态，要么是另一事务修改它之后的状态，事务不会查看中间状态的数据。这称为可串行性，因为它能够重新装载起始数据，并且重播一系列事务，以使数据结束时的状态与原始事务执行的状态相同。当事务可序列化时将获得最高的隔离级别。在此级别上，从一组可并行执行的事务获得的结果与通过连续运行每个事务所获得的结果相同。由于高度隔离会限制可并行执行的事务数，所以一些应用程序降低隔离级别以换取更大的吞吐量。  </li>
+<li><strong>持久性</strong><br>事务完成之后，它对于系统的影响是永久性的。该修改即使出现致命的系统故障也将一直保持。  </li>
+</ul>
+<p>主要说说这个描述很抽象一致性，举个例子：A向B转账，假设转账之前这两个用户的钱加起来总共是2000，那么A向B转账之后，不管这两个账户怎么转，A用户的钱和B用户的钱加起来的总额还是2000，这个就是事务的一致性。</p>
+<p>小结：原子性是事务隔离的基础，隔离性和持久性是手段，最终目的是为了保持数据的一致性。</p>
+<a id="more"></a>
+<h3 id="事务的并发问题"><a href="#事务的并发问题" class="headerlink" title="事务的并发问题"></a>事务的并发问题</h3><ul>
+<li><p>脏读：事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</p>
+</li>
+<li><p>不可重复读：事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果 不一致。</p>
+</li>
+<li><p>幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</p>
+</li>
+</ul>
+<p><strong>幻读和不可重复读的区别</strong></p>
+<p><strong>不可重复读：</strong></p>
+<p>不可重复读的重点是修改:同样的条件, 你读取过的数据, 再次读取出来发现值不一样了。</p>
+<p>例子：</p>
+<p>在事务1中，Mary 读取了自己的工资为1000,操作并没有完成 </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">con1 = getConnection();  </span><br><span class="line">select salary from employee empId =<span class="string">"Mary"</span>;</span><br></pre></td></tr></table></figure>
+<p>在事务2中，这时财务人员修改了Mary的工资为2000,并提交了事务. </p>
+<p>con2 = getConnection();<br>update employee set salary = 2000;<br>con2.commit();  </p>
+<p>在事务1中，Mary 再次读取自己的工资时，工资变为了2000 </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//con1  </span></span><br><span class="line">select salary from employee empId =<span class="string">"Mary"</span>;</span><br></pre></td></tr></table></figure>
+<p>在一个事务中前后两次读取的结果并不致，导致了不可重复读。</p>
+<p><strong>幻读：</strong></p>
+<p>幻读的重点在于新增或者删除同样的条件, 第1次和第2次读出来的记录数不一样</p>
+<p>例子：</p>
+<p>目前工资为1000的员工有10人。 事务1,读取所有工资为1000的员工。 </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">con1 = getConnection();  </span><br><span class="line">Select * from employee where salary =<span class="number">1000</span>;</span><br></pre></td></tr></table></figure>
+<p>共读取10条记录 </p>
+<p>这时另一个事务向employee表插入了一条员工记录，工资也为1000 </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">con2 = getConnection();  </span><br><span class="line"><span class="function">Insert into <span class="title">employee</span><span class="params">(empId,salary)</span> <span class="title">values</span><span class="params">(<span class="string">"Lili"</span>,<span class="number">1000</span>)</span></span>;  </span><br><span class="line">con2.commit();</span><br></pre></td></tr></table></figure>
+<p>事务1再次读取所有工资为1000的员工 </p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//con1  </span></span><br><span class="line">select * from employee where salary =<span class="number">1000</span>;</span><br></pre></td></tr></table></figure>
+<p>共读取到了11条记录，这就产生了幻像读。 </p>
+<h3 id="四种隔离级别"><a href="#四种隔离级别" class="headerlink" title="四种隔离级别"></a>四种隔离级别</h3><ul>
+<li><p><strong>Read Uncommitted（读取未提交内容）</strong><br>在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。读取未提交的数据，也被称之为脏读（Dirty Read）。</p>
+</li>
+<li><p><strong>Read Committed（读取提交内容）</strong><br>这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这种隔离级别 也支持所谓的不可重复读（Nonrepeatable Read），因为同一事务的其他实例在该实例处理其间可能会有新的commit，所以同一select可能返回不同结果。</p>
+</li>
+<li><p><strong>Repeatable Read（可重读）</strong><br>这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：幻读 （Phantom Read）。简单的说，幻读指当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，当用户再读取该范围的数据行时，会发现有新的“幻影” 行。InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题。</p>
+</li>
+<li><p><strong>Serializable（可串行化）</strong><br>这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，从而解决幻读问题。简言之，它是在每个读的数据行上加上共享锁。在这个级别，可能导致大量的超时现象和锁竞争。</p>
+</li>
+</ul>
+<p>这四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。例如：<br>脏读(Drity Read)：某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个RollBack了操作，则后一个事务所读取的数据就会是不正确的。</p>
+<p>不可重复读(Non-repeatable read):在一个事务的两次查询之中数据不一致，这可能是两次查询过程中间插入了一个事务更新的原有的数据。</p>
+<p>幻读(Phantom Read):在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几列(Row)数据，而另一个事务却在此时插入了新的几列数据，先前的事务在接下来的查询中，就会发现有几列数据是它先前所没有的。</p>
+<p>在MySQL中，实现了这四种隔离级别，分别有可能产生问题如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读未提交(Read uncommitted)</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>读已提交(Read committed)</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>可重复读(Repeatable read)</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+</tr>
+<tr>
+<td>可串行化(Serializable)</td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody>
+</table>
+<h3 id="数据库的各种锁的总结"><a href="#数据库的各种锁的总结" class="headerlink" title="数据库的各种锁的总结"></a>数据库的各种锁的总结</h3><ul>
+<li><p><strong>共享锁（又称读锁）、排它锁（又称写锁）</strong></p>
+<p>  InnoDB引擎的锁机制：InnoDB支持事务，支持行锁和表锁用的比较多，Myisam不支持事务，只支持表锁。</p>
+<p>  说明：</p>
+<p>  1）共享锁和排他锁都是行锁，意向锁都是表锁，应用中我们只会使用到共享锁和排他锁，意向锁是mysql内部使用的，不需要用户干预。</p>
+<p>  2）对于UPDATE、DELETE和INSERT语句，InnoDB会自动给涉及数据集加排他锁（X)；对于普通SELECT语句，InnoDB不会加任何锁，事务可以通过以下语句显示给记录集加共享锁或排他锁。</p>
+<p>  共享锁（S）：SELECT <em> FROM table_name WHERE … LOCK IN SHARE MODE。<br>  排他锁（X)：SELECT </em> FROM table_name WHERE … FOR UPDATE。</p>
+<p>  对于锁定行记录后需要进行更新操作的应用，应该使用Select…For update 方式，获取排它锁。（用共享锁，在读了之后再写会阻塞，会导致死锁）</p>
+<p>  这里说说Myisam：MyISAM在执行查询语句(SELECT)前，会自动给涉及的所有表加读锁，在执行更新操作(UPDATE、DELETE、INSERT等)前，会自动给涉及的表加写锁。</p>
+<p>  3）InnoDB行锁是通过给索引上的索引项加锁来实现的，因此InnoDB这种行锁实现特点意味着：只有通过索引条件检索数据，InnoDB才使用行级锁，否则，InnoDB将使用表锁！</p>
+</li>
+<li><p><strong>乐观锁、悲观锁</strong></p>
+<p>  <strong>悲观锁：</strong><br>  悲观锁，正如其名，它指的是对数据被外界（包括本系统当前的其他事务，以及来自外部系统的事务处理）修改持保守态度，因此，在整个数据处理过程中，将数据处于锁定状态。悲观锁的实现，往往依靠数据库提供的锁机制（也只有数据库层提供的锁机制才能真正保证数据访问的排他性，否则，即使在本系统中实现了加锁机制，也无法保证外部系统不会修改数据）</p>
+<p>  1）使用悲观锁，我们必须关闭mysql数据库的自动提交属性，采用手动提交事务的方式，因为MySQL默认使用autocommit模式，也就是说，当你执行一个更新操作后，MySQL会立刻将结果进行提交。</p>
+<p>  2）需要注意的是，在事务中，只有SELECT … FOR UPDATE 或LOCK IN SHARE MODE 同一笔数据时会等待其它事务结束后才执行，一般SELECT … 则不受此影响。对于UPDATE、DELETE和INSERT语句，InnoDB会自动给涉及数据集加排他锁（X)。</p>
+<p>  3）补充：MySQL select…for update的Row Lock与Table Lock</p>
+<p>  使用select…for update会把数据给锁住，不过我们需要注意一些锁的级别，MySQL InnoDB默认Row-Level Lock，所以只有「明确」地指定主键（或有索引的地方），MySQL 才会执行Row lock (只锁住被选取的数据) ，否则MySQL 将会执行Table Lock (将整个数据表单给锁住)。</p>
+<p>  <strong>乐观锁：</strong><br>  乐观锁（ Optimistic Locking ） 相对悲观锁而言，乐观锁假设认为数据一般情况下不会造成冲突，所以在数据进行提交更新的时候，才会正式对数据的冲突与否进行检测，如果发现冲突了，则让返回用户错误的信息，让用户决定如何去做（一般是回滚事务）。那么我们如何实现乐观锁呢，一般来说有以下2种方式：</p>
+<p>  1）.使用数据版本（Version）记录机制实现，这是乐观锁最常用的一种实现方式。何谓数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现。当读取数据时，将version字段的值一同读出，数据每更新一次，对此version值加一。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的version值进行比对，如果数据库表当前版本号与第一次取出来的version值相等，则予以更新，否则认为是过期数据。</p>
+<p>  2）.乐观锁定的第二种实现方式和第一种差不多，同样是在需要乐观锁控制的table中增加一个字段，名称无所谓，字段类型使用时间戳（timestamp）, 和上面的version类似，也是在更新提交的时候检查当前数据库中数据的时间戳和自己更新前取到的时间戳进行对比，如果一致则OK，否则就是版本冲突。</p>
+<p>  <strong>总结：</strong><br>  两种锁各有优缺点，不可认为一种好于另一种，像乐观锁适用于写比较少的情况下，即冲突真的很少发生的时候，这样可以省去了锁的开销，加大了系统的整个吞吐量。但如果经常产生冲突，上层应用会不断的进行retry，这样反倒是降低了性能，所以这种情况下用悲观锁就比较合适。</p>
+<p>  另外，高并发情况下个人认为乐观锁要好于悲观锁，因为悲观锁的机制使得各个线程等待时间过长，极其影响效率，乐观锁可以在一定程度上提高并发度。</p>
+</li>
+<li><p><strong>表锁、行锁</strong></p>
+<p>  表级锁(table-level locking)：MyISAM和MEMORY存储引擎</p>
+<p>  行级锁(row-level locking) ：InnoDB存储引擎</p>
+<p>  页面锁(page-level-locking)：BDB存储引擎</p>
+<p>  表级锁：开销小，加锁快;不会出现死锁;锁定粒度大，发生锁冲突的概率最高,并发度最低。</p>
+<p>  行级锁：开销大，加锁慢;会出现死锁;锁定粒度最小，发生锁冲突的概率最低,并发度也最高。</p>
+<p>  页面锁：开销和加锁时间界于表锁和行锁之间;会出现死锁;锁定粒度界于表锁和行锁之间，并发度一般。</p>
+</li>
+</ul>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-01-07T13:20:35.000Z" itemprop="datePublished">
+              2018-01-07
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/mysql-transaction/">mysql transaction</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

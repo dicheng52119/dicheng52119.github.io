@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+    <header class='PageTitle'>
+        <h1>{ Adapter }</h1>
+    </header>
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/适配器模式/">适配器模式</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T13:02:49.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/design-pattern/">design pattern</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Adapter/">Adapter</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Design-Pattern/">Design Pattern</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>适配器就是一种适配中间件，它存在于不匹配的二者之间，用于连接二者，将不匹配变得匹配，简单点理解就是平常所见的转接头，转换器之类的存在。</p>
+<p>适配器模式有三种：类适配器、对象适配器、接口适配器</p>
+<p>前二者在实现上有些许区别，作用一样，第三个接口适配器差别较大。</p>
+<h3 id="类适配器模式"><a href="#类适配器模式" class="headerlink" title="类适配器模式"></a>类适配器模式</h3><p>原理：通过继承来实现适配器功能。</p>
+<p>当我们要访问的接口A中没有我们想要的方法，却在另一个接口B中发现了合适的方法，我们又不能改变访问接口A，在这种情况下，我们可以定义一个适配器p来进行中转，这个适配器p要实现我们访问的接口A，这样我们就能继续访问当前接口A中的方法（虽然它目前不是我们的菜），然后再继承接口B的实现类BB，这样我们可以在适配器P中访问接口B的方法了，这时我们在适配器P中的接口A方法中直接引用BB中的合适方法，这样就完成了一个简单的类适配器。</p>
+<p>详见下方实例：我们以ps2与usb的转接为例</p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/适配器模式/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+
+ 
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

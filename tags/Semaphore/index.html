@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+    <header class='PageTitle'>
+        <h1>{ Semaphore }</h1>
+    </header>
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/Semaphore信号量学习笔记/">Semaphore信号量学习笔记</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T12:02:39.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Semaphore/">Semaphore</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Thread/">Thread</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在多线程程序设计中有三个同步工具需要我们掌握，分别是Semaphore(信号量)，countDownLatch（倒计数门闸锁），CyclicBarrier(可重用栅栏)</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Semaphore是一种基于计数的信号量。它可以设定一个阈值，基于此，多个线程竞争获取许可信号，做完自己的申请后归还，超过阈值后，线程申请许可信号将会被阻塞。Semaphore可以用来构建一些对象池，资源池之类的，比如数据库连接池，我们也可以创建计数为1的Semaphore，将其作为一种类似互斥锁的机制，这也叫二元信号量，表示两种互斥状态。它的用法如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个计数阈值为5的信号量对象  </span></span><br><span class="line"><span class="comment">// 只能5个线程同时访问  </span></span><br><span class="line">Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="comment">// 申请许可  </span></span><br><span class="line">    semp.acquire();  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="comment">// 业务逻辑  </span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">  </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;  </span><br><span class="line">        <span class="comment">// 释放许可  </span></span><br><span class="line">        semp.release();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/Semaphore信号量学习笔记/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+
+ 
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

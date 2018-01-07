@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Executor并发框架学习笔记 | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>Executor并发框架学习笔记</h1>
+    </header>
+
+    <section>
+      <h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>Eexecutor作为灵活且强大的异步执行框架，其支持多种不同类型的任务执行策略，提供了一种标准的方法将任务的提交过程和执行过程解耦开发，基于生产者-消费者模式，其提交任务的线程相当于生产者，执行任务的线程相当于消费者，并用Runnable来表示任务，Executor的实现还提供了对生命周期的支持，以及统计信息收集，应用程序管理机制和性能监视等机制。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ul>
+<li>Executor的UML图：（常用的几个接口和子类）<br><img src="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/Executor%E5%AE%B6%E8%B0%B1%E5%9B%BE.png" alt=""></li>
+</ul>
+<ol>
+<li>Executor：一个接口，其定义了一个接收Runnable对象的方法executor，其方法签名为executor(Runnable command)</li>
+<li>ExecutorService：是一个比Executor使用更广泛的子类接口，其提供了生命周期管理的方法，以及可跟踪一个或多个异步任务执行状况返回Future的方法</li>
+<li>AbstractExecutorService：ExecutorService执行方法的默认实现</li>
+<li>ScheduledExecutorService：一个可定时调度任务的接口</li>
+<li>ScheduledThreadPoolExecutor：ScheduledExecutorService的实现，一个可定时调度任务的线程池</li>
+<li>ThreadPoolExecutor：线程池，可以通过调用Executors以下静态工厂方法来创建线程池并返回一个ExecutorService对象</li>
+</ol>
+<a id="more"></a>
+<h3 id="ThreadPoolExecutor构造函数的各个参数说明"><a href="#ThreadPoolExecutor构造函数的各个参数说明" class="headerlink" title="ThreadPoolExecutor构造函数的各个参数说明"></a>ThreadPoolExecutor构造函数的各个参数说明</h3><p>ThreadPoolExecutor方法签名：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                          <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                          TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                          BlockingQueue&lt;Runnable&gt; workQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">                          ThreadFactory threadFactory,</span></span></span><br><span class="line"><span class="function"><span class="params">                          RejectedExecutionHandler handler)</span> <span class="comment">//后两个参数为可选参数</span></span></span><br></pre></td></tr></table></figure></p>
+<p>参数说明：</p>
+<ol>
+<li>corePoolSize：核心线程数，如果运行的线程少于corePoolSize，则创建新线程来执行新任务，即使线程池中的其他线程是空闲的</li>
+<li>maximumPoolSize:最大线程数，可允许创建的线程数，corePoolSize和maximumPoolSize设置的边界自动调整池大小：<br>corePoolSize &lt;运行的线程数&lt; maximumPoolSize:仅当队列满时才创建新线程<br>corePoolSize=运行的线程数= maximumPoolSize：创建固定大小的线程池</li>
+<li>keepAliveTime:如果线程数多于corePoolSize,则这些多余的线程的空闲时间超过keepAliveTime时将被终止</li>
+<li>unit:keepAliveTime参数的时间单位</li>
+<li>workQueue:保存任务的阻塞队列，与线程池的大小有关：<br>当运行的线程数少于corePoolSize时，在有新任务时直接创建新线程来执行任务而无需再进队列<br>当运行的线程数等于或多于corePoolSize，在有新任务添加时则选加入队列，不直接创建线程<br>当队列满时，在有新任务时就创建新线程</li>
+<li>threadFactory:使用ThreadFactory创建新线程，默认使用defaultThreadFactory创建线程</li>
+<li>handle:定义处理被拒绝任务的策略，默认使用ThreadPoolExecutor.AbortPolicy,任务被拒绝时将抛出RejectExecutorException</li>
+</ol>
+<h3 id="Executors"><a href="#Executors" class="headerlink" title="Executors"></a>Executors</h3><p>提供了一系列静态工厂方法用于创建各种线程池</p>
+<ol>
+<li><p>newFixedThreadPool:创建可重用且固定线程数的线程池，如果线程池中的所有线程都处于活动状态，此时再提交任务就在队列中等待，直到有可用线程；如果线程池中的某个线程由于异常而结束时，线程池就会再补充一条新线程。<br>方法签名：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                  <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                  <span class="comment">//使用一个基于FIFO排序的阻塞队列，在所有corePoolSize线程都忙时新任务将在队列中等待</span></span><br><span class="line">                                  <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>newSingleThreadExecutor:创建一个单线程的Executor，如果该线程因为异常而结束就新建一条线程来继续执行后续的任务。<br>方法签名：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService</span><br><span class="line">                     <span class="comment">//corePoolSize和maximumPoolSize都等于，表示固定线程池大小为1</span></span><br><span class="line">                        (<span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</span><br><span class="line">                                                <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                                <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>newScheduledThreadPool:创建一个可延迟执行或定期执行的线程池。</p>
+</li>
+<li>newCachedThreadPool:创建可缓存的线程池，如果线程池中的线程在60秒未被使用就将被移除，在执行新的任务时，当线程池中有之前创建的可用线程就重用可用线程，否则就新建一条线程。<br>方法签名：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                  <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                  <span class="comment">//使用同步队列，将任务直接提交给线程</span></span><br><span class="line">                                  <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>通过使用Executor可以很轻易的实现各种调优  管理  监视  记录日志和错误报告等待。</p>
+<h3 id="Executor的生命周期"><a href="#Executor的生命周期" class="headerlink" title="Executor的生命周期"></a>Executor的生命周期</h3><p>ExecutorService提供了管理Executor生命周期的方法，ExecutorService的生命周期包括了：运行、关闭和终止三种状态。</p>
+<p>ExecutorService在初始化创建时处于运行状态。<br>shutdown方法等待提交的任务执行完成并不再接受新任务，在完成全部提交的任务后关闭。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ul>
+<li><p>使用newScheduledThreadPool来模拟心跳机制</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeartBeat</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ScheduledExecutorService executor = Executors.newScheduledThreadPool(<span class="number">5</span>);</span><br><span class="line">        Runnable task = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"HeartBeat........................."</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        executor.scheduleAtFixedRate(task,<span class="number">5</span>,<span class="number">3</span>, TimeUnit.SECONDS);   <span class="comment">//5秒后第一次执行，之后每隔3秒执行一次</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  输出结果：</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">HeartBeat....................... //5秒后第一次输出</span><br><span class="line">HeartBeat....................... //每隔3秒输出一个</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用newCachedThreadPool模拟线程重用</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadPoolTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">     ExecutorService threadPool = Executors.newCachedThreadPool();<span class="comment">//线程池里面的线程数会动态变化，并可在线程被移除前重用</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">3</span>; i ++) &#123;</span><br><span class="line">            <span class="keyword">final</span>  <span class="keyword">int</span> task = i;   <span class="comment">//10个任务</span></span><br><span class="line">            <span class="comment">//TimeUnit.SECONDS.sleep(1);</span></span><br><span class="line">            threadPool.execute(<span class="keyword">new</span> Runnable() &#123;    <span class="comment">//接受一个Runnable实例</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        System.out.println(<span class="string">"线程名字： "</span> + Thread.currentThread().getName() +  <span class="string">"  任务名为： "</span>+task);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  输出结果：（为每个任务新建一条线程，共创建了3条线程）</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">线程名字： pool-1-thread-1 任务名为： 1</span><br><span class="line">线程名字： pool-1-thread-2 任务名为： 2</span><br><span class="line">线程名字： pool-1-thread-3 任务名为： 3</span><br></pre></td></tr></table></figure>
+<p>  去掉第6行的注释其输出如下：（始终重复利用一条线程，因为newCachedThreadPool能重用可用线程）</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">线程名字： pool-1-thread-1 任务名为： 1</span><br><span class="line">线程名字： pool-1-thread-1 任务名为： 2</span><br><span class="line">线程名字： pool-1-thread-1 任务名为： 3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>任务执行完成后并返回执行结果</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CallableAndFuture</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ExecutionException, InterruptedException </span>&#123;</span><br><span class="line">        ExecutorService executor = Executors.newSingleThreadExecutor();</span><br><span class="line">        Future&lt;String&gt; future = executor.submit(<span class="keyword">new</span> Callable&lt;String&gt;() &#123;   <span class="comment">//接受一上callable实例</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="string">"MOBIN"</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        System.out.println(<span class="string">"任务的执行结果："</span>+future.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  输出结果：</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">任务的执行结果：MOBIN</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过Executor来设计应用程序可以简化开发过程，提高开发效率，并有助于实现并发，在开发中如果需要创建线程可优先考虑使用Executor。</p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-01-07T12:07:45.853Z" itemprop="datePublished">
+              2018-01-07
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Executor/">Executor</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Executors/">Executors</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

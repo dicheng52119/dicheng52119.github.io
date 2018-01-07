@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+    <header class='PageTitle'>
+        <h1>{ BlockingQueue }</h1>
+    </header>
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/阻塞队列BlockingQueue学习笔记/">阻塞队列BlockingQueue学习笔记</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T11:08:04.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/BlockingQueue/">BlockingQueue</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Thread/">Thread</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="阻塞队列-BlockingQueue-介绍"><a href="#阻塞队列-BlockingQueue-介绍" class="headerlink" title="阻塞队列 (BlockingQueue)介绍"></a>阻塞队列 (BlockingQueue)介绍</h3><p>阻塞队列 (BlockingQueue)是Java util.concurrent包下重要的数据结构，BlockingQueue提供了线程安全的队列访问方式：当阻塞队列进行插入数据时，如果队列已满，线程将会阻塞等待直到队列非满；从阻塞队列取数据时，如果队列已空，线程将会阻塞等待直到队列非空。并发包下很多高级同步类的实现都是基于BlockingQueue实现的。</p>
+<h3 id="BlockingQueue-的操作方法"><a href="#BlockingQueue-的操作方法" class="headerlink" title="BlockingQueue 的操作方法"></a>BlockingQueue 的操作方法</h3><p>BlockingQueue 具有 4 组不同的方法用于插入、移除以及对队列中的元素进行检查。如果请求的操作不能得到立即执行的话，每个方法的表现也不同。这些方法如下： </p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>抛异常</th>
+<th>特定值</th>
+<th>阻塞</th>
+<th>超时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插入</td>
+<td>add(o)</td>
+<td>offer(o)</td>
+<td>put(o)</td>
+<td>offer(o,timeout,timeunit)</td>
+</tr>
+<tr>
+<td>移除</td>
+<td>remove(o)</td>
+<td>poll(o)</td>
+<td>take(o)</td>
+<td>poll(timeout,timeunit)</td>
+</tr>
+<tr>
+<td>检查</td>
+<td>element(o)</td>
+<td>peek(o)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>四组不同的行为方式解释：</p>
+<ul>
+<li>抛异常：如果试图的操作无法立即执行，抛一个异常。</li>
+<li>特定值：如果试图的操作无法立即执行，返回一个特定的值(常常是 true / false)。</li>
+<li>阻塞：如果试图的操作无法立即执行，该方法调用将会发生阻塞，直到能够执行。</li>
+<li>超时：如果试图的操作无法立即执行，该方法调用将会发生阻塞，直到能够执行，但等待时间不会超过给定值。返回一个特定值以告知该操作是否成功(典型的是true / false)。</li>
+</ul>
+<p>无法向一个 BlockingQueue 中插入 null。如果你试图插入 null，BlockingQueue 将会抛出一个 NullPointerException。</p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/阻塞队列BlockingQueue学习笔记/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+
+ 
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

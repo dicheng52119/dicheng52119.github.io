@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Semaphore信号量学习笔记 | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>Semaphore信号量学习笔记</h1>
+    </header>
+
+    <section>
+      <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在多线程程序设计中有三个同步工具需要我们掌握，分别是Semaphore(信号量)，countDownLatch（倒计数门闸锁），CyclicBarrier(可重用栅栏)</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Semaphore是一种基于计数的信号量。它可以设定一个阈值，基于此，多个线程竞争获取许可信号，做完自己的申请后归还，超过阈值后，线程申请许可信号将会被阻塞。Semaphore可以用来构建一些对象池，资源池之类的，比如数据库连接池，我们也可以创建计数为1的Semaphore，将其作为一种类似互斥锁的机制，这也叫二元信号量，表示两种互斥状态。它的用法如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个计数阈值为5的信号量对象  </span></span><br><span class="line"><span class="comment">// 只能5个线程同时访问  </span></span><br><span class="line">Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="comment">// 申请许可  </span></span><br><span class="line">    semp.acquire();  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="comment">// 业务逻辑  </span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">  </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;  </span><br><span class="line">        <span class="comment">// 释放许可  </span></span><br><span class="line">        semp.release();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>在信号量上我们定义两种操作： acquire（获取） 和 release（释放）。当一个线程调用acquire操作时，它要么通过成功获取信号量（信号量减1），要么一直等下去，直到有线程释放信号量，或超时。release（释放）实际上会将信号量的值加1，然后唤醒等待的线程。</p>
+<h3 id="Semaphore的作用"><a href="#Semaphore的作用" class="headerlink" title="Semaphore的作用"></a>Semaphore的作用</h3><p>在java中，使用了synchronized关键字和Lock锁实现了资源的并发访问控制，在同一时间只允许唯一了线程进入临界区访问资源(读锁除外)，这样子控制的主要目的是为了解决多个线程并发同一资源造成的数据不一致的问题。在另外一种场景下，一个资源有多个副本可供同时使用，比如打印机房有多个打印机、厕所有多个坑可供同时使用，这种情况下，Java提供了另外的并发访问控制–资源的多副本的并发访问控制，今天学习的信号量Semaphore即是其中的一种。</p>
+<p>信号量主要用于两个目的，一个是用于多个共享资源的互斥使用，另一个用于并发线程数的控制。</p>
+<h3 id="Semaphore的实现原理"><a href="#Semaphore的实现原理" class="headerlink" title="Semaphore的实现原理"></a>Semaphore的实现原理</h3><p>Semaphore是用来保护一个或者多个共享资源的访问，Semaphore内部维护了一个计数器，其值为可以访问的共享资源的个数。一个线程要访问共享资源，先获得信号量，如果信号量的计数器值大于1，意味着有共享资源可以访问，则使其计数器值减去1，再访问共享资源。</p>
+<p>如果计数器值为0,线程进入休眠。当某个线程使用完共享资源后，释放信号量，并将信号量内部的计数器加1，之前进入休眠的线程将被唤醒并再次试图获得信号量。</p>
+<p>就好比一个厕所管理员，站在门口，只有厕所有空位，就开门允许与空侧数量等量的人进入厕所。多个人进入厕所后，相当于N个人来分配使用N个空位。为避免多个人来同时竞争同一个侧卫，在内部仍然使用锁来控制资源的同步访问。</p>
+<h3 id="信号量Semaphore的源码分析"><a href="#信号量Semaphore的源码分析" class="headerlink" title="信号量Semaphore的源码分析"></a>信号量Semaphore的源码分析</h3><p>在Java的并发包中，Semaphore类表示信号量。Semaphore内部主要通过AQS（AbstractQueuedSynchronizer）实现线程的管理。Semaphore有两个构造函数，参数permits表示许可数，它最后传递给了AQS的state值。线程在运行时首先获取许可，如果成功，许可数就减1，线程运行，当线程运行结束就释放许可，许可数就加1。如果许可数为0，则获取失败，线程位于AQS的等待队列中，它会被其它释放许可的线程唤醒。在创建Semaphore对象的时候还可以指定它的公平性。一般常用非公平的信号量，非公平信号量是指在获取许可时先尝试获取许可，而不必关心是否已有需要获取许可的线程位于等待队列中，如果获取失败，才会入列。而公平的信号量在获取许可时首先要查看等待队列中是否已有线程，如果有则入列。</p>
+<ul>
+<li><p><strong>构造函数源代码</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//非公平的构造函数</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Semaphore</span><span class="params">(<span class="keyword">int</span> permits)</span> </span>&#123;</span><br><span class="line">    sync = <span class="keyword">new</span> NonfairSync(permits);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//通过fair参数决定公平性</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Semaphore</span><span class="params">(<span class="keyword">int</span> permits, <span class="keyword">boolean</span> fair)</span> </span>&#123;</span><br><span class="line">    sync = fair ? <span class="keyword">new</span> FairSync(permits) : <span class="keyword">new</span> NonfairSync(permits);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>acquire源代码</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">acquire</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    sync.acquireSharedInterruptibly(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquireSharedInterruptibly</span><span class="params">(<span class="keyword">int</span> arg)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Thread.interrupted())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</span><br><span class="line">    <span class="keyword">if</span> (tryAcquireShared(arg) &lt; <span class="number">0</span>)</span><br><span class="line">        doAcquireSharedInterruptibly(arg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">int</span> <span class="title">nonfairTryAcquireShared</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="keyword">int</span> available = getState();</span><br><span class="line">        <span class="keyword">int</span> remaining = available - acquires;</span><br><span class="line">        <span class="keyword">if</span> (remaining &lt; <span class="number">0</span> ||</span><br><span class="line">            compareAndSetState(available, remaining))</span><br><span class="line">            <span class="keyword">return</span> remaining;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  可以看出，如果remaining &lt;0 即获取许可后，许可数小于0，则获取失败，在doAcquireSharedInterruptibly方法中线程会将自身阻塞，然后入列。</p>
+</li>
+<li><p><strong>release源代码</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">release</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sync.releaseShared(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">releaseShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (tryReleaseShared(arg)) &#123;</span><br><span class="line">        doReleaseShared();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryReleaseShared</span><span class="params">(<span class="keyword">int</span> releases)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        <span class="keyword">int</span> current = getState();</span><br><span class="line">        <span class="keyword">int</span> next = current + releases;</span><br><span class="line">        <span class="keyword">if</span> (next &lt; current) <span class="comment">// overflow</span></span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Maximum permit count exceeded"</span>);</span><br><span class="line">        <span class="keyword">if</span> (compareAndSetState(current, next))</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  可以看出释放许可就是将AQS中state的值加1。然后通过doReleaseShared唤醒等待队列的第一个节点。可以看出Semaphore使用的是AQS的共享模式，等待队列中的第一个节点，如果第一个节点成功获取许可，又会唤醒下一个节点，以此类推。</p>
+</li>
+</ul>
+<h3 id="Semaphore的使用"><a href="#Semaphore的使用" class="headerlink" title="Semaphore的使用"></a>Semaphore的使用</h3><p>Semaphore使用时需要先构建一个参数来指定共享资源的数量，Semaphore构造完成后即是获取Semaphore、共享资源使用完毕后释放Semaphore。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Semaphore semaphore = <span class="keyword">new</span> Semaphore(<span class="number">10</span>,<span class="keyword">true</span>);  </span><br><span class="line">semaphore.acquire();  </span><br><span class="line"><span class="comment">//do something here  </span></span><br><span class="line">semaphore.release();</span><br></pre></td></tr></table></figure>
+<p>下面的代码就是模拟控制商场厕所的并发使用：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceManage</span> </span>&#123;    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Semaphore semaphore ;    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> resourceArray[];    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReentrantLock lock;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResourceManage</span><span class="params">()</span> </span>&#123;    </span><br><span class="line">        <span class="keyword">this</span>.resourceArray = <span class="keyword">new</span> <span class="keyword">boolean</span>[<span class="number">10</span>];<span class="comment">//存放厕所状态    </span></span><br><span class="line">        <span class="keyword">this</span>.semaphore = <span class="keyword">new</span> Semaphore(<span class="number">10</span>,<span class="keyword">true</span>);<span class="comment">//控制10个共享资源的使用，使用先进先出的公平模式进行共享;公平模式的信号量，先来的先获得信号量    </span></span><br><span class="line">        <span class="keyword">this</span>.lock = <span class="keyword">new</span> ReentrantLock(<span class="keyword">true</span>);<span class="comment">//公平模式的锁，先来的先选    </span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span> ;i&lt;<span class="number">10</span>; i++)&#123;    </span><br><span class="line">            resourceArray[i] = <span class="keyword">true</span>;<span class="comment">//初始化为资源可用的情况    </span></span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">useResource</span><span class="params">(<span class="keyword">int</span> userId)</span></span>&#123;   </span><br><span class="line">        semaphore.acquire();   </span><br><span class="line">        <span class="keyword">try</span>&#123;    </span><br><span class="line">            <span class="comment">//semaphore.acquire();    </span></span><br><span class="line">            <span class="keyword">int</span> id = getResourceId();<span class="comment">//占到一个坑    </span></span><br><span class="line">            System.out.print(<span class="string">"userId:"</span>+userId+<span class="string">"正在使用资源，资源id:"</span>+id+<span class="string">"\n"</span>);    </span><br><span class="line">            Thread.sleep(<span class="number">100</span>);<span class="comment">//do something，相当于于使用资源    </span></span><br><span class="line">            resourceArray[id] = <span class="keyword">true</span>;<span class="comment">//退出这个坑    </span></span><br><span class="line">        &#125;<span class="keyword">catch</span> (InterruptedException e)&#123;    </span><br><span class="line">            e.printStackTrace();    </span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;    </span><br><span class="line">            semaphore.release();<span class="comment">//释放信号量，计数器加1    </span></span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getResourceId</span><span class="params">()</span></span>&#123;    </span><br><span class="line">        <span class="keyword">int</span> id = -<span class="number">1</span>;   </span><br><span class="line">        lock.lock();  </span><br><span class="line">        <span class="keyword">try</span> &#123;    </span><br><span class="line">            <span class="comment">//lock.lock();//虽然使用了锁控制同步，但由于只是简单的一个数组遍历，效率还是很高的，所以基本不影响性能。    </span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++)&#123;    </span><br><span class="line">                <span class="keyword">if</span>(resourceArray[i])&#123;    </span><br><span class="line">                    resourceArray[i] = <span class="keyword">false</span>;    </span><br><span class="line">                    id = i;    </span><br><span class="line">                    <span class="keyword">break</span>;    </span><br><span class="line">                &#125;    </span><br><span class="line">            &#125;    </span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;    </span><br><span class="line">            e.printStackTrace();    </span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;    </span><br><span class="line">            lock.unlock();    </span><br><span class="line">        &#125;    </span><br><span class="line">        <span class="keyword">return</span> id;    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;    </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceUser</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;    </span><br><span class="line">    <span class="keyword">private</span> ResourceManage resourceManage;    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> userId;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ResourceUser</span><span class="params">(ResourceManage resourceManage, <span class="keyword">int</span> userId)</span> </span>&#123;    </span><br><span class="line">        <span class="keyword">this</span>.resourceManage = resourceManage;    </span><br><span class="line">        <span class="keyword">this</span>.userId = userId;    </span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;    </span><br><span class="line">        System.out.print(<span class="string">"userId:"</span>+userId+<span class="string">"准备使用资源...\n"</span>);    </span><br><span class="line">        resourceManage.useResource(userId);    </span><br><span class="line">        System.out.print(<span class="string">"userId:"</span>+userId+<span class="string">"使用资源完毕...\n"</span>);    </span><br><span class="line">    &#125;    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;    </span><br><span class="line">        ResourceManage resourceManage = <span class="keyword">new</span> ResourceManage();    </span><br><span class="line">        Thread[] threads = <span class="keyword">new</span> Thread[<span class="number">100</span>];    </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;    </span><br><span class="line">            Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ResourceUser(resourceManage,i));<span class="comment">//创建多个资源使用者    </span></span><br><span class="line">            threads[i] = thread;    </span><br><span class="line">        &#125;    </span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)&#123;    </span><br><span class="line">            Thread thread = threads[i];    </span><br><span class="line">            <span class="keyword">try</span> &#123;    </span><br><span class="line">                thread.start();<span class="comment">//启动线程    </span></span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;    </span><br><span class="line">                e.printStackTrace();    </span><br><span class="line">            &#125;    </span><br><span class="line">        &#125;    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，Semaphore除了控制资源的多个副本的并发访问控制，也可以使用二进制信号量来实现类似synchronized关键字和Lock锁的并发访问控制功能。</p>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-01-07T12:02:39.000Z" itemprop="datePublished">
+              2018-01-07
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Semaphore/">Semaphore</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

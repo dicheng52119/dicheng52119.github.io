@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CyclicBarrier学习笔记 | CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <div>
+  <article class='ContentView'>
+    <header class='PageTitle'>
+        <h1>CyclicBarrier学习笔记</h1>
+    </header>
+
+    <section>
+      <h3 id="类说明"><a href="#类说明" class="headerlink" title="类说明"></a>类说明</h3><p>一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环的 barrier。比如有一组线程，都要往数据库里面写入操作，只有当所有的线程都往数据库里面写入数据之后，这些线程才能继续往下执行，这时候就可以使用CyclicBarrier了。当所有的等待线程释放之后,CyclicBarrier是可重用的。</p>
+<p>CyclicBarrier有两个构造函数：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties, Runnable barrierAction)</span></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数parties指让多少个线程或者任务等待至barrier状态；参数barrierAction为当这些线程都达到barrier状态时会执行的内容。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>需要所有的子任务都完成时，才执行主任务，这个时候就可以选择使用CyclicBarrier。</p>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><p>对于CyclicBarrier来说，最重要的是await()方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, BrokenBarrierException</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br></pre></td></tr></table></figure>
+<p>第一个版本比较常用，用来挂起当前线程，直至所有线程都到达barrier状态再同时执行后续任务；</p>
+<a id="more"></a>
+<p>第二个版本是让这些线程等待至一定的时间，如果还有线程没有到达barrier状态就直接让到达barrier的线程执行后续任务。</p>
+<p>返回：到达的当前线程的索引，其中，索引 getParties() - 1 指示将到达的第一个线程，零指示最后一个到达的线程</p>
+<p>抛出：</p>
+<p>InterruptedException - 如果当前线程在等待时被中断</p>
+<p>BrokenBarrierException - 如果另一个 线程在当前线程等待时被中断或超时，或者重置了 barrier，或者在调用 await 时 barrier 被损坏，抑或由于异常而导致屏障操作（如果存在）失败。</p>
+<h3 id="相关实例"><a href="#相关实例" class="headerlink" title="相关实例"></a>相关实例</h3><ul>
+<li><p>应用场景一：赛跑时，等待所有人都准备好时，才起跑</p>
+  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CyclicBarrierTest</span> </span>&#123;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;  </span><br><span class="line">        <span class="comment">//如果将参数改为4，但是下面只加入了3个选手，这永远等待下去  </span></span><br><span class="line">        <span class="comment">//Waits until all parties have invoked await on this barrier.   </span></span><br><span class="line">        CyclicBarrier barrier = <span class="keyword">new</span> CyclicBarrier(<span class="number">3</span>);  </span><br><span class="line"></span><br><span class="line">        ExecutorService executor = Executors.newFixedThreadPool(<span class="number">3</span>);  </span><br><span class="line">        executor.submit(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner(barrier, <span class="string">"1号选手"</span>)));  </span><br><span class="line">        executor.submit(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner(barrier, <span class="string">"2号选手"</span>)));  </span><br><span class="line">        executor.submit(<span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner(barrier, <span class="string">"3号选手"</span>)));  </span><br><span class="line"></span><br><span class="line">        executor.shutdown();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Runner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;  </span><br><span class="line">    <span class="comment">// 一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)  </span></span><br><span class="line">    <span class="keyword">private</span> CyclicBarrier barrier;  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Runner</span><span class="params">(CyclicBarrier barrier, String name)</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">super</span>();  </span><br><span class="line">        <span class="keyword">this</span>.barrier = barrier;  </span><br><span class="line">        <span class="keyword">this</span>.name = name;  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            Thread.sleep(<span class="number">1000</span> * (<span class="keyword">new</span> Random()).nextInt(<span class="number">8</span>));  </span><br><span class="line">            System.out.println(name + <span class="string">" 准备好了..."</span>);  </span><br><span class="line">            <span class="comment">// barrier的await方法，在所有参与者都已经在此 barrier 上调用 await 方法之前，将一直等待。  </span></span><br><span class="line">            barrier.await();  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">        System.out.println(name + <span class="string">" 起跑！"</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  输出结果：</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">3号选手 准备好了...</span><br><span class="line">2号选手 准备好了...</span><br><span class="line">1号选手 准备好了...</span><br><span class="line">1号选手 起跑！</span><br><span class="line">2号选手 起跑！</span><br><span class="line">3号选手 起跑！</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>应用场景二：有几个同学约好一起去食堂吃饭，各自都从各自的宿舍出发，然后到宿舍楼下集合。当所有的人都到了宿舍楼下之后，再一起从宿舍楼下出发前往食堂吃饭。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.easyliu.java.demo.cyclicbarrier;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.BrokenBarrierException;  </span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CyclicBarrier;  </span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;  </span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CyclicBarrierTest</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THREAD_NUMBER = <span class="number">3</span>;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> CyclicBarrier sCyclicBarrier = <span class="keyword">new</span> CyclicBarrier(  </span><br><span class="line">            THREAD_NUMBER, <span class="keyword">new</span> Runnable() &#123;  </span><br><span class="line">  </span><br><span class="line">                <span class="meta">@Override</span>  </span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">                    System.out.println(<span class="string">"大家都到达了宿舍楼下，一起出发吧。。。"</span>);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;);  </span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line">        ExecutorService executorService = Executors  </span><br><span class="line">                .newFixedThreadPool(THREAD_NUMBER);  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; THREAD_NUMBER; i++) &#123;  </span><br><span class="line">            executorService.execute(<span class="keyword">new</span> WalkFromDomitoryToCanteenRunnable(  </span><br><span class="line">                    sCyclicBarrier, <span class="string">"同学"</span> + i));  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            Thread.sleep(<span class="number">10000</span>);<span class="comment">//主线程睡眠  </span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">        System.out.println(<span class="string">"CyclicBarrier重用"</span>);  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = THREAD_NUMBER; i &lt; THREAD_NUMBER * <span class="number">2</span>; i++) &#123;  </span><br><span class="line">            executorService.execute(<span class="keyword">new</span> WalkFromDomitoryToCanteenRunnable(  </span><br><span class="line">                    sCyclicBarrier, <span class="string">"同学"</span> + i));  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 从宿舍到食堂线程 </span></span><br><span class="line"><span class="comment">     *  </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@author</span> LiuYi </span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     */</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WalkFromDomitoryToCanteenRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">private</span> CyclicBarrier mCyclicBarrier;  </span><br><span class="line">        <span class="keyword">private</span> String mName;  </span><br><span class="line">  </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">WalkFromDomitoryToCanteenRunnable</span><span class="params">(CyclicBarrier cyclicBarrier,  </span></span></span><br><span class="line"><span class="function"><span class="params">                String name)</span> </span>&#123;  </span><br><span class="line">            <span class="keyword">this</span>.mCyclicBarrier = cyclicBarrier;  </span><br><span class="line">            <span class="keyword">this</span>.mName = name;  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">            System.out.println(mName + <span class="string">"开始从宿舍出发。。。"</span>);  </span><br><span class="line">            <span class="keyword">try</span> &#123;  </span><br><span class="line">                Thread.sleep(<span class="number">1000</span>);  </span><br><span class="line">                mCyclicBarrier.await();<span class="comment">// 等待别同学  </span></span><br><span class="line">                <span class="comment">// 前往食堂  </span></span><br><span class="line">                System.out.println(mName + <span class="string">"开始从宿舍楼下出发。。。"</span>);  </span><br><span class="line">                Thread.sleep(<span class="number">1000</span>);  </span><br><span class="line">                System.out.println(mName + <span class="string">"达到食堂。。。"</span>);  </span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">                e.printStackTrace();  </span><br><span class="line">            &#125; <span class="keyword">catch</span> (BrokenBarrierException e) &#123;  </span><br><span class="line">                e.printStackTrace();  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  输出结果如下：</p>
+  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">同学1开始从宿舍出发。。。  </span><br><span class="line">同学0开始从宿舍出发。。。  </span><br><span class="line">同学2开始从宿舍出发。。。  </span><br><span class="line">大家都到达了宿舍楼下，一起出发吧。。。  </span><br><span class="line">同学1开始从宿舍楼下出发。。。  </span><br><span class="line">同学2开始从宿舍楼下出发。。。  </span><br><span class="line">同学0开始从宿舍楼下出发。。。  </span><br><span class="line">同学0达到食堂。。。  </span><br><span class="line">同学1达到食堂。。。  </span><br><span class="line">同学2达到食堂。。。  </span><br><span class="line">CyclicBarrier重用  </span><br><span class="line">同学3开始从宿舍出发。。。  </span><br><span class="line">同学5开始从宿舍出发。。。  </span><br><span class="line">同学4开始从宿舍出发。。。  </span><br><span class="line">大家都到达了宿舍楼下，一起出发吧。。。  </span><br><span class="line">同学5开始从宿舍楼下出发。。。  </span><br><span class="line">同学4开始从宿舍楼下出发。。。  </span><br><span class="line">同学3开始从宿舍楼下出发。。。  </span><br><span class="line">同学4达到食堂。。。  </span><br><span class="line">同学3达到食堂。。。  </span><br><span class="line">同学5达到食堂。。。</span><br></pre></td></tr></table></figure>
+<p>  从输出结果可以看出实现了我们想要的效果，并且实现了CyclicBarrier的重用，因为初始化CyclicBarrier的时候只设置了让三个线程等待至barrier状态，也就是当有三个同学到达了宿舍楼下之后，就一起走。剩下的三个同学一起走。</p>
+</li>
+</ul>
+<h3 id="总结-CountDownLatch、CyclicBarrier和Semaphore比较"><a href="#总结-CountDownLatch、CyclicBarrier和Semaphore比较" class="headerlink" title="总结(CountDownLatch、CyclicBarrier和Semaphore比较)"></a>总结(CountDownLatch、CyclicBarrier和Semaphore比较)</h3><ul>
+<li><strong>相同点：</strong></li>
+</ul>
+<ol>
+<li>CountDownLatch和CyclicBarrier都能够实现线程之间的等待。</li>
+</ol>
+<ul>
+<li><strong>不同点：</strong></li>
+</ul>
+<ol>
+<li><p>它们侧重点不同：CountDownLatch一般用于某个线程A等待若干个其他线程执行完任务之后，它才执行；<br>而CyclicBarrier一般用于一组线程互相等待至某个状态，然后这一组线程再同时执行；</p>
+</li>
+<li><p>重用性：CountDownLatch是不能够重用的，而CyclicBarrier是可以重用的。</p>
+</li>
+<li><p>Semaphore其实和锁有点类似，它一般用于控制对某组资源的访问权限。</p>
+</li>
+</ol>
+
+
+      
+
+    </section>
+    
+      <section class='ArticleMeta'>
+          <div>
+            发布于&nbsp;
+            <time datetime="2018-01-07T11:56:26.000Z" itemprop="datePublished">
+              2018-01-07
+            </time>
+          </div>
+          
+            <div>
+              tags: 
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/CyclicBarrier/">CyclicBarrier</a> }
+  </li>
+
+
+            </div>
+          
+      </section>
+    
+    
+</article>
+
+  
+</div>
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

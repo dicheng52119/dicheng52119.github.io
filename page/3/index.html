@@ -42,10 +42,6 @@
               <li>Categories</li>
             </a>  
           
-            <a href="/404.html" class="Btn">
-              <li>Commonweal</li>
-            </a>  
-          
             <a href="/about/" class="Btn">
               <li>About</li>
             </a>  
@@ -91,27 +87,27 @@
     <header class="title">
       
         <h1>
-          <a href="/2017/12/18/Git常用命令总结/">Git常用命令总结(自己总结 超实用)</a>
+          <a href="/2018/01/07/适配器模式/">适配器模式</a>
         </h1>
       
       <div class='ListMeta'>
-  <time datetime="2017-12-18T13:28:31.000Z" itemprop="datePublished">
-    2017-12-18
+  <time datetime="2018-01-07T13:02:49.000Z" itemprop="datePublished">
+    2018-01-07
   </time>
   
   | 
   <ul>
     
-  <li class="meta-text">
-  { <a href="/tags/git/">git</a> }
-  </li>
-
   <li class="meta-text">
   { <a href="/tags/technology/">technology</a> }
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/terminal-command/">terminal command</a> }
+  { <a href="/tags/design-pattern/">design pattern</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Adapter/">Adapter</a> }
   </li>
 
 
@@ -122,7 +118,7 @@
   <ul>
     
   <li class="meta-text">
-  { <a href="/categories/IT/">IT</a> }
+  { <a href="/categories/Design-Pattern/">Design Pattern</a> }
   </li>
 
 
@@ -133,29 +129,15 @@
     </header>
     <div >
       
-        <h3 id="将本地代码关联到远程git仓库步骤："><a href="#将本地代码关联到远程git仓库步骤：" class="headerlink" title="将本地代码关联到远程git仓库步骤："></a>将本地代码关联到远程git仓库步骤：</h3><ul>
-<li><p>初始化一个仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将github上项目与本地项目进行关联</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote add origin github仓库地址</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>添加本地代码到暂存区</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>提交本地代码到本地</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">"提交信息"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>拉取远程仓库代码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull origin 分支名称（如果报错的话，就添加后缀--allow unrelated histories）</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>提交本地代码到远程仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push -u origin 分支名称</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>适配器就是一种适配中间件，它存在于不匹配的二者之间，用于连接二者，将不匹配变得匹配，简单点理解就是平常所见的转接头，转换器之类的存在。</p>
+<p>适配器模式有三种：类适配器、对象适配器、接口适配器</p>
+<p>前二者在实现上有些许区别，作用一样，第三个接口适配器差别较大。</p>
+<h3 id="类适配器模式"><a href="#类适配器模式" class="headerlink" title="类适配器模式"></a>类适配器模式</h3><p>原理：通过继承来实现适配器功能。</p>
+<p>当我们要访问的接口A中没有我们想要的方法，却在另一个接口B中发现了合适的方法，我们又不能改变访问接口A，在这种情况下，我们可以定义一个适配器p来进行中转，这个适配器p要实现我们访问的接口A，这样我们就能继续访问当前接口A中的方法（虽然它目前不是我们的菜），然后再继承接口B的实现类BB，这样我们可以在适配器P中访问接口B的方法了，这时我们在适配器P中的接口A方法中直接引用BB中的合适方法，这样就完成了一个简单的类适配器。</p>
+<p>详见下方实例：我们以ps2与usb的转接为例</p>
         
           <div class="more-link">
-            <a href="/2017/12/18/Git常用命令总结/#more">阅读全文 »</a>
+            <a href="/2018/01/07/适配器模式/#more">阅读全文 »</a>
           </div>
         
       
@@ -169,31 +151,35 @@
     <header class="title">
       
         <h1>
-          <a href="/2017/12/16/地铁随笔/">地铁随笔</a>
+          <a href="/2018/01/07/代理模式/">代理模式</a>
         </h1>
       
       <div class='ListMeta'>
-  <time datetime="2017-12-16T14:56:39.000Z" itemprop="datePublished">
-    2017-12-16
+  <time datetime="2018-01-07T12:41:53.000Z" itemprop="datePublished">
+    2018-01-07
   </time>
   
   | 
   <ul>
     
   <li class="meta-text">
-  { <a href="/tags/北京/">北京</a> }
+  { <a href="/tags/technology/">technology</a> }
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/记忆/">记忆</a> }
+  { <a href="/tags/Proxy/">Proxy</a> }
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/青春/">青春</a> }
+  { <a href="/tags/JDK-Proxy/">JDK Proxy</a> }
   </li>
 
   <li class="meta-text">
-  { <a href="/tags/奋斗/">奋斗</a> }
+  { <a href="/tags/Cglib-Proxy/">Cglib Proxy</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/design-pattern/">design pattern</a> }
   </li>
 
 
@@ -204,7 +190,7 @@
   <ul>
     
   <li class="meta-text">
-  { <a href="/categories/情感/">情感</a> }
+  { <a href="/categories/Design-Pattern/">Design Pattern</a> }
   </li>
 
 
@@ -215,18 +201,15 @@
     </header>
     <div >
       
-        <p>掐指一算，来北京已经有两年时光。恍惚间，头顶多了几根白发，少了一撮黑发。</p>
-<p>这是一趟开往北京南站的列车，此行的任务是接待本人媳妇的闺蜜，可谓是任重而道远。</p>
-<p>对于一个刚踏入社会，即将开启北漂生活的妹子来说，这简直可以说是一种天上掉馅饼被爽死的幸福。行李托运、温馨提示、行程导航、美食招待、住所安排、行李托管、安全护送…</p>
-<p>一切的一切，让本人的眼光不再清澈，恍然间，回到过去的某个时刻。</p>
-<p>遥想铖哥当年，回到了解放前的某一天，也就是两年前的那一天，本人携内人初来帝都，可谓是人生地不熟，行李放到一个不靠谱的托管处，然后凭借高德地图强大的导航能力，拖着坐酸了一夜的老腰，来到了帝都恢弘气势的天安门广场。</p>
-<p>匆匆过客，来不及欣赏百年沉淀的文化，便已踏入寻房苦途，经过了一番折腾和斗智斗勇的完美体验后，与次日凌晨入驻几平的小房间，期间包括与房东一窝战斗的情形，与中介讨价还价的心跳，这里不必细谈，因为均以战败告终。一把伤心泪，从此，开启了梦幻的北漂之旅。</p>
-<p>房间的憋屈，环境的脏乱，地铁的拥堵，人与人之间的嫌弃，人心的浮躁，工作的忙碌等等，使得生活在这个灯红酒绿城市的人们看似没有光鲜亮丽外表的美好，使得人生观一度发生改变和扭曲。</p>
-<p>时间在流逝，世界在变化！这个世界难道就因此而变得不美好了吗？答案是你知道。</p>
-<p>细数一下，短短两年时光，住所已更换了数次，在每一次的迭代更新中，都慢慢熟悉了这里面满满的套路，经济实惠舒适的房子已然出现（相对而言)。十九大的顺利召开，蓝天白云不再是普通人心目中的完美车标，奢饰品你也值得拥有！每日运载上千万乘客的庞大地铁系统，承载了太多太多人的辛勤和汗水，共同维护着这座城中城。童叟无欺，主动让出身边的座位时常发生。同事的帮助和关怀，让你感觉自己不是一个人在奋斗！皎洁月光下的深夜，是如此的宁静，宁静的可以听到工位上微微的心跳，向仍在此刻奋斗的同僚们致敬！你们是专业的，你们是敬业的，你们是爱业的！沉淀自己，你们会成功的！</p>
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>代理(Proxy)是一种设计模式,提供了对目标对象另外的访问方式;即通过代理对象访问目标对象.这样做的好处是:可以在目标对象实现的基础上,增强额外的功能操作,即扩展目标对象的功能。</p>
+<p>这里使用到编程中的一个思想:不要随意去修改别人已经写好的代码或者方法,如果需改修改,可以通过代理的方式来扩展该方法。</p>
+<p>举个例子来说明代理的作用:假设我们想邀请一位明星,那么并不是直接连接明星,而是联系明星的经纪人,来达到同样的目的.明星就是一个目标对象,他只要负责活动中的节目,而其他琐碎的事情就交给他的代理人(经纪人)来解决.这就是代理思想在现实中的一个例子。</p>
+<p>用图表示如下:</p>
+<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%9B%BE%E8%A7%A3.png?raw=true" alt=""></p>
+<p>代理模式的关键点是:代理对象与目标对象。代理对象是对目标对象的扩展,并会调用目标对象。</p>
         
           <div class="more-link">
-            <a href="/2017/12/16/地铁随笔/#more">阅读全文 »</a>
+            <a href="/2018/01/07/代理模式/#more">阅读全文 »</a>
           </div>
         
       
@@ -240,41 +223,71 @@
     <header class="title">
       
         <h1>
-          <a href="/2017/12/12/hello-world/">Hello World</a>
+          <a href="/2018/01/07/工厂设计模式/">工厂设计模式</a>
         </h1>
       
       <div class='ListMeta'>
-  <time datetime="2017-12-12T09:48:39.000Z" itemprop="datePublished">
-    2017-12-12
+  <time datetime="2018-01-07T12:37:33.000Z" itemprop="datePublished">
+    2018-01-07
   </time>
   
   | 
   <ul>
     
   <li class="meta-text">
-  { <a href="/tags/示例/">示例</a> }
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/design-pattern/">design pattern</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Simple-Factory/">Simple Factory</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Factory-Method/">Factory Method</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Abstract-Factory/">Abstract Factory</a> }
   </li>
 
 
   </ul>
   
   
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Design-Pattern/">Design Pattern</a> }
+  </li>
+
+
+  </ul>
+  
 </div>
 
     </header>
     <div >
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<!--将languages目录下面的zh-Hans.yml修改为zh-CN.yml或者按照文档中的修改根目录配置文件也行。-->
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>主要用来实例化有共同接口的类，工厂模式可以动态决定应该实例化那一个类。</p>
+<h3 id="工厂模式的形态"><a href="#工厂模式的形态" class="headerlink" title="工厂模式的形态"></a>工厂模式的形态</h3><ol>
+<li>简单工厂（Simple Factory）。又称为静态工厂方法(Static Factory Method)模式</li>
+<li>工厂方法（Factory Method）。</li>
+<li>抽象工厂（Abstract Factory）。</li>
+</ol>
+<h3 id="简单工厂-（Simple-Factory）"><a href="#简单工厂-（Simple-Factory）" class="headerlink" title="简单工厂 （Simple Factory）"></a>简单工厂 （Simple Factory）</h3><p>又叫静态工厂，是工厂模式三中状态中结构最为简单的。主要有一个静态方法，用来接受参数，并根据参数来决定返回实现同一接口的不同类的实例。我们来看一个具体的例子：</p>
+<p>假设一家工厂，有生产洗衣机，有生产冰箱，还有空调等等..</p>
+<p>我们先为所有产品定义一个共同的产品接口<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着我们让这个工厂的所有产品都必须实现此接口</p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/工厂设计模式/#more">阅读全文 »</a>
+          </div>
+        
       
     </div>
 </article>
@@ -285,7 +298,7 @@
 
   <section id="nav-wrapper">
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/2/">« prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+      <a class="extend prev" rel="prev" href="/page/2/">« prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/">next »</a>
     </nav>
   </section>
 

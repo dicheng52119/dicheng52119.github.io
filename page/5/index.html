@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/Semaphore信号量学习笔记/">Semaphore信号量学习笔记</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T12:02:39.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Semaphore/">Semaphore</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Thread/">Thread</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在多线程程序设计中有三个同步工具需要我们掌握，分别是Semaphore(信号量)，countDownLatch（倒计数门闸锁），CyclicBarrier(可重用栅栏)</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Semaphore是一种基于计数的信号量。它可以设定一个阈值，基于此，多个线程竞争获取许可信号，做完自己的申请后归还，超过阈值后，线程申请许可信号将会被阻塞。Semaphore可以用来构建一些对象池，资源池之类的，比如数据库连接池，我们也可以创建计数为1的Semaphore，将其作为一种类似互斥锁的机制，这也叫二元信号量，表示两种互斥状态。它的用法如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个计数阈值为5的信号量对象  </span></span><br><span class="line"><span class="comment">// 只能5个线程同时访问  </span></span><br><span class="line">Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="comment">// 申请许可  </span></span><br><span class="line">    semp.acquire();  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="comment">// 业务逻辑  </span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">  </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;  </span><br><span class="line">        <span class="comment">// 释放许可  </span></span><br><span class="line">        semp.release();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/Semaphore信号量学习笔记/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/CyclicBarrier学习笔记/">CyclicBarrier学习笔记</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T11:56:26.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/CyclicBarrier/">CyclicBarrier</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Thread/">Thread</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="类说明"><a href="#类说明" class="headerlink" title="类说明"></a>类说明</h3><p>一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环的 barrier。比如有一组线程，都要往数据库里面写入操作，只有当所有的线程都往数据库里面写入数据之后，这些线程才能继续往下执行，这时候就可以使用CyclicBarrier了。当所有的等待线程释放之后,CyclicBarrier是可重用的。</p>
+<p>CyclicBarrier有两个构造函数：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties, Runnable barrierAction)</span></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数parties指让多少个线程或者任务等待至barrier状态；参数barrierAction为当这些线程都达到barrier状态时会执行的内容。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>需要所有的子任务都完成时，才执行主任务，这个时候就可以选择使用CyclicBarrier。</p>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><p>对于CyclicBarrier来说，最重要的是await()方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, BrokenBarrierException</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br></pre></td></tr></table></figure>
+<p>第一个版本比较常用，用来挂起当前线程，直至所有线程都到达barrier状态再同时执行后续任务；</p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/CyclicBarrier学习笔记/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/CountDownLatch学习笔记/">CountDownLatch学习笔记</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T11:50:08.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/CountDownLatch/">CountDownLatch</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Thread/">Thread</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>CountDownLatch是一个同步的辅助类，它可以允许一个或多个线程等待，直到一组在其它线程中的操作执行完成。</p>
+<p>一个CountDownLatch会通过一个给定的count数来被初始化。其中await()方法会一直阻塞，直到当前的count被减到0，而这个过程是通过调用countDown()方法来实现的。在await()方法不再阻塞以后，所有等待的线程都会被释放，并且任何await()的子调用都会立刻返回。这是一次性的－－count不能被重置。如果你需要一种能重置count的版本，请考虑使用CyclicBarrier。</p>
+<p>CountDownlatch是一个多功能的同步工具，可以被用于各种目的。一个CountDownLatch通过一个值为1的count被初始化，来作为一个开/关的门或门闩：所有调用了await()的线程都会在门前等待，直到门被一个线程通过调用countDown()打开。一个被初始化为N的CountDownLatch可以被用来“在N个线程都完成了某种操作（或者一些操作已经被完成了N次）之后创建一个线程”。</p>
+<p>CountDownLatch一个有用的属性就是它不需要线程们在继续执行之前，调用countDown来等待count被减到0。它简单地阻止了任何调用了await()的线程继续，直到所有的线程都能够通过。</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>下面请看一个应用场景：<br>有1个driver和5个worker，需要满足以下两点要求：</p>
+<p>当driver完成了全部的工作之后才允许worker们开始工作；<br>当所有的worker都完成了自己的工作之后，driver主线程才能结束。</p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/CountDownLatch学习笔记/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+  <section id="nav-wrapper">
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/4/">« prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">next »</a>
+    </nav>
+  </section>
+
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>

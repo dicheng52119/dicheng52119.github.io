@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CrazyIT</title>
+  
+  
+  <!--link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css"-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/highlight.js/9.10.0/styles/github-gist.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+<div class="Shell">
+    <aside class='SideBar'>
+    <section class='avatar' style="background-image: url(/assets/header.png)">
+        <div class='av-pic' style="background-image: url(/assets/tree_small.png)">
+        </div>
+    </section>
+    <section class='menu'>
+        <div>CrazyIT</div>
+        
+            <div>Toss more than life</div>
+        
+        <ul>
+          
+            <a href="/" class="Btn">
+              <li>Home</li>
+            </a>  
+          
+            <a href="/archives/" class="Btn">
+              <li>Archive</li>
+            </a>  
+          
+            <a href="/tags/" class="Btn">
+              <li>Tags</li>
+            </a>  
+          
+            <a href="/categories/" class="Btn">
+              <li>Categories</li>
+            </a>  
+          
+            <a href="/about/" class="Btn">
+              <li>About</li>
+            </a>  
+          
+        </ul>
+    </section>
+    <section class="media">
+        
+            
+                <a href="https://github.com/dicheng52119">
+                    <img src="/assets/github.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.facebook.com/profile.php?id=100023446571362">
+                    <img src="/assets/facebook.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.zhihu.com/people/yixie-zhi-qiu-16-96-61/activities">
+                    <img src="/assets/zhihu.svg" />
+                </a>
+            
+        
+            
+                <a href="https://www.csdn.net/">
+                    <img src="/assets/csdn.svg" />
+                </a>
+            
+        
+    </section>
+</aside>
+
+    <div class="container">
+        <div data-pager-shell>
+            <ul class="Index">
+  
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2018/01/07/Lock学习笔记/">Lock学习笔记</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2018-01-07T10:32:11.000Z" itemprop="datePublished">
+    2018-01-07
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/technology/">technology</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/Lock/">Lock</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/ReentrantLock/">ReentrantLock</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/ReadWriteLock/">ReadWriteLock</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/ReentrantReadWriteLock/">ReentrantReadWriteLock</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/Thread/">Thread</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <h2 id="API说明"><a href="#API说明" class="headerlink" title="API说明"></a>API说明</h2><ul>
+<li><h3 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a>Lock</h3><p>  Lock是一个接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Condition <span class="title">newCondition</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h3 id="Lock接口中方法的说明与使用"><a href="#Lock接口中方法的说明与使用" class="headerlink" title="Lock接口中方法的说明与使用"></a>Lock接口中方法的说明与使用</h3><p>  lock()方法是平常使用得最多的一个方法，就是用来获取锁。如果锁已被其他线程获取，则进行等待。</p>
+<p>  如果采用Lock，必须主动去释放锁，并且在发生异常时，不会自动释放锁。因此一般来说，使用Lock必须在try{}catch{}块中进行，并且将释放锁的操作放在finally块中进行，以保证锁一定被被释放，防止死锁的发生。通常使用Lock来进行同步的话，是以下面这种形式去使用的：</p>
+        
+          <div class="more-link">
+            <a href="/2018/01/07/Lock学习笔记/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2017/12/24/一花一世界/">一花一世界</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2017-12-24T04:44:38.000Z" itemprop="datePublished">
+    2017-12-24
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/感觉/">感觉</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/梦境/">梦境</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/情感/">情感</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <p>闲来无事，总想写点东西，不知这种感觉你是否也从拥有。</p>
+<p>其实，这种感觉并非空穴来风，而是源自你内心深处最真实的想法。这可能就是所谓的感由心生。</p>
+<p>最近，爱上了一种安静，甚至可以说是宁静，时常地思考或者回忆，浮现出一幅幅画面，不知这种喜欢你是否也感同深受。</p>
+<p>其实，这种喜欢并非妙不可言，而是情感的变化凸显了这种微妙。这可能就是所谓的境由情生。</p>
+<p>很多时候，梦境中的情形似曾相识，在某年某月某日的某个时刻，你就是梦境中的主人公。</p>
+<p>其实，这种情景是对美好生活的极度渴望和向往。如果，梦不再那么模糊，梦中的细节得以延续，那将会是另一个世界。这可能就是所谓的一花一世界。</p>
+        
+          <div class="more-link">
+            <a href="/2017/12/24/一花一世界/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+    <li>
+      <article class='ListView'>
+    <header class="title">
+      
+        <h1>
+          <a href="/2017/12/24/岁月如光，时光静好/">岁月如光，时光静好</a>
+        </h1>
+      
+      <div class='ListMeta'>
+  <time datetime="2017-12-24T04:44:21.000Z" itemprop="datePublished">
+    2017-12-24
+  </time>
+  
+  | 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/tags/失眠/">失眠</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/夜晚/">夜晚</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/音乐/">音乐</a> }
+  </li>
+
+  <li class="meta-text">
+  { <a href="/tags/历史/">历史</a> }
+  </li>
+
+
+  </ul>
+  
+  
+  / 
+  <ul>
+    
+  <li class="meta-text">
+  { <a href="/categories/情感/">情感</a> }
+  </li>
+
+
+  </ul>
+  
+</div>
+
+    </header>
+    <div >
+      
+        <p>不知道，失眠是否是对一个人意志上的考验，然而，此刻，在这个静谧深邃、月光如水的夜晚，我却辗转反侧。</p>
+<p>有时候，一支优美的音乐，或是因为它的旋律动人，或是因为它的伤感离愁，总是勾勒起对过去的往往。这种微妙的情感，唯泪流满面不止。因为，它触动的是你内心最柔弱的那一点。</p>
+<p>创作的源泉，或者说是素材，来源于不平凡的点点滴滴。心跳般的跌宕人生，必是一段刻骨铭心的经历。</p>
+<p>忆千年久远，古有勇赴鸿门宴，逼至西楚霸王乌江自刎，开创大汉王朝的汉高祖刘邦。亦有耻受胯下之辱，一雪前耻的西汉开国名将韩信。亦有令汉朝皇室皇叔刘备三顾茅庐、令号称拥有百万雄狮的丞相曹操心不甘，情不愿草船借箭、令东吴最为倚重的大都督周瑜感叹既生瑜，何生亮、北征前作催人泪下，留芳百世，肺腑之言绝笔出师表、于城上敌楼前，凭栏而坐，焚香抚琴，不费一兵一卒击退魏国军师司马懿十万大军，坐唱空城计的三国诸葛孔明。亦有放荡不羁，把酒吟月，钟鼓馔玉不足贵，但愿长醉不复醒，留下千古绝唱的李白。数风流人物，还看今朝。指挥红军万里长征，八年抗战，三年内战的辉煌胜利，开国伟大的领袖毛泽东同志亦是最可爱的人。</p>
+<p>如果说在这个静谧深邃、月光如水的夜晚，配上一支优美的音乐，浮现不平凡的点点滴滴，你的内心是否还依然如此平静，你是否被这个寂静的深夜所深深吸引而无法入睡。</p>
+<p>明天，是美好的一天。</p>
+        
+          <div class="more-link">
+            <a href="/2017/12/24/岁月如光，时光静好/#more">阅读全文 »</a>
+          </div>
+        
+      
+    </div>
+</article>
+
+    </li>
+  
+</ul>
+
+  <section id="nav-wrapper">
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/page/6/">« prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/">next »</a>
+    </nav>
+  </section>
+
+
+            <footer>
+    <div>© 2015 - Mr.CrazyDC </div>
+    <div>
+    Powered by Hexo
+    </div>
+</footer>
+
+        </div>
+    </div>
+</div>
+<script src="/js/pager/dist/singlepager.js"></script>
+<script>
+var sp = new Pager('data-pager-shell')
+
+</script>
+</body>
+</html>
