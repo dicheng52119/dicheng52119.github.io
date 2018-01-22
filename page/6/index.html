@@ -317,6 +317,216 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/18/Hexo-Blog搭建步骤详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/18/Hexo-Blog搭建步骤详解/" itemprop="url">Hexo Blog搭建步骤详解</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-18T21:42:07+08:00">
+                2017-12-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  756
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤:"></a>搭建步骤:</h3><ul>
+<li><p>申请github账号,步骤此处省略一万字</p>
+</li>
+<li><p>新建仓库，仓库名称定义格式:访问主页时的用户名.github.io</p>
+</li>
+<li><p>仓库添加README.md文件，修改为index.html,添加内容”hello world”</p>
+</li>
+<li><p>访问步骤二定义的地址，即<a href="https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成" target="_blank" rel="noopener">https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成</a></p>
+</li>
+<li><p>访问hexo官网，可按照步骤进行创建本地hexo项目，也可继续按照本篇文档继续完成设置</p>
+</li>
+<li><p>安装nvm和npm,步骤此处省略一万字，安装完成后，可通过命令行指令nvm -v 和npm -v查看是否安装成功</p>
+</li>
+<li><p>命令行运行npm install hexo-cli -g，运行命令hexo -v查看安装是否成功</p>
+</li>
+<li><p>选择一个目录位置，运行hexo init blog 命令，创建hexo项目文件，cd blog进入项目</p>
+</li>
+<li><p>使用文本编辑器，这里推荐使用vscode,打开blog项目，修改根目录下的config配置文件，将title和author自定义进行修改，将文件最下方的发布信息type的值修改为git,添加属性repo，并赋值为第二步你所定义的仓库地址</p>
+</li>
+<li><p>命令行运行npm install hexo-deployer-git —save 命令</p>
+</li>
+<li><p>运行hexo &amp;&amp; hexo g &amp;&amp; hexo s在本地运行，查看博客的部署情况</p>
+</li>
+<li><p>运行hexo clean &amp;&amp; hexo g &amp;&amp; hexo d,分别代表着hexo clean，hexo generate，hexo deploy，hexo server，部署到github 上进行运行，访问第二步你所定义的仓库名称，查看效果</p>
+</li>
+<li><p>hexo官网已开源大量主题，可根据需要进行使用，进入相关主题的github项目中，复制仓库地址，进入本地blog项目的theme文件夹中，clone 复制的仓库地址，然后在根配置文件中修改theme的值，为clone下来的主题文件夹名称，至于不同主题下的详细配置，这里不再做一一介绍，详见每个主题的配置说明。配置完成后，同样使用步骤12的命令查看效果</p>
+</li>
+<li><p>运行hexo new “文章名称”命令进行创建新的文章</p>
+</li>
+<li><p>如果不想博文在首页全部显示, 并能出现阅读全文按钮效果, 需要在你想在首页显示的部分下添加 <code>&lt;!--more--&gt;</code></p>
+</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/18/Hexo-Blog搭建步骤详解/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/18/Git常用命令总结/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -905,7 +1115,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">29</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -916,7 +1126,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -927,7 +1137,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-count">58</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1067,7 +1277,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共48.8k字</span>
+  <span class="post-count">博客全站共52.7k字</span>
 </div>
 
         
