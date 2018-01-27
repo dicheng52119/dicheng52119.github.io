@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="technology,Spring Boot,ElasticJob," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="CrazyIT" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="引言在上一节中，即ElasticJob入门实战一中已经介绍了使用springboot + elastic的application.properties配置方式，由于使用springboot原生配置，很多job细腻化的配置无法实现。所以，本文介绍了其中关于job和注册中心的配置实用了spring的xml配置方式。 SpringBoot整合ElasticJob(xml配置方式)1）依赖pom.xml">
+<meta name="keywords" content="technology,Spring Boot,ElasticJob">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ElasticJob入门实战二">
+<meta property="og:url" content="http://yoursite.com/2018/01/27/ElasticJob入门实战二/index.html">
+<meta property="og:site_name" content="CrazyIT">
+<meta property="og:description" content="引言在上一节中，即ElasticJob入门实战一中已经介绍了使用springboot + elastic的application.properties配置方式，由于使用springboot原生配置，很多job细腻化的配置无法实现。所以，本文介绍了其中关于job和注册中心的配置实用了spring的xml配置方式。 SpringBoot整合ElasticJob(xml配置方式)1）依赖pom.xml">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-27T14:26:34.879Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ElasticJob入门实战二">
+<meta name="twitter:description" content="引言在上一节中，即ElasticJob入门实战一中已经介绍了使用springboot + elastic的application.properties配置方式，由于使用springboot原生配置，很多job细腻化的配置无法实现。所以，本文介绍了其中关于job和注册中心的配置实用了spring的xml配置方式。 SpringBoot整合ElasticJob(xml配置方式)1）依赖pom.xml">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/27/ElasticJob入门实战二/"/>
+
+
+
+
+
+  <title>ElasticJob入门实战二 | CrazyIT</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/dicheng52119" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CrazyIT</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Toss more than life</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/ElasticJob入门实战二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ElasticJob入门实战二</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T22:22:04+08:00">
+                2018-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticJob/" itemprop="url" rel="index">
+                    <span itemprop="name">ElasticJob</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,287
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>在上一节中，即ElasticJob入门实战一中已经介绍了使用springboot + elastic的<a href="https://github.com/dicheng52119/springboot-cloud-demo/tree/master/elastic-job" target="_blank" rel="noopener">application.properties配置方式</a>，由于使用springboot原生配置，很多job细腻化的配置无法实现。所以，本文介绍了其中关于job和注册中心的配置实用了spring的<a href="https://github.com/dicheng52119/springboot-elastic-job" target="_blank" rel="noopener">xml配置方式</a>。</p>
+<h3 id="SpringBoot整合ElasticJob-xml配置方式"><a href="#SpringBoot整合ElasticJob-xml配置方式" class="headerlink" title="SpringBoot整合ElasticJob(xml配置方式)"></a>SpringBoot整合ElasticJob(xml配置方式)</h3><p><strong>1）依赖pom.xml</strong></p>
+<a id="more"></a>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">	<span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.crazyit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springboot-elastic-job<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>springboot-elastic-job<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>elastic-job project for Spring Boot<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.5.9.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">project.reporting.outputEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.reporting.outputEncoding</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">elastic.job.version</span>&gt;</span>2.1.5<span class="tag">&lt;/<span class="name">elastic.job.version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">curator.test.version</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">curator.test.version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">alibaba.druid.version</span>&gt;</span>1.1.4<span class="tag">&lt;/<span class="name">alibaba.druid.version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">&lt;!--springboot elastic-job config begin--&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.dangdang<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>elastic-job-lite-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;elastic.job.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.dangdang<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>elastic-job-lite-spring<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;elastic.job.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!--springboot elastic-job config end--&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!--内置zookeeper config--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.curator<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>curator-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;curator.test.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!--数据源 config begin--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-jdbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;alibaba.druid.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!--数据源 config end--&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">	 <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">				<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><strong>2) 内嵌Zookeeper配置</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmbedZookeeperServer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> TestingServer testingServer;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> port)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            testingServer = <span class="keyword">new</span> TestingServer(port,<span class="keyword">new</span> File(String.format(<span class="string">"target/test_zk_data/%s/"</span>,System.nanoTime())));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            Runtime.getRuntime().addShutdownHook(<span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000L</span>);</span><br><span class="line">                    testingServer.close();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException | IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>3) 基于时间驱动的任务</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringSimpleJob</span> <span class="keyword">implements</span> <span class="title">SimpleJob</span></span>&#123;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> FooRepository fooRepository;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(ShardingContext shardingContext)</span> </span>&#123;</span><br><span class="line">        System.out.println(String.format(<span class="string">"Item: %s | Time: %s | Thread: %s | %s"</span>,</span><br><span class="line">                shardingContext.getShardingItem(), <span class="keyword">new</span> SimpleDateFormat(<span class="string">"HH:mm:ss"</span>).format(<span class="keyword">new</span> Date()), Thread.currentThread().getId(), <span class="string">"SIMPLE"</span>));</span><br><span class="line">        List&lt;Foo&gt; data = fooRepository.findTodoData(shardingContext.getShardingParameter(), <span class="number">10</span>);</span><br><span class="line">        <span class="keyword">for</span> (Foo each : data) &#123;</span><br><span class="line">            fooRepository.setCompleted(each.getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>模型类<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> id;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String location;</span><br><span class="line">    <span class="keyword">private</span> Status status;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Foo</span><span class="params">(<span class="keyword">long</span> id, String location, Status status)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">        <span class="keyword">this</span>.location = location;</span><br><span class="line">        <span class="keyword">this</span>.status = status;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getLocation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> location;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Status <span class="title">getStatus</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> status;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStatus</span><span class="params">(Status status)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.status = status;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Foo&#123;"</span> +</span><br><span class="line">                <span class="string">"id="</span> + id +</span><br><span class="line">                <span class="string">", location='"</span> + location + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", status="</span> + status +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> Status&#123;</span><br><span class="line">        TODO,</span><br><span class="line">        COMPLETED</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Repository<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FooRepository</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;Long,Foo&gt; data = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;(<span class="number">300</span>,<span class="number">1</span>);</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FooRepository</span><span class="params">()</span></span>&#123;init();&#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">        addData(<span class="number">0L</span>, <span class="number">100L</span>, <span class="string">"Beijing"</span>);</span><br><span class="line">        addData(<span class="number">100L</span>, <span class="number">200L</span>, <span class="string">"Shanghai"</span>);</span><br><span class="line">        addData(<span class="number">200L</span>, <span class="number">300L</span>, <span class="string">"Guangzhou"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addData</span><span class="params">(<span class="keyword">final</span> Long idFrom,<span class="keyword">final</span> Long idTo,<span class="keyword">final</span> String location)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">long</span> i=idFrom; i &lt; idTo; i++) &#123;</span><br><span class="line">            data.put(i,<span class="keyword">new</span> Foo(i,location,Foo.Status.TODO));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Foo&gt; <span class="title">findTodoData</span><span class="params">(<span class="keyword">final</span> String location, <span class="keyword">final</span> <span class="keyword">int</span> limit)</span> </span>&#123;</span><br><span class="line">        List&lt;Foo&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;(limit);</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Long, Foo&gt; each : data.entrySet()) &#123;</span><br><span class="line">            Foo foo = each.getValue();</span><br><span class="line">            <span class="keyword">if</span> (foo.getLocation().equals(location) &amp;&amp; foo.getStatus() == Foo.Status.TODO) &#123;</span><br><span class="line">                result.add(foo);</span><br><span class="line">                count++;</span><br><span class="line">                <span class="keyword">if</span> (count == limit) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCompleted</span><span class="params">(<span class="keyword">final</span> <span class="keyword">long</span> id)</span> </span>&#123;</span><br><span class="line">        data.get(id).setStatus(Foo.Status.COMPLETED);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>4) 入口类</strong><br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ImportResource</span>(value = &#123; <span class="string">"classpath:applicationContext-elastic-job.xml"</span> &#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringbootElasticJobApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> EMBED_ZOOKEEPER_PORT = <span class="number">6181</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		EmbedZookeeperServer.start(EMBED_ZOOKEEPER_PORT); <span class="comment">// 启动内嵌zookeeper</span></span><br><span class="line">		SpringApplication.run(SpringbootElasticJobApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>5) 参数配置application.properties</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server.port=9100</span><br></pre></td></tr></table></figure></p>
+<p><strong>6) druid连接池配置/conf/druid-config.properties</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#druid datasouce database settings begin</span><br><span class="line">spring.druid.datasource.type=com.alibaba.druid.pool.DruidDataSource</span><br><span class="line">spring.druid.datasource.driverClassName=com.mysql.jdbc.Driver</span><br><span class="line">spring.druid.datasource.url=jdbc:mysql://localhost:3306/spring-cloud-db?characterEncoding=utf-8</span><br><span class="line">spring.druid.datasource.username=root</span><br><span class="line">spring.druid.datasource.password=root</span><br><span class="line"></span><br><span class="line"># \u4E0B\u9762\u4E3A\u8FDE\u63A5\u6C60\u7684\u8865\u5145\u8BBE\u7F6E\uFF0C\u5E94\u7528\u5230\u4E0A\u9762\u6240\u6709\u6570\u636E\u6E90\u4E2D</span><br><span class="line"># \u521D\u59CB\u5316\u5927\u5C0F\uFF0C\u6700\u5C0F\uFF0C\u6700\u5927</span><br><span class="line">spring.druid.datasource.initialSize=5</span><br><span class="line">spring.druid.datasource.minIdle=5</span><br><span class="line">spring.druid.datasource.maxActive=20</span><br><span class="line"># \u914D\u7F6E\u83B7\u53D6\u8FDE\u63A5\u7B49\u5F85\u8D85\u65F6\u7684\u65F6\u95F4</span><br><span class="line">spring.druid.datasource.maxWait=60000</span><br><span class="line"># \u914D\u7F6E\u95F4\u9694\u591A\u4E45\u624D\u8FDB\u884C\u4E00\u6B21\u68C0\u6D4B\uFF0C\u68C0\u6D4B\u9700\u8981\u5173\u95ED\u7684\u7A7A\u95F2\u8FDE\u63A5\uFF0C\u5355\u4F4D\u662F\u6BEB\u79D2</span><br><span class="line">spring.druid.datasource.timeBetweenEvictionRunsMillis=60000</span><br><span class="line"># \u914D\u7F6E\u4E00\u4E2A\u8FDE\u63A5\u5728\u6C60\u4E2D\u6700\u5C0F\u751F\u5B58\u7684\u65F6\u95F4\uFF0C\u5355\u4F4D\u662F\u6BEB\u79D2</span><br><span class="line">spring.druid.datasource.minEvictableIdleTimeMillis=300000</span><br><span class="line">spring.druid.datasource.validationQuery=SELECT 1 FROM DUAL</span><br><span class="line">spring.druid.datasource.testWhileIdle=true</span><br><span class="line">spring.druid.datasource.testOnBorrow=false</span><br><span class="line">spring.druid.datasource.testOnReturn=false</span><br><span class="line"># \u6253\u5F00PSCache\uFF0C\u5E76\u4E14\u6307\u5B9A\u6BCF\u4E2A\u8FDE\u63A5\u4E0APSCache\u7684\u5927\u5C0F</span><br><span class="line">spring.druid.datasource.poolPreparedStatements=true</span><br><span class="line">spring.druid.datasource.maxPoolPreparedStatementPerConnectionSize=20</span><br><span class="line"># \u914D\u7F6E\u76D1\u63A7\u7EDF\u8BA1\u62E6\u622A\u7684filters\uFF0C\u53BB\u6389\u540E\u76D1\u63A7\u754C\u9762sql\u65E0\u6CD5\u7EDF\u8BA1\uFF0C&apos;wall&apos;\u7528\u4E8E\u9632\u706B\u5899</span><br><span class="line">spring.druid.datasource.filters=stat,wall,log4j,config</span><br><span class="line"># \u901A\u8FC7connectProperties\u5C5E\u6027\u6765\u6253\u5F00mergeSql\u529F\u80FD\uFF1B\u6162SQL\u8BB0\u5F55</span><br><span class="line">spring.druid.datasource.connectionProperties=druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000</span><br><span class="line"># \u5408\u5E76\u591A\u4E2ADruidDataSource\u7684\u76D1\u63A7\u6570\u636E</span><br><span class="line">spring.druid.datasource.useGlobalDataSourceStat=true</span><br><span class="line">#druid datasouce database settings end</span><br><span class="line"></span><br><span class="line">#jpa settings begin</span><br><span class="line">jpa.database=MYSQL</span><br><span class="line">jpa.show-sql=true</span><br><span class="line">jpa.hibernate.ddl-auto=update</span><br><span class="line">jpa.hibernate.naming-strategy=org.hibernate.cfg.ImprovedNamingStrategy</span><br><span class="line">jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect</span><br><span class="line">#jpa settings end</span><br></pre></td></tr></table></figure></p>
+<p><strong>7) job配置/conf/job.properties</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#listener.simple=com.dangdang.ddframe.job.example.listener.SpringSimpleListener</span><br><span class="line">#listener.distributed=com.dangdang.ddframe.job.example.listener.SpringSimpleDistributeListener</span><br><span class="line">#listener.distributed.startedTimeoutMilliseconds=1000</span><br><span class="line">#listener.distributed.completedTimeoutMilliseconds=3000</span><br><span class="line"></span><br><span class="line">#1.cron:cron\u8868\u8FBE\u5F0F,\u7528\u4E8E\u914D\u7F6E\u4F5C\u4E1A\u89E6\u53D1\u65F6\u95F4</span><br><span class="line">#2.shardingTotalCount:\u4F5C\u4E1A\u5206\u7247\u603B\u6570</span><br><span class="line">#3.shardingItemParameters:\u5206\u7247\u5E8F\u5217\u53F7\u548C\u53C2\u6570\u7528\u7B49\u53F7\u5206\u9694\uFF0C\u591A\u4E2A\u952E\u503C\u5BF9\u7528\u9017\u53F7\u5206\u9694\u5206\u7247\u5E8F\u5217\u53F7\u4ECE0\u5F00\u59CB\uFF0C\u4E0D\u53EF\u5927\u4E8E\u6216\u7B49\u4E8E\u4F5C\u4E1A\u5206\u7247\u603B\u6570\u5982\uFF1A0=a,1=b,2=c</span><br><span class="line">#4.maxTimeDiffSeconds:\u6700\u5927\u5141\u8BB8\u7684\u672C\u673A\u4E0E\u6CE8\u518C\u4E2D\u5FC3\u7684\u65F6\u95F4\u8BEF\u5DEE\u79D2\u6570\u5982\u679C\u65F6\u95F4\u8BEF\u5DEE\u8D85\u8FC7\u914D\u7F6E\u79D2\u6570\u5219\u4F5C\u4E1A\u542F\u52A8\u65F6\u5C06\u629B\u5F02\u5E38\u914D\u7F6E\u4E3A-1\u8868\u793A\u4E0D\u6821\u9A8C\u65F6\u95F4\u8BEF\u5DEE</span><br><span class="line">#5.failover:\u662F\u5426\u5F00\u542F\u5931\u6548\u8F6C\u79FB\u4EC5monitorExecution\u5F00\u542F\uFF0C\u5931\u6548\u8F6C\u79FB\u624D\u6709\u6548</span><br><span class="line">#6.processCountIntervalSeconds:\u7EDF\u8BA1\u4F5C\u4E1A\u5904\u7406\u6570\u636E\u6570\u91CF\u7684\u95F4\u9694\u65F6\u95F4,\u5355\u4F4D\uFF1A\u79D2</span><br><span class="line">#7.description:\u4F5C\u4E1A\u63CF\u8FF0\u4FE1\u606F</span><br><span class="line">#8.disabled:\u4F5C\u4E1A\u662F\u5426\u7981\u6B62\u542F\u52A8,\u53EF\u7528\u4E8E\u90E8\u7F72\u4F5C\u4E1A\u65F6,\u5148\u7981\u7528\u542F\u52A8,\u90E8\u7F72\u7ED3\u675F\u540E\u7EDF\u4E00\u542F\u52A8</span><br><span class="line">#9.overwrite:\u672C\u5730\u914D\u7F6E\u662F\u5426\u53EF\u8986\u76D6\u6CE8\u518C\u4E2D\u5FC3\u914D\u7F6E,\u5982\u679C\u53EF\u8986\u76D6,\u6BCF\u6B21\u542F\u52A8\u4F5C\u4E1A\u90FD\u4EE5\u672C\u5730\u914D\u7F6E\u4E3A\u51C6</span><br><span class="line"></span><br><span class="line"># simple job 1 config</span><br><span class="line">simple.id=springSimpleJob</span><br><span class="line">simple.class=com.uxin.springbootelasticjob.job.simple.SpringSimpleJob</span><br><span class="line">simple.cron=0 */1 * * * ?</span><br><span class="line">simple.shardingTotalCount=3</span><br><span class="line">simple.shardingItemParameters=0=Beijing,1=Shanghai,2=Guangzhou</span><br><span class="line">simple.monitorExecution=false</span><br><span class="line">simple.failover=true</span><br><span class="line">simple.description=\u610F\u4E3A\u7B80\u5355\u5B9E\u73B0\uFF0C\u672A\u7ECF\u4EFB\u4F55\u5C01\u88C5\u7684\u7C7B\u578B\u3002\u9700\u5B9E\u73B0SimpleJob\u63A5\u53E3\u3002\u8BE5\u63A5\u53E3\u4EC5\u63D0\u4F9B\u5355\u4E00\u65B9\u6CD5\u7528\u4E8E\u8986\u76D6\uFF0C\u6B64\u65B9\u6CD5\u5C06\u5B9A\u65F6\u6267\u884C\u3002\u4E0EQuartz\u539F\u751F\u63A5\u53E3\u76F8\u4F3C\uFF0C\u4F46\u63D0\u4F9B\u4E86\u5F39\u6027\u6269\u7F29\u5BB9\u548C\u5206\u7247\u7B49\u529F\u80FD\u3002</span><br><span class="line">simple.disabled=false</span><br><span class="line">simple.overwrite=true</span><br><span class="line">simple.monitorPort=9888</span><br><span class="line"></span><br><span class="line"># simple job 2 config</span><br><span class="line">simple2.id=springSimpleJob2</span><br><span class="line">simple2.class=com.uxin.springbootelasticjob.job.simple.SpringSimpleJob2</span><br><span class="line">simple2.cron=0 */5 * * * ?</span><br><span class="line">simple2.shardingTotalCount=3</span><br><span class="line">simple2.shardingItemParameters=0=Beijing,1=Shanghai,2=Guangzhou</span><br><span class="line">simple2.monitorExecution=false</span><br><span class="line">simple2.failover=true</span><br><span class="line">simple2.description=\u53EA\u8FD0\u884C\u4E00\u6B21\u7684\u4F5C\u4E1A\u793A\u4F8B</span><br><span class="line">simple2.disabled=false</span><br><span class="line">simple2.overwrite=true</span><br><span class="line">simple2.monitorPort=9889</span><br><span class="line"></span><br><span class="line"># dataflow config</span><br><span class="line">dataflow.id=springDataflowJob</span><br><span class="line">dataflow.class=com.uxin.springbootelasticjob.job.dataflow.SpringDataflowJob</span><br><span class="line">dataflow.cron=0 0 23 * * ?</span><br><span class="line">dataflow.shardingTotalCount=3</span><br><span class="line">dataflow.shardingItemParameters=0=Beijing,1=Shanghai,2=Guangzhou</span><br><span class="line">dataflow.maxTimeDiffSeconds=-1</span><br><span class="line">dataflow.monitorExecution=true</span><br><span class="line">dataflow.failover=true</span><br><span class="line">dataflow.streamingProcess=true</span><br><span class="line">dataflow.description=\u6309\u987A\u5E8F\u4E0D\u505C\u6B62\u8FD0\u884C\u7684\u4F5C\u4E1A\u793A\u4F8B</span><br><span class="line">dataflow.disabled=false</span><br><span class="line">dataflow.overwrite=true</span><br><span class="line"></span><br><span class="line"># script job config</span><br><span class="line">script.id=springScriptJob</span><br><span class="line"></span><br><span class="line"># need absolute path</span><br><span class="line">script.scriptCommandLine=your_path/elastic-job/elastic-job-example/elastic-job-example-lite-spring/src/main/resources/script/demo.sh</span><br><span class="line"></span><br><span class="line">script.cron=0 0 23 * * ?</span><br><span class="line">script.shardingTotalCount=3</span><br><span class="line">script.shardingItemParameters=0=Beijing,1=Shanghai,2=Guangzhou</span><br><span class="line">script.description=Script Job</span><br><span class="line">script.overwrite=true</span><br></pre></td></tr></table></figure></p>
+<p><strong>8) zookeeper配置/conf/reg.properties</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">serverLists=localhost:6181</span><br><span class="line">namespace=elastic-job-example-lite-springboot</span><br><span class="line">baseSleepTimeMilliseconds=1000</span><br><span class="line">maxSleepTimeMilliseconds=3000</span><br><span class="line">maxRetries=3</span><br></pre></td></tr></table></figure></p>
+<p><strong>8) xml配置applicationContext-elastic-job.xml</strong><br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:reg</span>=<span class="string">"http://www.dangdang.com/schema/ddframe/reg"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:job</span>=<span class="string">"http://www.dangdang.com/schema/ddframe/job"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.springframework.org/schema/context/spring-context.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.dangdang.com/schema/ddframe/reg</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.dangdang.com/schema/ddframe/reg/reg.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.dangdang.com/schema/ddframe/job</span></span></span><br><span class="line"><span class="tag"><span class="string">                        http://www.dangdang.com/schema/ddframe/job/job.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">                        "</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--包扫描--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.uxin.springbootelasticjob.job"</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--配置文件扫描--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">"classpath:conf/*.properties"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--配置数据库中关于作业运行的log--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"elasticJobLog"</span> <span class="attr">class</span>=<span class="string">"com.alibaba.druid.pool.DruidDataSource"</span> <span class="attr">destroy-method</span>=<span class="string">"close"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"driverClassName"</span> <span class="attr">value</span>=<span class="string">"$&#123;spring.druid.datasource.driverClassName&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"url"</span> <span class="attr">value</span>=<span class="string">"$&#123;spring.druid.datasource.url&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"username"</span> <span class="attr">value</span>=<span class="string">"$&#123;spring.druid.datasource.username&#125;"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span> <span class="attr">value</span>=<span class="string">"$&#123;spring.druid.datasource.password&#125;"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--配置作业注册中心 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">reg:zookeeper</span> <span class="attr">id</span>=<span class="string">"regCenter"</span></span></span><br><span class="line"><span class="tag">                   <span class="attr">server-lists</span>=<span class="string">"$&#123;serverLists&#125;"</span></span></span><br><span class="line"><span class="tag">                   <span class="attr">namespace</span>=<span class="string">"$&#123;namespace&#125;"</span></span></span><br><span class="line"><span class="tag">                   <span class="attr">base-sleep-time-milliseconds</span>=<span class="string">"$&#123;baseSleepTimeMilliseconds&#125;"</span></span></span><br><span class="line"><span class="tag">                   <span class="attr">max-sleep-time-milliseconds</span>=<span class="string">"$&#123;maxSleepTimeMilliseconds&#125;"</span></span></span><br><span class="line"><span class="tag">                   <span class="attr">max-retries</span>=<span class="string">"$&#123;maxRetries&#125;"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 配置简单作业 1--&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- event-trace-rdb-data-source 配置带作业数据库事件追踪的简单作业--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">job:simple</span> <span class="attr">id</span>=<span class="string">"$&#123;simple.id&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">class</span>=<span class="string">"$&#123;simple.class&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">registry-center-ref</span>=<span class="string">"regCenter"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">sharding-total-count</span>=<span class="string">"$&#123;simple.shardingTotalCount&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">cron</span>=<span class="string">"$&#123;simple.cron&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">sharding-item-parameters</span>=<span class="string">"$&#123;simple.shardingItemParameters&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">monitor-execution</span>=<span class="string">"$&#123;simple.monitorExecution&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">monitor-port</span>=<span class="string">"$&#123;simple.monitorPort&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">failover</span>=<span class="string">"$&#123;simple.failover&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">description</span>=<span class="string">"$&#123;simple.description&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">disabled</span>=<span class="string">"$&#123;simple.disabled&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">overwrite</span>=<span class="string">"$&#123;simple.overwrite&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">event-trace-rdb-data-source</span>=<span class="string">"elasticJobLog"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 配置带监听的简单作业 2--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">job:simple</span> <span class="attr">id</span>=<span class="string">"$&#123;simple2.id&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">class</span>=<span class="string">"$&#123;simple2.class&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">registry-center-ref</span>=<span class="string">"regCenter"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">sharding-total-count</span>=<span class="string">"$&#123;simple2.shardingTotalCount&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">cron</span>=<span class="string">"$&#123;simple2.cron&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">sharding-item-parameters</span>=<span class="string">"$&#123;simple2.shardingItemParameters&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">monitor-execution</span>=<span class="string">"$&#123;simple2.monitorExecution&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">monitor-port</span>=<span class="string">"$&#123;simple2.monitorPort&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">failover</span>=<span class="string">"$&#123;simple2.failover&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">description</span>=<span class="string">"$&#123;simple2.description&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">disabled</span>=<span class="string">"$&#123;simple2.disabled&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">overwrite</span>=<span class="string">"$&#123;simple2.overwrite&#125;"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">event-trace-rdb-data-source</span>=<span class="string">"elasticJobLog"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--&amp;lt;!&amp;ndash;配置本地监听器&amp;ndash;&amp;gt;--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">job:listener</span> <span class="attr">class</span>=<span class="string">"com.uxin.springbootelasticjob.listener.MyElasticJobListener"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!--&amp;lt;!&amp;ndash;配置分布式监听器&amp;ndash;&amp;gt;--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">job:distributed-listener</span> <span class="attr">class</span>=<span class="string">"com.uxin.springbootelasticjob.listener.MyDistributeOnceElasticJobListener"</span></span></span><br><span class="line"><span class="tag">                                  <span class="attr">started-timeout-milliseconds</span>=<span class="string">"2000"</span> <span class="attr">completed-timeout-milliseconds</span>=<span class="string">"2000"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">job:simple</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- 配置数据流作业--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">job:dataflow</span> <span class="attr">id</span>=<span class="string">"$&#123;dataflow.id&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">class</span>=<span class="string">"$&#123;dataflow.class&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">registry-center-ref</span>=<span class="string">"regCenter"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">sharding-total-count</span>=<span class="string">"$&#123;dataflow.shardingTotalCount&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">cron</span>=<span class="string">"$&#123;dataflow.cron&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">sharding-item-parameters</span>=<span class="string">"$&#123;dataflow.shardingItemParameters&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">monitor-execution</span>=<span class="string">"$&#123;dataflow.monitorExecution&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">failover</span>=<span class="string">"$&#123;dataflow.failover&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">max-time-diff-seconds</span>=<span class="string">"$&#123;dataflow.maxTimeDiffSeconds&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">streaming-process</span>=<span class="string">"$&#123;dataflow.streamingProcess&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">description</span>=<span class="string">"$&#123;dataflow.description&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">disabled</span>=<span class="string">"$&#123;dataflow.disabled&#125;"</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">overwrite</span>=<span class="string">"$&#123;dataflow.overwrite&#125;"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>至此，已经简单介绍了ElasticJob的用法，后续会深入ElasticJob源码学习，深入理解其各个特性实现的思想；</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="https://github.com/elasticjob/elastic-job-lite" target="_blank" rel="noopener">Elastic-Job源码</a></li>
+<li><a href="https://github.com/elasticjob/elastic-job-example" target="_blank" rel="noopener">Elastic-Job示例</a></li>
+<li>参考博客原文地址：<a href="http://jianwl.com/2017/11/01/ElasticJob入门实战/" target="_blank" rel="noopener">http://jianwl.com/2017/11/01/ElasticJob入门实战/</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      </div>
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/technology/" rel="tag"><i class="fa fa-tag"></i> technology</a>
+          
+            <a href="/tags/Spring-Boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+          
+            <a href="/tags/ElasticJob/" rel="tag"><i class="fa fa-tag"></i> ElasticJob</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/27/ElasticJob入门实战一/" rel="next" title="ElasticJob入门实战一">
+                <i class="fa fa-chevron-left"></i> ElasticJob入门实战一
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/27/Elastic-Job-Lite源码分析-作业配置/" rel="prev" title="Elastic-Job-Lite源码分析---作业配置">
+                Elastic-Job-Lite源码分析---作业配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Mr.CrazyDC" />
+            
+              <p class="site-author-name" itemprop="name">Mr.CrazyDC</p>
+              <p class="site-description motion-element" itemprop="description">Life is a crazy ride, all in or nothing.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/dicheng52119" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/profile.php?id=100023446571362" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/2936614971/home?leftnav=1" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:dicheng52119@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-mortar-board"></i>
+                推荐阅读
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.oschina.net/" title="开源中国社区" target="_blank">开源中国社区</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.csdn.net/" title="CSDN社区" target="_blank">CSDN社区</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.open-open.com/" title="深度开源" target="_blank">深度开源</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.zhihu.com/" title="知乎" target="_blank">知乎</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jianshu.com/" title="简书" target="_blank">简书</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.uisdc.com/" title="优设" target="_blank">优设</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.alloyteam.com/nav/" title="Web前端导航" target="_blank">Web前端导航</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.36zhen.com/t?id=3448" title="前端书籍资料" target="_blank">前端书籍资料</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x5F15;&#x8A00;" class="headerlink" title="&#x5F15;&#x8A00;"></a>&#x5F15;&#x8A00;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringBoot整合ElasticJob-xml配置方式"><span class="nav-number">2.</span> <span class="nav-text"><a href="#SpringBoot&#x6574;&#x5408;ElasticJob-xml&#x914D;&#x7F6E;&#x65B9;&#x5F0F;" class="headerlink" title="SpringBoot&#x6574;&#x5408;ElasticJob(xml&#x914D;&#x7F6E;&#x65B9;&#x5F0F;)"></a>SpringBoot&#x6574;&#x5408;ElasticJob(xml&#x914D;&#x7F6E;&#x65B9;&#x5F0F;)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x7ED3;&#x8BED;" class="headerlink" title="&#x7ED3;&#x8BED;"></a>&#x7ED3;&#x8BED;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text"><a href="#&#x53C2;&#x8003;&#x8D44;&#x6599;" class="headerlink" title="&#x53C2;&#x8003;&#x8D44;&#x6599;"></a>&#x53C2;&#x8003;&#x8D44;&#x6599;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.CrazyDC</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span><span class="post-meta-divider">|</span>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共59.0k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_lines.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+<div id="hexo-helper-live2d">
+  <canvas id="live2dcanvas" width="150" height="300"></canvas>
+</div>
+<style>
+  #live2dcanvas{
+    position: fixed;
+    width: 150px;
+    height: 300px;
+    opacity:0.7;
+    right: 0px;
+    z-index: 999;
+    pointer-events: none;
+    bottom: -20px;
+  }
+</style>
+<script type="text/javascript" src="/live2d/device.min.js"></script>
+<script type="text/javascript">
+const loadScript = function loadScript(c,b){var a=document.createElement("script");a.type="text/javascript";"undefined"!=typeof b&&(a.readyState?a.onreadystatechange=function(){if("loaded"==a.readyState||"complete"==a.readyState)a.onreadystatechange=null,b()}:a.onload=function(){b()});a.src=c;document.body.appendChild(a)};
+(function(){
+  if((typeof(device) != 'undefined') && (device.mobile())){
+    var trElement = document.getElementById('hexo-helper-live2d');
+    trElement.parentNode.removeChild(trElement);
+    return;
+  }else
+    if (typeof(device) === 'undefined') console.error('Cannot find current-device script.');
+  loadScript("/live2d/script.js", function(){loadlive2d("live2dcanvas", "/live2d/assets/hijiki.model.json", 0.5);});
+})();
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
