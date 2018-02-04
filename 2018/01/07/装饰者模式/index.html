@@ -106,13 +106,13 @@
 <meta property="og:site_name" content="CrazyIT">
 <meta property="og:description" content="定义装饰者模式：在不改变原类文件以及不使用继承的情况下，动态地将责任附加到对象上，从而实现动态拓展一个对象的功能。它是通过创建一个包装对象，也就是装饰来包裹真实的对象。 设计原则要使用装饰者模式，需要满足以下设计原则：  多用组合，少用继承 开放-关闭原则：类应该对拓展开放，对修改关闭  UML类图我们先来看看装饰者模式的类图，再来详细讲述：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E9%9F%A6%E6%81%A9%E5%9B%BE.png?raw=true">
-<meta property="og:updated_time" content="2018-01-07T13:09:18.034Z">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E9%9F%A6%E6%81%A9%E5%9B%BE.png?raw=true">
+<meta property="og:updated_time" content="2018-02-04T05:26:58.575Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="装饰者模式">
 <meta name="twitter:description" content="定义装饰者模式：在不改变原类文件以及不使用继承的情况下，动态地将责任附加到对象上，从而实现动态拓展一个对象的功能。它是通过创建一个包装对象，也就是装饰来包裹真实的对象。 设计原则要使用装饰者模式，需要满足以下设计原则：  多用组合，少用继承 开放-关闭原则：类应该对拓展开放，对修改关闭  UML类图我们先来看看装饰者模式的类图，再来详细讲述：">
-<meta name="twitter:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true">
+<meta name="twitter:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true">
 
 
 
@@ -449,7 +449,7 @@
 </ol>
 <h3 id="UML类图"><a href="#UML类图" class="headerlink" title="UML类图"></a>UML类图</h3><p>我们先来看看装饰者模式的类图，再来详细讲述：</p>
 <a id="more"></a>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true" alt=""></p>
 <p>由上自下：</p>
 <ol>
 <li><strong>Component</strong>是基类。通常是一个抽象类或者一个接口，定义了属性或者方法，方法的实现可以由子类实现或者自己实现。通常不会直接使用该类，而是通过继承该类来实现特定的功能，它约束了整个继承树的行为。比如说，如果Component代表人，即使通过装饰也不会使人变成别的动物。</li>
@@ -471,7 +471,7 @@
 <p>最后我们在测试类内测试我们的代码：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Shopping</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Person person = <span class="keyword">new</span> Teenager();</span><br><span class="line">        </span><br><span class="line">        person = <span class="keyword">new</span> Shirt(person);</span><br><span class="line">        person = <span class="keyword">new</span> Casquette(person);</span><br><span class="line">        </span><br><span class="line">        System.out.println(person.getDescription() + <span class="string">" ￥ "</span> +person.cost());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>先创建一个Teenager对象，接着用Shirt装饰它，就变成了穿着Shirt的Teenager，再用Casquette装饰，就变成了戴着Casquette的穿着Shirt的Teenager。运行结果如下所示：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Shopping List:a shirt  a casquette ¥175.0</span><br></pre></td></tr></table></figure></p>
 <p>我们梳理一下以上的逻辑，画出如下所示的韦恩图：</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E9%9F%A6%E6%81%A9%E5%9B%BE.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E9%9F%A6%E6%81%A9%E5%9B%BE.png?raw=true" alt=""></p>
 <p>Teenager、Shirt、Casquette都是继承自Person基类，但是具体实现不同，Teenager是Person的直接子类，表示了被装饰者；Teenager、Shirt是装饰者，保存了Person的引用，实现了cost()方法，并且在cost()方法内部，不但实现了自己的逻辑，同时也调用了Person引用的cost()方法，即获取了被装饰者的信息，这是装饰者的一个特点，保存引用的目的就是为了获取被装饰者的状态信息，以便将自身的特性加以组合。</p>
 <h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>以上就是装饰者模式的一个小栗子，讲述了装饰者的基本用法。通过上述的例子，我们可以总结一下装饰者模式的特点。</p>
 <ol>
@@ -624,7 +624,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -802,7 +802,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共65.9k字</span>
+  <span class="post-count">博客全站共69.4k字</span>
 </div>
 
         

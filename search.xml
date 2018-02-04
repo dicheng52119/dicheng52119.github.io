@@ -3,6 +3,237 @@
   
     
     <entry>
+      <title><![CDATA[服务容错保护：Spring Cloud Hystrix 总结]]></title>
+      <url>/2018/02/04/Spring%20Cloud%20Hystrix%20%E6%80%BB%E7%BB%93/</url>
+      <content type="html"><![CDATA[<h3 id="Hystrix使用说明"><a href="#Hystrix使用说明" class="headerlink" title="Hystrix使用说明"></a>Hystrix使用说明</h3><ul>
+<li><p>应用场景<br>在微服务架构中，存在着那么多的服务单元，如一个单元出现故障，就很容易因y依赖关系而引发故障的蔓延，最终导致整个系统的瘫痪，为了解决这样的问题，引入断路器等一系列的服务保护机制。</p>
+</li>
+<li><p>功能描述</p>
+<ol>
+<li>服务降级</li>
+<li>服务熔断</li>
+<li>线程和信号隔离</li>
+<li>请求缓存</li>
+<li>请求合并</li>
+<li>服务监控</li>
+</ol>
+</li>
+<li><p>Hystrix工作流程图和详细流程说明</p>
+</li>
+</ul>
+<a id="more"></a>
+<p>  <img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Hystrix%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE.png?raw=true" alt=""></p>
+<p>  流程说明：</p>
+<ul>
+<li>Hystrix状态有三种：1.开启 2.关闭 3.半开</li>
+<li>HystrixCommand首先通过isOpen()来判断断路器的打开/关闭状态。<ul>
+<li>如果断路器打开标识为true，则直接返回true，表示断路器处于打开状态。否则，就从度量指标对象metrics中获取HealthCounts统计对象做进一步判断(该对象记录了一个滚动时间窗内的请求信息快照，默认时间窗为10秒)。<ul>
+<li>如果它的请求总数(QPS) 在预设的阈值范围内就返回false，表示断路器处于未打开状态。该阈值的配置参数为circuitBreakerRequestVolumeThreshold，默认值是20。</li>
+<li>如果错误百分比在阈值范围内就返回false，表示断路器处于未打开状态。该阈值的配置参数为circuitBreakerErrorThresholdPercentage，默认值为50。</li>
+<li>如果上面的两个条件都不满足，则将断路器设置为打开状态。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Hystrix状态之间的关系以及转化的机制<ul>
+<li>当失败的次数达到一定的阈值后，断路器处于开启，否则处于关闭。</li>
+<li>通过circuitBreakerSleepWindowInMilliseconds属性设置了一个断路器打开之后的休眠时间(默认是5秒)，在该休眠时间到达之后，将再次允许请求尝试访问，此时断路器处于“半开”状态，若此时请求继续失败，断路器又进入打开状态，并继续等待下一个休眠窗口过去之后再次尝试；若请求成功，则将断路器重新置于关闭状态。</li>
+</ul>
+</li>
+<li>markSuccess()用在“半开”状态时使用。若Hystrix命令调用成功，通过调用它将打开的断路器关闭，并重置度量指标对象。</li>
+</ul>
+<ul>
+<li><p>Hystrix依赖隔离策略以及作用</p>
+<ol>
+<li>execution.isolation.strategy为隔离策略，有两种方式，一种是semaphore，一种是thread，默认和建议的是thread。</li>
+<li>信号量模式是同步调用模式，不支持超时调用，不支持直接熔断，从始至终都只有请求线程自身，没有线程的切换，开销较小。由于信息量不支持超时，当被调服务发生问题时，有少部分用户会长时间无法得到响应。默认值是10个，排队队列默认是5个。</li>
+<li>线程池模式支持异步调用，支持超时调用，支持直接熔断，独立的请求线程和服务线程，存在线程切换，开销比信号量模式大一些。默认值是10个，排队队列默认是5个。</li>
+<li>线程池模式作用：运行环境被隔离开了。 这样就算调用服务的代码存在bug或者由于其他原因导致自己所在线程池被耗尽时, 不会对系统的其他服务造成影响。但是带来的代价就是维护多个线程池会对系统带来额外的性能开销。 如果是对性能有严格要求而且确信自己调用服务的客户端代码不会出问题的话, 可以使用Hystrix的信号模式(Semaphores)来隔离资源。</li>
+<li><strong>隔离策略配置</strong><br>全局配置：<br>hystrix.command.default.execution.isolation.strategy(默认值是THREAD)<br>实例配置：<br>hystrix.command.HystrixCommandKey.execution.isolation.strategy<br><strong>semaphore配置</strong><br>全局配置：<br>hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests(默认值是10)<br>实例配置：<br>hystrix.command.HystrixCommandKey.execution.isolation.semaphore.maxConcurrentRequests<br><strong>thread配置</strong><br>全局配置(线程总数)：<br>hystrix.threadpool.default.coreSize(默认值是10)<br>实例配置：<br>hystrix.threadpool.HystrixThreadPoolKey.coreSize<br>全局配置(最大可用线程数)<br>hystrix.threadpool.default.maximumSize(默认值是10)<br>实例配置：<br>hystrix.threadpool.HystrixThreadPoolKey.maximumSize</li>
+</ol>
+</li>
+<li><p>Hystrix的超时时间、并发数、熔断阈值对断路器的开启或关闭状态的控制</p>
+<ol>
+<li><strong>超时时间设置</strong><br>全局配置：<br>hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds(默认值是1000ms)<br>实例配置：<br>hystrix.command.HystrixCommandKey.execution.isolation.thread.timeoutInMilliseconds</li>
+<li><strong>并发数设置</strong><br>参照隔离策略配置进行相关配置</li>
+<li><strong>熔断阈值设置</strong><br>全局配置(滚动时间窗长度设置)：<br>hystrix.command.default.metrics.rollingStats.timeInMilliseconds(默认值是10000ms)<br>实例配置：<br>hystrix.command.HystrixCommandKey.metrics.rollingStats.timeInMilliseconds<br>全局配置(休眠窗时间设置)：<br>hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds(默认值5000ms)<br>实例配置：                                                                                    hystrix.command.HystrixCommandKey.circuitBreaker.sleepWindowInMilliseconds<br>全局配置(断路器熔断的最小请求数设置)：<br>hystrix.command.default.circuitBreaker.requestVolumeThreshold(默认值是20)<br>实例配置：<br>hystrix.command.HystrixCommandKey.circuitBreaker.requestVolumeThreshold<br>全局配置(断路器打开的错误百分比设置)：<br>hystrix.command.default.circuitBreaker.errorThresholdPercentage(默认值是50)<br>实例配置：<br>hystrix.command.HystrixCommandKey.circuitBreaker.errorThresholdPercentage</li>
+</ol>
+</li>
+<li><p>Hystrix与Ribbon超时时间设置的关系<br>Hystrix的超时时间需要大于Ribbon的超时时间，不然不会触发Ribbon重试。</p>
+</li>
+</ul>
+<hr>
+<h3 id="Feign中使用Hystrix说明"><a href="#Feign中使用Hystrix说明" class="headerlink" title="Feign中使用Hystrix说明"></a>Feign中使用Hystrix说明</h3><ul>
+<li><p>使用说明</p>
+<ol>
+<li><p>引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--引入feign客户端依赖--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-feign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 整合hystrix，其实feign中自带了hystrix，引入该依赖主要是为了使用其中的hystrix-metrics-event-stream，用于dashboard --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动类上面添加注解@EnableFeignClients和@EnableCircuitBreaker。其中，feign中自带了hystrix,如果单纯的使用hystrix功能，可以不加@EnableCircuitBreaker注解，使用@EnableCircuitBreaker注解可以使用其中的hystrix-metrics-event-stream，用于dashboard。</p>
+</li>
+<li>调用服务的接口上添加注解@FeignClient<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(value = <span class="string">"hello-service"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>全局开启或关闭Feign对Hystrix支持</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line"><span class="attr">  hystrix:</span></span><br><span class="line">    <span class="comment">#启用feign中的hystrix服务，默认是关闭的</span></span><br><span class="line"><span class="attr">    enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>坑：在spring-cloud的老版本中，默认是开启的，在新版本中，默认是关闭的，需要手动开启。</p>
+</blockquote>
+</li>
+<li><p>对指定的服务方法实现Hystrix的开启或关闭</p>
+<ol>
+<li><p>新建Hystrix禁用配置类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by dicheng on 17-12-22.</span></span><br><span class="line"><span class="comment"> * 在HelloService的<span class="doctag">@FeignCLient</span>注解中，通过configuration参数引入下面的配置</span></span><br><span class="line"><span class="comment"> * 这是其中一种对指定服务开启断路器的方法，另外一种是配置文件中进行指定断路器的全局开启或关闭</span></span><br><span class="line"><span class="comment"> * 默认是返回HystrixFeign.builder(),因为现在调用Feign.builder()，所以禁用了hystrix功能</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DisableHystrixConfiguration2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Scope</span>(<span class="string">"prototype"</span>)</span><br><span class="line">    <span class="keyword">public</span> Feign.<span class="function">Builder <span class="title">feignBuilder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Feign.builder();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在需要禁用的服务接口上配置Hystrix禁用类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(value = <span class="string">"hello-service"</span>, configuration = DisableHystrixConfiguration2.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function">String <span class="title">hello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>全局配置超时时间<br>参考Hystrix全局超时时间设置</p>
+</li>
+<li><p>对指定的服务方法实现超时时间设置<br>hystrix.command.serviceId.execution.isolation.thread.timeoutInMilliseconds</p>
+</li>
+<li><p>服务降级的实现方式(fallback 或 fallbackFactory)以及注意事项</p>
+<ol>
+<li><p>fallback实现服务降级</p>
+<ul>
+<li><p>指定服务降级处理类,通过fallback属性进行配置</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(value = <span class="string">"hello-service"</span>, configuration = DisableHystrixConfiguration2.class, fallback = HelloServiceFallback.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">   <span class="function">String <span class="title">hello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>服务降级处理类需要实现调用断路器的接口,同时使用@Component注解标明这个组件</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServiceFallback</span> <span class="keyword">implements</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="string">"error"</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>fallbackFactory实现服务降级</p>
+<ul>
+<li><p>指定服务降级处理类,通过fallbackFactory属性进行配置</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(value = <span class="string">"hello-service"</span>, configuration = DisableHystrixConfiguration2.class, fallbackFactory = HelloServiceFallbackFactory.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@RequestMapping</span>(<span class="string">"/hello"</span>)</span><br><span class="line">   <span class="function">String <span class="title">hello</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义一个接口，继承调用断路器的接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloServiceWithFactory</span> <span class="keyword">extends</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义一个实现类实现FallbackFactory接口，并指定类型为调用断路器的接口类型，实现fallbackFactory接口中的create方法，分析断路原因与断路逻辑处理</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServiceFallbackFactory</span> <span class="keyword">implements</span> <span class="title">FallbackFactory</span>&lt;<span class="title">HelloService</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = Logger.getLogger(HelloServiceFallbackFactory.class);</span><br><span class="line"></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> HelloService <span class="title">create</span><span class="params">(Throwable throwable)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//断路原因</span></span><br><span class="line">       logger.info(<span class="string">"fallback; reason was :"</span> + throwable);</span><br><span class="line"></span><br><span class="line">       <span class="comment">//断路处理逻辑</span></span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> HelloServiceWithFactory() &#123;</span><br><span class="line">           <span class="meta">@Override</span></span><br><span class="line">           <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">               <span class="keyword">return</span> <span class="string">"errorWithFactory"</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>说明：feign通过配置属性fallbackFactory不仅可以进行断路的降级逻辑处理，还可以获取断路的原因，可以说是fallback的加强版。</p>
+<blockquote>
+<p>坑：fallback不能与fallbackFactory同时使用，因为两者都可以自定义回调函数的处理逻辑，放在一块使用会造成冲突。</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="Turbine对集群服务的监控"><a href="#Turbine对集群服务的监控" class="headerlink" title="Turbine对集群服务的监控"></a>Turbine对集群服务的监控</h3><ul>
+<li>功能描述<br>引入Turbine，通过监控端点/turbine.stream对集群服务进行监控，并汇集监控信息。</li>
+<li><p>Turbine监控服务的搭建</p>
+<ol>
+<li>创建一个标准的Spring Boot工程。</li>
+<li><p>引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--引入turbine依赖--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-turbine<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动类上添加注解@EnableTurbine和@EnableDiscoveryClient，将Turbine作为一个服务注册到Eureka上，便于从Eureka上发现注册服务并获取其监控信息。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@EnableTurbine</span></span><br><span class="line"><span class="meta">@EnableDiscoveryClient</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TurbineApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(TurbineApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置Eureka和Turbine</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#eureka config</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    service-url:</span></span><br><span class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://localhost:1111/eureka/</span></span><br><span class="line">      </span><br><span class="line"><span class="comment">#turbine config</span></span><br><span class="line"><span class="attr">turbine:</span></span><br><span class="line"><span class="attr">  combine-host-port:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  aggregator:</span></span><br><span class="line"><span class="attr">    cluster-config:</span> <span class="string">HELLO-SERVICE</span></span><br><span class="line"><span class="attr">  app-config:</span> <span class="string">hello-service</span></span><br><span class="line">  <span class="comment">#cluster-name-expression: "'default'"</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>Turbine配置详解</p>
+<ol>
+<li><code>combine-host-port</code>: 可以让同一主机上的服务通过主机名和端口号的组合来进行区分。</li>
+<li><code>cluster-config</code>: <ul>
+<li>指定监控了哪些集群，多个使用”,”分割，默认为default。可使用<a href="http://.../turbine.stream?cluster={clusterconfig之一}" target="_blank" rel="noopener">http://.../turbine.stream?cluster={clusterconfig之一}</a> 访问。</li>
+<li>配置spring.application.name大写</li>
+<li>配置单个服务集群时，可以使用cluster-config进行配置，使用第一步中的地址进行访问监控，当监控多个服务集群时，可以使用cluster-name-expression进行配置，省略cluster-config配置，访问<a href="http://.../turbine.stream" target="_blank" rel="noopener">http://.../turbine.stream</a> 即可进行监控。</li>
+</ul>
+</li>
+<li><code>app-config</code>: 配置需要聚合的应用(spring.application.name小写)</li>
+<li><code>cluster-name-expression</code>: 指定了集群名称，当服务非常多的时候，启动多个Turbine服务来构建不同的聚合集群，而该参数可以用来区分这些不同的聚合集群。当cluster-name-expression为default时，cluster-config可以不写，因为默认就是default，访问<a href="http://.../turbine.stream" target="_blank" rel="noopener">http://.../turbine.stream</a> 即可进行监控。</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h3 id="Hystrix-Dashboard使用说明"><a href="#Hystrix-Dashboard使用说明" class="headerlink" title="Hystrix Dashboard使用说明"></a>Hystrix Dashboard使用说明</h3><ul>
+<li><p>功能描述<br>通过HystrixCommand实例在执行过程中记录的信息，会在内存中驻留一段时间，以供内部或外部进行查询使用，Hystrix Dashboard就是这些指标内容的消费者之一。通过Hystrix Dashboard可以实时监控Hystrix的各项指标信息，根据这些反馈的实时信息，可以帮助我们快速发现系统中存在的问题，从而及时地采取应对措施。</p>
+</li>
+<li><p>Hystrix Dashboard仪表盘服务的搭建</p>
+<ol>
+<li>创建一个标准的Spring Boot工程。</li>
+<li><p>引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--引入hystrix依赖--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--引入hystrix dashboard依赖--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-hystrix-dashboard<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动类上添加注解@EnableHystrixDashboard</p>
+</li>
+</ol>
+</li>
+<li><p>使用说明</p>
+<ol>
+<li>监控首页</li>
+</ol>
+<ul>
+<li>Hystrix Dashboard 共支持三种不同的监控方式：<br>i. 默认的集群监控：通过URL <a href="http://turbine-host:port/turbine.stream" target="_blank" rel="noopener">http://turbine-host:port/turbine.stream</a> 开启，实现对默认集群的监控。<br>ii. 指定的集群监控：通过URL <a href="http://turbine-host:port/turbine.stream.stream?cluster=[clusterName]开启，实现对clusterName集群的监控。" target="_blank" rel="noopener">http://turbine-host:port/turbine.stream.stream?cluster=[clusterName]开启，实现对clusterName集群的监控。</a><br>iii. 单体应用的监控：通过URL <a href="http://hystrix-app:port/hystrix.stream" target="_blank" rel="noopener">http://hystrix-app:port/hystrix.stream</a> 开启，实现对具体某个服务实例的监控。 </li>
+<li>Delay：该参数用来控制服务器上轮询监控信息的延迟时间，默认为2000ms，可以通过配置该属性来降低客户端的网络和CPU消耗。</li>
+<li>Title：该参数对应了监控图头部标题Hystrix Stream之后的内容，默认会使用具体监控实例的URL，可以通过配置该信息来展示更合适的标题。</li>
+</ul>
+<ol>
+<li>监控页面</li>
+</ol>
+<ul>
+<li>一个实心圆和一条曲线</li>
+<li>断路指标信息</li>
+<li>线程池指标信息</li>
+</ul>
+</li>
+<li><p>监控指标说明</p>
+<ol>
+<li>实心圆<br>通过颜色的变化代表了实例的健康程度，它的健康度从绿色、黄色、橙色、红色递减。它的大小会根据实例的请求流量发生变化，流量越大该实心圆就越大。通过该实心圆，可以在大量的实例中快速发现故障实例和高压力实例。</li>
+<li>曲线<br>用来记录2分钟内流量的相对变化，可以通过它来观察流量的上升和下降趋势。</li>
+<li>指标信息详解</li>
+</ol>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Hystrix%20Dashboard%E6%8C%87%E6%A0%87%E5%8F%82%E6%95%B0.png?raw=true" alt=""></p>
+<blockquote>
+<p><strong>注意</strong>：当使用Hystrix Board来监控Spring Cloud Zuul构建的API网关时，Thread Pool信息会一直处于Loading状态。这是由于Zuul默认会使用信号量来实现隔离，只有通过Hystrix配置把隔离机制改为线程池的方式才能够得以展示。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>  服务发送方与服务消费方分别将自己的多实例注册到Eureka Server上，服务消费方通过Eureka Server发现服务列表并进行相应的服务调用。在服务的相互调用过程中，可能会发生调用服务失败或服务异常等情况发生，通过使用Hystrix监控服务调用过程中可能出现的问题并进行相应的断路保护，比如服务降级，以免造成雪崩现象的发生，避免系统的全面崩溃。通过Turbine构建相应的微服务，并作为一个服务注册到Eureka Server上，配置监控的集群服务名称，从Eureka Server服务列表上获取到监控的服务并对其监控信息进行收集。而通过Turbine收集的监控信息不具备易读性，所以通过Hystrix Dashboard将其监控的信息进行页面展示，实时的监控服务的断路状态相关信息，从而帮助我们快速发现系统中存在的问题，及时采取应对措施。</p>
+<p>  系统架构图如下所示：</p>
+<p>  <img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<p><br></p>
+<h3 id="nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接"><a href="#nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接" class="headerlink" title="| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接"></a><font color="red"><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接<br></b></font></h3>]]></content>
+      
+        <categories>
+            
+            <category> Spring Cloud </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> springboot </tag>
+            
+            <tag> spring cloud </tag>
+            
+            <tag> hystrix </tag>
+            
+            <tag> turbine </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Hexo的next主题个性化教程:打造炫酷网站]]></title>
       <url>/2018/01/28/Hexo%E7%9A%84next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E6%95%99%E7%A8%8B-%E6%89%93%E9%80%A0%E7%82%AB%E9%85%B7%E7%BD%91%E7%AB%99/</url>
       <content type="html"><![CDATA[<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>看到有些next主题的网站很炫酷，那么是怎么配置的呢？接下来我会讲一讲如何实现一些炫酷的效果。</p>
@@ -1514,7 +1745,7 @@
 </ol>
 <h3 id="UML类图"><a href="#UML类图" class="headerlink" title="UML类图"></a>UML类图</h3><p>我们先来看看装饰者模式的类图，再来详细讲述：</p>
 <a id="more"></a>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8FUML%E7%B1%BB%E5%9B%BE.png?raw=true" alt=""></p>
 <p>由上自下：</p>
 <ol>
 <li><strong>Component</strong>是基类。通常是一个抽象类或者一个接口，定义了属性或者方法，方法的实现可以由子类实现或者自己实现。通常不会直接使用该类，而是通过继承该类来实现特定的功能，它约束了整个继承树的行为。比如说，如果Component代表人，即使通过装饰也不会使人变成别的动物。</li>
@@ -1536,7 +1767,7 @@
 <p>最后我们在测试类内测试我们的代码：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Shopping</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Person person = <span class="keyword">new</span> Teenager();</span><br><span class="line">        </span><br><span class="line">        person = <span class="keyword">new</span> Shirt(person);</span><br><span class="line">        person = <span class="keyword">new</span> Casquette(person);</span><br><span class="line">        </span><br><span class="line">        System.out.println(person.getDescription() + <span class="string">" ￥ "</span> +person.cost());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>先创建一个Teenager对象，接着用Shirt装饰它，就变成了穿着Shirt的Teenager，再用Casquette装饰，就变成了戴着Casquette的穿着Shirt的Teenager。运行结果如下所示：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Shopping List:a shirt  a casquette ¥175.0</span><br></pre></td></tr></table></figure></p>
 <p>我们梳理一下以上的逻辑，画出如下所示的韦恩图：</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E9%9F%A6%E6%81%A9%E5%9B%BE.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E8%A3%85%E9%A5%B0%E8%80%85%E6%A8%A1%E5%BC%8F%E9%9F%A6%E6%81%A9%E5%9B%BE.png?raw=true" alt=""></p>
 <p>Teenager、Shirt、Casquette都是继承自Person基类，但是具体实现不同，Teenager是Person的直接子类，表示了被装饰者；Teenager、Shirt是装饰者，保存了Person的引用，实现了cost()方法，并且在cost()方法内部，不但实现了自己的逻辑，同时也调用了Person引用的cost()方法，即获取了被装饰者的信息，这是装饰者的一个特点，保存引用的目的就是为了获取被装饰者的状态信息，以便将自身的特性加以组合。</p>
 <h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>以上就是装饰者模式的一个小栗子，讲述了装饰者的基本用法。通过上述的例子，我们可以总结一下装饰者模式的特点。</p>
 <ol>
@@ -1655,7 +1886,7 @@
 <p>这里使用到编程中的一个思想:不要随意去修改别人已经写好的代码或者方法,如果需改修改,可以通过代理的方式来扩展该方法。</p>
 <p>举个例子来说明代理的作用:假设我们想邀请一位明星,那么并不是直接连接明星,而是联系明星的经纪人,来达到同样的目的.明星就是一个目标对象,他只要负责活动中的节目,而其他琐碎的事情就交给他的代理人(经纪人)来解决.这就是代理思想在现实中的一个例子。</p>
 <p>用图表示如下:</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%9B%BE%E8%A7%A3.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%9B%BE%E8%A7%A3.png?raw=true" alt=""></p>
 <p>代理模式的关键点是:代理对象与目标对象。代理对象是对目标对象的扩展,并会调用目标对象。</p>
 <a id="more"></a>
 <h3 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h3><ul>
@@ -1856,33 +2087,33 @@
 <ul>
 <li><strong>饿汉式(静态常量)</strong></li>
 </ul>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E9%A5%BF%E6%B1%89%E9%9D%99%E6%80%81%E5%B8%B8%E9%87%8F%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E9%A5%BF%E6%B1%89%E9%9D%99%E6%80%81%E5%B8%B8%E9%87%8F%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
 <p>该方式不能实现懒加载、参数化、配置化，简单地说就是不够灵活。但却是一种简单可行的方式，在Java jdk中就有用到该方式实现单例，例如Runtime类。虽然jdk中没有使用final，但达到的效果是相同的，该方式还能用静态代码块实现。</p>
 <ul>
 <li><strong>饿汉式(静态代码块)</strong></li>
 </ul>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E9%A5%BF%E6%B1%89%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E9%A5%BF%E6%B1%89%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
 <p>该方式效果和优缺点同上。</p>
 <ul>
 <li><strong>懒汉式(线程同步)</strong></li>
 </ul>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E6%87%92%E6%B1%89%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E6%87%92%E6%B1%89%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
 <p>该方式达到了实现懒加载、可参数化、可配置化的要求，但是明显的缺点就是效率太低。</p>
 <ul>
 <li><strong>懒汉式（双重检查）</strong></li>
 </ul>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E6%87%92%E6%B1%89%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E6%87%92%E6%B1%89%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
 <p>该方式值得推荐使用，使用该方式需要对线程知识有一定的了解。使用volatile关键字使得单例对象具有可见性，通知多线程中的其他线程去主存中获取单例对象。但不能保证原子性，所以需要使用synchronized关键字保证原子性操作。</p>
 <p>除了饿汉式和懒汉式，下面笔者再提供两种值得推荐的方式。</p>
 <ul>
 <li><strong>静态内部类</strong></li>
 </ul>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
 <p>该方式类似于饿汉式和懒汉式的结合版，既避免了线程同步问题，又支持延迟加载，还提高了效率。类加载时没有进行单例对象的初始化，而是在获取实例对象时通过调用其静态内部类获取单例的静态常量对象来进行实现。</p>
 <ul>
 <li><strong>枚举式</strong></li>
 </ul>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/design-mode/%E6%9E%9A%E4%B8%BE%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E6%9E%9A%E4%B8%BE%E6%96%B9%E5%BC%8F.png?raw=true" alt=""></p>
 <p>该方式简单直接。不过目前使用的频率不高，可能是因为枚举是在JDK1.5之后的新特性的原因，大家还未习惯使用枚举吧。</p>
 <p>以上六种方式均为可行的实现单例模式的方式，可根据具体需求进行选择。</p>
 <h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ol>
@@ -1947,8 +2178,8 @@
 <li>HashEntry 用来封装映射表的键 / 值对；</li>
 <li>每个桶是由若干个 HashEntry 对象链接起来的链表。</li>
 </ol>
-<p>一个 ConcurrentHashMap 实例中包含由若干个 Segment 对象组成的数组，下面我们通过一个图来演示一下 ConcurrentHashMap 的结构：<br><img src="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png" alt=""></p>
-<h3 id="JDK1-8分析"><a href="#JDK1-8分析" class="headerlink" title="JDK1.8分析"></a>JDK1.8分析</h3><p>1.8的实现已经抛弃了Segment分段锁机制，利用CAS+Synchronized来保证并发更新的安全，底层依然采用数组+链表+红黑树的存储结构:<br><img src="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.8%20ConcurrentHashMap%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png" alt=""></p>
+<p>一个 ConcurrentHashMap 实例中包含由若干个 Segment 对象组成的数组，下面我们通过一个图来演示一下 ConcurrentHashMap 的结构：<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true" alt=""></p>
+<h3 id="JDK1-8分析"><a href="#JDK1-8分析" class="headerlink" title="JDK1.8分析"></a>JDK1.8分析</h3><p>1.8的实现已经抛弃了Segment分段锁机制，利用CAS+Synchronized来保证并发更新的安全，底层依然采用数组+链表+红黑树的存储结构:<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.8%20ConcurrentHashMap%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true" alt=""></p>
 <h3 id="重要概念"><a href="#重要概念" class="headerlink" title="重要概念"></a>重要概念</h3><p>在开始之前，有些重要的概念需要介绍一下：</p>
 <ol>
 <li><strong>table：</strong> 默认为null，初始化发生在第一次插入操作，默认大小为16的数组，用来存储Node节点数据，扩容时大小总是2的幂次方。</li>
@@ -2000,7 +2231,7 @@
       <url>/2018/01/07/Executor%E5%B9%B6%E5%8F%91%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
       <content type="html"><![CDATA[<h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>Eexecutor作为灵活且强大的异步执行框架，其支持多种不同类型的任务执行策略，提供了一种标准的方法将任务的提交过程和执行过程解耦开发，基于生产者-消费者模式，其提交任务的线程相当于生产者，执行任务的线程相当于消费者，并用Runnable来表示任务，Executor的实现还提供了对生命周期的支持，以及统计信息收集，应用程序管理机制和性能监视等机制。</p>
 <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ul>
-<li>Executor的UML图：（常用的几个接口和子类）<br><img src="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/Executor%E5%AE%B6%E8%B0%B1%E5%9B%BE.png" alt=""></li>
+<li>Executor的UML图：（常用的几个接口和子类）<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/Executor%E5%AE%B6%E8%B0%B1%E5%9B%BE.png?raw=true" alt=""></li>
 </ul>
 <ol>
 <li>Executor：一个接口，其定义了一个接收Runnable对象的方法executor，其方法签名为executor(Runnable command)</li>
@@ -2708,7 +2939,7 @@
 </li>
 </ul>
 <h3 id="Hystrix-仪表盘介绍"><a href="#Hystrix-仪表盘介绍" class="headerlink" title="Hystrix 仪表盘介绍"></a>Hystrix 仪表盘介绍</h3><p>主要用来实时监控Hystrix 的各项指标信息。通过Hystrix Dasboard反馈的实时信息，可以帮助我们快速发现系统中存在的问题，从而及时的采取应对措施。</p>
-<h3 id="Hystrix-Dashboard的架构介绍"><a href="#Hystrix-Dashboard的架构介绍" class="headerlink" title="Hystrix Dashboard的架构介绍"></a>Hystrix Dashboard的架构介绍</h3><p>本节中我们将在Hystrix入门例子的基础上，构建一个Hystrix Dashboard来对RIBBON-CONSUMER实时监控，完成后的架构如下图所示：<br><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="Hystrix-Dashboard的架构介绍"><a href="#Hystrix-Dashboard的架构介绍" class="headerlink" title="Hystrix Dashboard的架构介绍"></a>Hystrix Dashboard的架构介绍</h3><p>本节中我们将在Hystrix入门例子的基础上，构建一个Hystrix Dashboard来对RIBBON-CONSUMER实时监控，完成后的架构如下图所示：<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
 <h3 id="Hystrix-Dashboard的快速构建"><a href="#Hystrix-Dashboard的快速构建" class="headerlink" title="Hystrix Dashboard的快速构建"></a>Hystrix Dashboard的快速构建</h3><ul>
 <li>创建一个标准的Spring Boot工程，命名为hystrix-dashboard。</li>
 <li><p>编辑pom.xml，具体依赖内容如下所以：</p>
@@ -2724,7 +2955,7 @@
 </ul>
 <h3 id="Hystrix-Dashboard页面介绍"><a href="#Hystrix-Dashboard页面介绍" class="headerlink" title="Hystrix Dashboard页面介绍"></a>Hystrix Dashboard页面介绍</h3><ul>
 <li><p>监控首页</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/hystrix%E7%9B%91%E6%8E%A7%E9%A6%96%E9%A1%B5.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/hystrix%E7%9B%91%E6%8E%A7%E9%A6%96%E9%A1%B5.png?raw=true" alt=""></p>
 <ul>
 <li>Hystrix Dashboard 共支持三种不同的监控方式：</li>
 </ul>
@@ -2755,13 +2986,13 @@
 </ol>
 <ul>
 <li><p>其他一些数量指标如下图所示：</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/hystrix%E5%BA%A6%E9%87%8F%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/hystrix%E5%BA%A6%E9%87%8F%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E.png?raw=true" alt=""></p>
 </li>
 </ul>
 </li>
 </ul>
 <h3 id="Turbine集群监控介绍"><a href="#Turbine集群监控介绍" class="headerlink" title="Turbine集群监控介绍"></a>Turbine集群监控介绍</h3><p>Hystrix Dashboard通过监控端点/turbine.stream对集群进行监控。通过引入Turbine，来汇集集群服务的监控信息，并将聚合后的信息供给Hystrix Dashboard来集中展示和监控。</p>
-<h3 id="监控聚合服务架构图"><a href="#监控聚合服务架构图" class="headerlink" title="监控聚合服务架构图"></a>监控聚合服务架构图</h3><p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="监控聚合服务架构图"><a href="#监控聚合服务架构图" class="headerlink" title="监控聚合服务架构图"></a>监控聚合服务架构图</h3><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
 <h3 id="turbine工程的快速构建"><a href="#turbine工程的快速构建" class="headerlink" title="turbine工程的快速构建"></a>turbine工程的快速构建</h3><ul>
 <li>创建一个标准的Spring Boot工程，命名为turbine。</li>
 <li><p>编辑pom.xml</p>
@@ -2802,7 +3033,7 @@
 </li>
 </ul>
 <h3 id="与消息代理结合简介"><a href="#与消息代理结合简介" class="headerlink" title="与消息代理结合简介"></a>与消息代理结合简介</h3><p>Spring Cloud在封装Turbine的时候，还封装了基于消息代理的收集实现。所以，我们可以将所有需要收集的监控信息都输出到消息代理中，然后Turbine服务再从消息代理中异步获取这些监控信息，最后将这些监控信息聚合并输出到Hystrix Dashboard中。</p>
-<h3 id="Turbine与消息代理整合架构图"><a href="#Turbine与消息代理整合架构图" class="headerlink" title="Turbine与消息代理整合架构图"></a>Turbine与消息代理整合架构图</h3><p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Turbine%E4%B8%8E%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86%E7%BB%93%E5%90%88%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="Turbine与消息代理整合架构图"><a href="#Turbine与消息代理整合架构图" class="headerlink" title="Turbine与消息代理整合架构图"></a>Turbine与消息代理整合架构图</h3><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Turbine%E4%B8%8E%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86%E7%BB%93%E5%90%88%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
 <h3 id="创建基于消息代理的Turbine聚合服务"><a href="#创建基于消息代理的Turbine聚合服务" class="headerlink" title="创建基于消息代理的Turbine聚合服务"></a>创建基于消息代理的Turbine聚合服务</h3><ul>
 <li>创建一个标准的Spring Boot工程，命名为turbine-amqp。</li>
 <li><p>编辑pom.xml</p>
@@ -2953,28 +3184,41 @@
 <h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><p>图片与链接的语法很像，区别在一个 ! 号。二者格式：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">图片：![]()    ![图片文本(可忽略)](图片地址)</span><br><span class="line"></span><br><span class="line">链接：[]()     [链接文本](链接地址)</span><br></pre></td></tr></table></figure>
 <p>链接又分为行内式、参考式和自动链接：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这是行内式链接：[CrazyIT&apos;s Blog](http://dicheng52119.github.io)。</span><br><span class="line"></span><br><span class="line">这是参考式链接：[CrazyIT&apos;s Blog][url]，其中url为链接标记，可置于文中任意位置。</span><br><span class="line"></span><br><span class="line">[url]: http://dicheng52119.github.io/ &quot;CrazyIT&apos;s Blog&quot;</span><br><span class="line"></span><br><span class="line">链接标记格式为：[链接标记文本]:  链接地址  链接title(可忽略)</span><br><span class="line"></span><br><span class="line">这是自动链接：直接使用`&lt;&gt;`括起来&lt;http://dicheng52119.github.io&gt;</span><br><span class="line"></span><br><span class="line">这是图片：![][avatar]</span><br><span class="line"></span><br><span class="line">[avatar]: https://github.com/dicheng52119/dicheng52119.github.io/blob/master/assets/tree_small.png?raw=true</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">这是行内式链接：[CrazyIT&apos;s Blog](http://dicheng52119.github.io)。</span><br><span class="line"></span><br><span class="line">这是参考式链接：[CrazyIT&apos;s Blog][url]，其中url为链接标记，可置于文中任意位置。</span><br><span class="line"></span><br><span class="line">[url]: http://dicheng52119.github.io/ &quot;CrazyIT&apos;s Blog&quot;</span><br><span class="line"></span><br><span class="line">链接标记格式为：[链接标记文本]:  链接地址  链接title(可忽略)</span><br><span class="line"></span><br><span class="line">这是自动链接：直接使用`&lt;&gt;`括起来&lt;http://dicheng52119.github.io&gt;</span><br><span class="line"></span><br><span class="line">这是图片：![][avatar]</span><br><span class="line"></span><br><span class="line">[avatar]: https://github.com/dicheng52119/Picture-Repository/blob/master/life/tree_small.png?raw=true</span><br></pre></td></tr></table></figure>
 <p>效果如下：</p>
 <p>这是行内式链接：<a href="https://dicheng52119.github.io" target="_blank" rel="noopener">CrazyIT’s Blog</a>。</p>
 <p>这是参考式链接：<a href="https://dicheng52119.github.io/" title="CrazyIT&#39;s Blog" target="_blank" rel="noopener">CrazyIT’s Blog</a>，其中url为链接标记，可置于文中任意位置。</p>
 <p>链接标记格式为：[链接标记文本]:  链接地址  链接title(可忽略)</p>
 <p>这是自动链接：直接使用<code>&lt;&gt;</code>括起来<a href="https://dicheng52119.github.io" target="_blank" rel="noopener">https://dicheng52119.github.io</a></p>
-<p>这是图片：<img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/assets/tree_small.png?raw=true" alt=""></p>
+<p>这是图片：<img src="https://github.com/dicheng52119/Picture-Repository/blob/master/life/tree_small.png?raw=true" alt=""></p>
 <hr>
 <h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><p>代码分为行内代码和代码块。</p>
 <ul>
 <li><p>行内代码使用 `` 标识，可嵌入文字中</p>
 </li>
-<li><p>代码块使用4个空格或<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">\</span><br></pre></td></tr></table></figure></p>
+<li><p>代码块使用4个空格或```标识</p>
+<p>```</p>
 <p>这里是代码</p>
-<p>\<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">* 代码语法高亮在 ```后面加上空格和语言名称即可</span><br><span class="line"></span><br><span class="line">  \``` 语言</span><br><span class="line"></span><br><span class="line">  ``//注意语言前面有空格``</span><br><span class="line">  </span><br><span class="line">  这里是代码</span><br><span class="line"></span><br><span class="line">  \</span><br></pre></td></tr></table></figure></p>
+<p>```</p>
+</li>
+<li><p>代码语法高亮在 ```后面加上空格和语言名称即可</p>
+<p>``` 语言</p>
+<p><code>//注意语言前面有空格</code></p>
+<p>这里是代码</p>
+<p>```</p>
 </li>
 </ul>
 <p>例如：</p>
 <blockquote>
 <p>这是行内代码<code>onCreate(Bundle savedInstanceState)</code>的例子。</p>
 <p>这是代码块和语法高亮：</p>
-<p>\<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">&gt;</span><br><span class="line">&gt;<span class="comment">// 注意java前面有空格</span></span><br><span class="line">&gt;</span><br><span class="line">&gt;  </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line">&gt;</span><br><span class="line">&gt;\</span><br></pre></td></tr></table></figure></p>
+<p>``` java</p>
+<p>// 注意java前面有空格</p>
+<pre><code>protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+}
+</code></pre><p>```</p>
 </blockquote>
 <p>效果如下：</p>
 <p>这是行内代码onCreate(Bundle savedInstanceState)的例子。</p>

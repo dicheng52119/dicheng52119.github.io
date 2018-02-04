@@ -106,16 +106,16 @@
 <meta property="og:site_name" content="CrazyIT">
 <meta property="og:description" content="Hystrix介绍Spring Cloud Hystrix实现了断路器、线程隔离等一系列服务保护功能。它是基于Netflix的开源框架Hystrix实现的，该框架的目标在于通过控制那些访问远程系统、服务和第三方库的节点，从而对延迟和故障提供更强大的容错能力。Hystrix具备服务降级、服务熔断、线程和信号隔离、请求缓存、请求合并以及服务监控等强大功能。 准备工作 需要启动的工程： eureka-s">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/hystrix%E7%9B%91%E6%8E%A7%E9%A6%96%E9%A1%B5.png?raw=true">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/hystrix%E5%BA%A6%E9%87%8F%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E.png?raw=true">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
-<meta property="og:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Turbine%E4%B8%8E%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86%E7%BB%93%E5%90%88%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
-<meta property="og:updated_time" content="2018-01-07T12:29:22.440Z">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/hystrix%E7%9B%91%E6%8E%A7%E9%A6%96%E9%A1%B5.png?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/hystrix%E5%BA%A6%E9%87%8F%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E.png?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Turbine%E4%B8%8E%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86%E7%BB%93%E5%90%88%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
+<meta property="og:updated_time" content="2018-02-04T05:10:28.143Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spring Cloud之Hystrix学习笔记">
 <meta name="twitter:description" content="Hystrix介绍Spring Cloud Hystrix实现了断路器、线程隔离等一系列服务保护功能。它是基于Netflix的开源框架Hystrix实现的，该框架的目标在于通过控制那些访问远程系统、服务和第三方库的节点，从而对延迟和故障提供更强大的容错能力。Hystrix具备服务降级、服务熔断、线程和信号隔离、请求缓存、请求合并以及服务监控等强大功能。 准备工作 需要启动的工程： eureka-s">
-<meta name="twitter:image" content="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
+<meta name="twitter:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true">
 
 
 
@@ -470,7 +470,7 @@
 </li>
 </ul>
 <h3 id="Hystrix-仪表盘介绍"><a href="#Hystrix-仪表盘介绍" class="headerlink" title="Hystrix 仪表盘介绍"></a>Hystrix 仪表盘介绍</h3><p>主要用来实时监控Hystrix 的各项指标信息。通过Hystrix Dasboard反馈的实时信息，可以帮助我们快速发现系统中存在的问题，从而及时的采取应对措施。</p>
-<h3 id="Hystrix-Dashboard的架构介绍"><a href="#Hystrix-Dashboard的架构介绍" class="headerlink" title="Hystrix Dashboard的架构介绍"></a>Hystrix Dashboard的架构介绍</h3><p>本节中我们将在Hystrix入门例子的基础上，构建一个Hystrix Dashboard来对RIBBON-CONSUMER实时监控，完成后的架构如下图所示：<br><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="Hystrix-Dashboard的架构介绍"><a href="#Hystrix-Dashboard的架构介绍" class="headerlink" title="Hystrix Dashboard的架构介绍"></a>Hystrix Dashboard的架构介绍</h3><p>本节中我们将在Hystrix入门例子的基础上，构建一个Hystrix Dashboard来对RIBBON-CONSUMER实时监控，完成后的架构如下图所示：<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Hystrix%20Dashboard%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
 <h3 id="Hystrix-Dashboard的快速构建"><a href="#Hystrix-Dashboard的快速构建" class="headerlink" title="Hystrix Dashboard的快速构建"></a>Hystrix Dashboard的快速构建</h3><ul>
 <li>创建一个标准的Spring Boot工程，命名为hystrix-dashboard。</li>
 <li><p>编辑pom.xml，具体依赖内容如下所以：</p>
@@ -486,7 +486,7 @@
 </ul>
 <h3 id="Hystrix-Dashboard页面介绍"><a href="#Hystrix-Dashboard页面介绍" class="headerlink" title="Hystrix Dashboard页面介绍"></a>Hystrix Dashboard页面介绍</h3><ul>
 <li><p>监控首页</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/hystrix%E7%9B%91%E6%8E%A7%E9%A6%96%E9%A1%B5.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/hystrix%E7%9B%91%E6%8E%A7%E9%A6%96%E9%A1%B5.png?raw=true" alt=""></p>
 <ul>
 <li>Hystrix Dashboard 共支持三种不同的监控方式：</li>
 </ul>
@@ -517,13 +517,13 @@
 </ol>
 <ul>
 <li><p>其他一些数量指标如下图所示：</p>
-<p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/hystrix%E5%BA%A6%E9%87%8F%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E.png?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/hystrix%E5%BA%A6%E9%87%8F%E6%8C%87%E6%A0%87%E8%AF%B4%E6%98%8E.png?raw=true" alt=""></p>
 </li>
 </ul>
 </li>
 </ul>
 <h3 id="Turbine集群监控介绍"><a href="#Turbine集群监控介绍" class="headerlink" title="Turbine集群监控介绍"></a>Turbine集群监控介绍</h3><p>Hystrix Dashboard通过监控端点/turbine.stream对集群进行监控。通过引入Turbine，来汇集集群服务的监控信息，并将聚合后的信息供给Hystrix Dashboard来集中展示和监控。</p>
-<h3 id="监控聚合服务架构图"><a href="#监控聚合服务架构图" class="headerlink" title="监控聚合服务架构图"></a>监控聚合服务架构图</h3><p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="监控聚合服务架构图"><a href="#监控聚合服务架构图" class="headerlink" title="监控聚合服务架构图"></a>监控聚合服务架构图</h3><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/turbine%E8%81%9A%E5%90%88%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
 <h3 id="turbine工程的快速构建"><a href="#turbine工程的快速构建" class="headerlink" title="turbine工程的快速构建"></a>turbine工程的快速构建</h3><ul>
 <li>创建一个标准的Spring Boot工程，命名为turbine。</li>
 <li><p>编辑pom.xml</p>
@@ -564,7 +564,7 @@
 </li>
 </ul>
 <h3 id="与消息代理结合简介"><a href="#与消息代理结合简介" class="headerlink" title="与消息代理结合简介"></a>与消息代理结合简介</h3><p>Spring Cloud在封装Turbine的时候，还封装了基于消息代理的收集实现。所以，我们可以将所有需要收集的监控信息都输出到消息代理中，然后Turbine服务再从消息代理中异步获取这些监控信息，最后将这些监控信息聚合并输出到Hystrix Dashboard中。</p>
-<h3 id="Turbine与消息代理整合架构图"><a href="#Turbine与消息代理整合架构图" class="headerlink" title="Turbine与消息代理整合架构图"></a>Turbine与消息代理整合架构图</h3><p><img src="https://github.com/dicheng52119/dicheng52119.github.io/blob/master/images/spring-cloud/Turbine%E4%B8%8E%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86%E7%BB%93%E5%90%88%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="Turbine与消息代理整合架构图"><a href="#Turbine与消息代理整合架构图" class="headerlink" title="Turbine与消息代理整合架构图"></a>Turbine与消息代理整合架构图</h3><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/spring%20cloud/Turbine%E4%B8%8E%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86%E7%BB%93%E5%90%88%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true" alt=""></p>
 <h3 id="创建基于消息代理的Turbine聚合服务"><a href="#创建基于消息代理的Turbine聚合服务" class="headerlink" title="创建基于消息代理的Turbine聚合服务"></a>创建基于消息代理的Turbine聚合服务</h3><ul>
 <li>创建一个标准的Spring Boot工程，命名为turbine-amqp。</li>
 <li><p>编辑pom.xml</p>
@@ -749,7 +749,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -927,7 +927,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共65.9k字</span>
+  <span class="post-count">博客全站共69.4k字</span>
 </div>
 
         

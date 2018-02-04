@@ -106,13 +106,13 @@
 <meta property="og:site_name" content="CrazyIT">
 <meta property="og:description" content="前言HashMap是我们平时开发过程中用的比较多的集合，但它是非线程安全的，在涉及到多线程并发的情况，进行put操作有可能会引起死循环，导致CPU利用率接近100%。 final HashMap&amp;lt;String, String&amp;gt; map = new HashMap&amp;lt;String, String&amp;gt;(2);for (int i = 0; i &amp;lt; 10000; i++) &amp;#">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.8%20ConcurrentHashMap%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png">
-<meta property="og:updated_time" content="2018-01-07T12:26:52.793Z">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.8%20ConcurrentHashMap%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true">
+<meta property="og:updated_time" content="2018-02-04T05:40:18.730Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ConcurrentHashMap并发集合学习笔记">
 <meta name="twitter:description" content="前言HashMap是我们平时开发过程中用的比较多的集合，但它是非线程安全的，在涉及到多线程并发的情况，进行put操作有可能会引起死循环，导致CPU利用率接近100%。 final HashMap&amp;lt;String, String&amp;gt; map = new HashMap&amp;lt;String, String&amp;gt;(2);for (int i = 0; i &amp;lt; 10000; i++) &amp;#">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png">
+<meta name="twitter:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true">
 
 
 
@@ -453,8 +453,8 @@
 <li>HashEntry 用来封装映射表的键 / 值对；</li>
 <li>每个桶是由若干个 HashEntry 对象链接起来的链表。</li>
 </ol>
-<p>一个 ConcurrentHashMap 实例中包含由若干个 Segment 对象组成的数组，下面我们通过一个图来演示一下 ConcurrentHashMap 的结构：<br><img src="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png" alt=""></p>
-<h3 id="JDK1-8分析"><a href="#JDK1-8分析" class="headerlink" title="JDK1.8分析"></a>JDK1.8分析</h3><p>1.8的实现已经抛弃了Segment分段锁机制，利用CAS+Synchronized来保证并发更新的安全，底层依然采用数组+链表+红黑树的存储结构:<br><img src="https://raw.githubusercontent.com/dicheng52119/dicheng52119.github.io/master/images/thread/1.8%20ConcurrentHashMap%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png" alt=""></p>
+<p>一个 ConcurrentHashMap 实例中包含由若干个 Segment 对象组成的数组，下面我们通过一个图来演示一下 ConcurrentHashMap 的结构：<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.6%20ConcurrentHashMap%20%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true" alt=""></p>
+<h3 id="JDK1-8分析"><a href="#JDK1-8分析" class="headerlink" title="JDK1.8分析"></a>JDK1.8分析</h3><p>1.8的实现已经抛弃了Segment分段锁机制，利用CAS+Synchronized来保证并发更新的安全，底层依然采用数组+链表+红黑树的存储结构:<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/1.8%20ConcurrentHashMap%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84.png?raw=true" alt=""></p>
 <h3 id="重要概念"><a href="#重要概念" class="headerlink" title="重要概念"></a>重要概念</h3><p>在开始之前，有些重要的概念需要介绍一下：</p>
 <ol>
 <li><strong>table：</strong> 默认为null，初始化发生在第一次插入操作，默认大小为16的数组，用来存储Node节点数据，扩容时大小总是2的幂次方。</li>
@@ -617,7 +617,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -795,7 +795,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共65.9k字</span>
+  <span class="post-count">博客全站共69.4k字</span>
 </div>
 
         
