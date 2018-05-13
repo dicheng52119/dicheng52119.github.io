@@ -1984,13 +1984,13 @@
             
             <tag> technology </tag>
             
+            <tag> design pattern </tag>
+            
             <tag> Proxy </tag>
             
             <tag> JDK Proxy </tag>
             
             <tag> Cglib Proxy </tag>
-            
-            <tag> design pattern </tag>
             
         </tags>
         
@@ -2155,9 +2155,9 @@
             
             <tag> technology </tag>
             
-            <tag> design pattern </tag>
-            
             <tag> 单例 </tag>
+            
+            <tag> design pattern </tag>
             
         </tags>
         
@@ -2218,9 +2218,9 @@
         
         <tags>
             
-            <tag> ConcurrentHashMap </tag>
-            
             <tag> technology </tag>
+            
+            <tag> ConcurrentHashMap </tag>
             
         </tags>
         
@@ -2450,9 +2450,9 @@
         
         <tags>
             
-            <tag> technology </tag>
-            
             <tag> CountDownLatch </tag>
+            
+            <tag> technology </tag>
             
         </tags>
         
@@ -3700,25 +3700,25 @@
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -a</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>创建一个新的分支</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b 分支名称</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>切换分支</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout 分支名称</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>合并分支</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git merge origin <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git merge origin 分支名称</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>删除本地分支</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d/-D <span class="string">"分支名称"</span> (大D为强制删除)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d/-D 分支名称 (大D为强制删除)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>删除远程分支</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d/-D origin:<span class="string">"分支名称"</span> (大D为强制删除)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d/-D origin:分支名称 (大D为强制删除)</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>查看提交记录</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>回退到历史版本</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git reset --hard <span class="string">"某一版本号"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git reset --hard 某一版本号</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>使用https方式提交本地代码，避免重复登录用户名与密码</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
