@@ -1984,13 +1984,13 @@
             
             <tag> technology </tag>
             
+            <tag> design pattern </tag>
+            
             <tag> Proxy </tag>
             
             <tag> JDK Proxy </tag>
             
             <tag> Cglib Proxy </tag>
-            
-            <tag> design pattern </tag>
             
         </tags>
         
@@ -2155,9 +2155,9 @@
             
             <tag> technology </tag>
             
-            <tag> design pattern </tag>
-            
             <tag> 单例 </tag>
+            
+            <tag> design pattern </tag>
             
         </tags>
         
@@ -3689,7 +3689,7 @@
 </ul>
 <a id="more"></a>
 <p><br></p>
-<h3 id="其他常用的命令总结"><a href="#其他常用的命令总结" class="headerlink" title="其他常用的命令总结"></a>其他常用的命令总结</h3><ul>
+<h3 id="常用的命令总结"><a href="#常用的命令总结" class="headerlink" title="常用的命令总结"></a>常用的命令总结</h3><ul>
 <li><p>查看本地代码的状态信息</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git status</span><br></pre></td></tr></table></figure>
 </li>
@@ -3708,6 +3708,12 @@
 <li><p>合并分支</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git merge origin <span class="string">"分支名称"</span></span><br></pre></td></tr></table></figure>
 </li>
+<li><p>删除本地分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d/-D <span class="string">"分支名称"</span> (大D为强制删除)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除远程分支</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -d/-D origin:<span class="string">"分支名称"</span> (大D为强制删除)</span><br></pre></td></tr></table></figure>
+</li>
 <li><p>查看提交记录</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 </li>
@@ -3716,6 +3722,61 @@
 </li>
 <li><p>使用https方式提交本地代码，避免重复登录用户名与密码</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global credential.helper store</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>git服务器上的项目和本地的项目有完全不相同的提交历史，可以通过加入这个可选项进行强行的合并</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull origin master --allow-unrelated-histories</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="标签的使用"><a href="#标签的使用" class="headerlink" title="标签的使用"></a>标签的使用</h3><ul>
+<li><p>列出已有的标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>过滤查询指定标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -l <span class="string">'v1.0.*'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新建标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -a v1.0.0 -m <span class="string">'my version 1.0.0'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看相应标签的版本信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git show v1.0.0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分享标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push origin v1.0.0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>推送所有本地新增的标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push origin --tags</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换到标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout v1.0.0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除本地标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -d/-D v1.0.0 (大D为强制删除)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除远程标签</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -d/-D origin:v1.0.0 (大D为强制删除)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打标签不必要在head之上，也可在之前的版本上打，这需要你知道某个提交对象的校验和（通过git log获取）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -a v1.0.0 9fbc3d0</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="远程仓库的使用"><a href="#远程仓库的使用" class="headerlink" title="远程仓库的使用"></a>远程仓库的使用</h3><ul>
+<li><p>查看远程仓库的信息，会列出当前项目对应的所有远程版本仓库的信息，含仓库名和仓库地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote -v</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>单纯的列出所有远程仓库的名字，不展示远程仓库的地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加远程仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote add [shortname] [url]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看远程仓库信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote show [shortname]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重命名远程仓库</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote rename [old-name] [new-name]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除远程仓库（解除与远程仓库的关系）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote rm [shortname]</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <p><br></p>
