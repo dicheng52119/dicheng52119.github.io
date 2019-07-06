@@ -1984,13 +1984,13 @@
             
             <tag> technology </tag>
             
-            <tag> design pattern </tag>
-            
             <tag> Proxy </tag>
             
             <tag> JDK Proxy </tag>
             
             <tag> Cglib Proxy </tag>
+            
+            <tag> design pattern </tag>
             
         </tags>
         
@@ -2155,9 +2155,9 @@
             
             <tag> technology </tag>
             
-            <tag> 单例 </tag>
-            
             <tag> design pattern </tag>
+            
+            <tag> 单例 </tag>
             
         </tags>
         
@@ -2218,9 +2218,9 @@
         
         <tags>
             
-            <tag> technology </tag>
-            
             <tag> ConcurrentHashMap </tag>
+            
+            <tag> technology </tag>
             
         </tags>
         
@@ -2450,9 +2450,9 @@
         
         <tags>
             
-            <tag> CountDownLatch </tag>
-            
             <tag> technology </tag>
+            
+            <tag> CountDownLatch </tag>
             
         </tags>
         

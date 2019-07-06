@@ -486,13 +486,13 @@
     
       <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
     
-      <category term="design pattern" scheme="http://yoursite.com/tags/design-pattern/"/>
-    
       <category term="Proxy" scheme="http://yoursite.com/tags/Proxy/"/>
     
       <category term="JDK Proxy" scheme="http://yoursite.com/tags/JDK-Proxy/"/>
     
       <category term="Cglib Proxy" scheme="http://yoursite.com/tags/Cglib-Proxy/"/>
+    
+      <category term="design pattern" scheme="http://yoursite.com/tags/design-pattern/"/>
     
   </entry>
   
@@ -563,9 +563,9 @@
     
       <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
     
-      <category term="单例" scheme="http://yoursite.com/tags/%E5%8D%95%E4%BE%8B/"/>
-    
       <category term="design pattern" scheme="http://yoursite.com/tags/design-pattern/"/>
+    
+      <category term="单例" scheme="http://yoursite.com/tags/%E5%8D%95%E4%BE%8B/"/>
     
   </entry>
   
@@ -590,9 +590,9 @@
       <category term="Thread" scheme="http://yoursite.com/categories/Thread/"/>
     
     
-      <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
-    
       <category term="ConcurrentHashMap" scheme="http://yoursite.com/tags/ConcurrentHashMap/"/>
+    
+      <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
     
   </entry>
   
