@@ -2218,9 +2218,9 @@
         
         <tags>
             
-            <tag> ConcurrentHashMap </tag>
-            
             <tag> technology </tag>
+            
+            <tag> ConcurrentHashMap </tag>
             
         </tags>
         
@@ -2450,9 +2450,9 @@
         
         <tags>
             
-            <tag> technology </tag>
-            
             <tag> CountDownLatch </tag>
+            
+            <tag> technology </tag>
             
         </tags>
         

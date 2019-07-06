@@ -590,9 +590,9 @@
       <category term="Thread" scheme="http://yoursite.com/categories/Thread/"/>
     
     
-      <category term="ConcurrentHashMap" scheme="http://yoursite.com/tags/ConcurrentHashMap/"/>
-    
       <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
+    
+      <category term="ConcurrentHashMap" scheme="http://yoursite.com/tags/ConcurrentHashMap/"/>
     
   </entry>
   
