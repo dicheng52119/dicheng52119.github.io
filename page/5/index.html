@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/CountDownLatch学习笔记/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/装饰者模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -336,7 +336,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/CountDownLatch学习笔记/" itemprop="url">CountDownLatch学习笔记</a></h1>
+                <a class="post-title-link" href="/2018/01/07/装饰者模式/" itemprop="url">装饰者模式</a></h1>
         
 
         <div class="post-meta">
@@ -348,7 +348,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:50:08+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T21:07:18+08:00">
                 2018-01-07
               </time>
             
@@ -371,8 +371,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Thread/" itemprop="url" rel="index">
-                    <span itemprop="name">Thread</span>
+                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
+                    <span itemprop="name">Design Pattern</span>
                   </a>
                 </span>
 
@@ -402,7 +402,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  626
+                  2,039
                 </span>
               
 
@@ -418,7 +418,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  8
                 </span>
               
             </div>
@@ -440,15 +440,16 @@
 
       
         
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>CountDownLatch是一个同步的辅助类，它可以允许一个或多个线程等待，直到一组在其它线程中的操作执行完成。</p>
-<p>一个CountDownLatch会通过一个给定的count数来被初始化。其中await()方法会一直阻塞，直到当前的count被减到0，而这个过程是通过调用countDown()方法来实现的。在await()方法不再阻塞以后，所有等待的线程都会被释放，并且任何await()的子调用都会立刻返回。这是一次性的－－count不能被重置。如果你需要一种能重置count的版本，请考虑使用CyclicBarrier。</p>
-<p>CountDownlatch是一个多功能的同步工具，可以被用于各种目的。一个CountDownLatch通过一个值为1的count被初始化，来作为一个开/关的门或门闩：所有调用了await()的线程都会在门前等待，直到门被一个线程通过调用countDown()打开。一个被初始化为N的CountDownLatch可以被用来“在N个线程都完成了某种操作（或者一些操作已经被完成了N次）之后创建一个线程”。</p>
-<p>CountDownLatch一个有用的属性就是它不需要线程们在继续执行之前，调用countDown来等待count被减到0。它简单地阻止了任何调用了await()的线程继续，直到所有的线程都能够通过。</p>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>下面请看一个应用场景：<br>有1个driver和5个worker，需要满足以下两点要求：</p>
-<p>当driver完成了全部的工作之后才允许worker们开始工作；<br>当所有的worker都完成了自己的工作之后，driver主线程才能结束。</p>
+          <h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>装饰者模式：在不改变原类文件以及不使用继承的情况下，动态地将责任附加到对象上，从而实现动态拓展一个对象的功能。它是通过创建一个包装对象，也就是装饰来包裹真实的对象。</p>
+<h3 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h3><p>要使用装饰者模式，需要满足以下设计原则：</p>
+<ol>
+<li>多用组合，少用继承</li>
+<li>开放-关闭原则：类应该对拓展开放，对修改关闭</li>
+</ol>
+<h3 id="UML类图"><a href="#UML类图" class="headerlink" title="UML类图"></a>UML类图</h3><p>我们先来看看装饰者模式的类图，再来详细讲述：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/CountDownLatch学习笔记/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/装饰者模式/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -501,7 +502,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/volatile关键字学习笔记/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/适配器模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -520,7 +521,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/volatile关键字学习笔记/" itemprop="url">volatile关键字学习笔记</a></h1>
+                <a class="post-title-link" href="/2018/01/07/适配器模式/" itemprop="url">适配器模式</a></h1>
         
 
         <div class="post-meta">
@@ -532,7 +533,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:22:12+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T21:02:49+08:00">
                 2018-01-07
               </time>
             
@@ -555,8 +556,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Thread/" itemprop="url" rel="index">
-                    <span itemprop="name">Thread</span>
+                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
+                    <span itemprop="name">Design Pattern</span>
                   </a>
                 </span>
 
@@ -586,7 +587,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  3,730
+                  1,628
                 </span>
               
 
@@ -602,7 +603,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  14
+                  6
                 </span>
               
             </div>
@@ -624,26 +625,15 @@
 
       
         
-          <h3 id="并发编程中的三个概念"><a href="#并发编程中的三个概念" class="headerlink" title="并发编程中的三个概念"></a>并发编程中的三个概念</h3><ul>
-<li><p><strong>原子性</strong> </p>
-<p>  原子性：即一个操作或者多个操作 要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。</p>
-</li>
-<li><p><strong>可见性</strong></p>
-<p>  可见性是指当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值。</p>
-</li>
-<li><p><strong>有序性</strong></p>
-<p>  有序性：即程序执行的顺序按照代码的先后顺序执行。</p>
-</li>
-</ul>
-<h3 id="深入剖析volatile关键字"><a href="#深入剖析volatile关键字" class="headerlink" title="深入剖析volatile关键字"></a>深入剖析volatile关键字</h3><ul>
-<li><p><strong>volatile关键字的两层语义</strong></p>
-<p>  一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile修饰之后，那么就具备了两层语义：</p>
-<p>  1）保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。</p>
-<p>  2）禁止进行指令重排序。</p>
-<p>  先看一段代码，假如线程1先执行，线程2后执行：</p>
+          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>适配器就是一种适配中间件，它存在于不匹配的二者之间，用于连接二者，将不匹配变得匹配，简单点理解就是平常所见的转接头，转换器之类的存在。</p>
+<p>适配器模式有三种：类适配器、对象适配器、接口适配器</p>
+<p>前二者在实现上有些许区别，作用一样，第三个接口适配器差别较大。</p>
+<h3 id="类适配器模式"><a href="#类适配器模式" class="headerlink" title="类适配器模式"></a>类适配器模式</h3><p>原理：通过继承来实现适配器功能。</p>
+<p>当我们要访问的接口A中没有我们想要的方法，却在另一个接口B中发现了合适的方法，我们又不能改变访问接口A，在这种情况下，我们可以定义一个适配器p来进行中转，这个适配器p要实现我们访问的接口A，这样我们就能继续访问当前接口A中的方法（虽然它目前不是我们的菜），然后再继承接口B的实现类BB，这样我们可以在适配器P中访问接口B的方法了，这时我们在适配器P中的接口A方法中直接引用BB中的合适方法，这样就完成了一个简单的类适配器。</p>
+<p>详见下方实例：我们以ps2与usb的转接为例</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/volatile关键字学习笔记/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/适配器模式/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -696,7 +686,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/多条件condition学习笔记/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/代理模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -715,7 +705,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/多条件condition学习笔记/" itemprop="url">多条件condition学习笔记(生产者消费者模式实例)</a></h1>
+                <a class="post-title-link" href="/2018/01/07/代理模式/" itemprop="url">代理模式</a></h1>
         
 
         <div class="post-meta">
@@ -727,7 +717,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:16:03+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:41:53+08:00">
                 2018-01-07
               </time>
             
@@ -750,8 +740,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Thread/" itemprop="url" rel="index">
-                    <span itemprop="name">Thread</span>
+                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
+                    <span itemprop="name">Design Pattern</span>
                   </a>
                 </span>
 
@@ -781,7 +771,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,026
+                  2,117
                 </span>
               
 
@@ -797,7 +787,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  8
                 </span>
               
             </div>
@@ -819,13 +809,15 @@
 
       
         
-          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Java 并发包下的提供Lock，Lock相对于Synchronized可以更好的解决线程同步问题，更加的灵活和高效，并且ReadWriteLock锁还能实现读、写的分离。但线程间仅仅互斥是不够的，还需要通信，本篇的内容是基于上篇之上，使用Lock如何处理线程通信。阻塞队列(BlockingQueue)就是使用condition的和lock实现的。</p>
-<h3 id="Condition介绍"><a href="#Condition介绍" class="headerlink" title="Condition介绍"></a>Condition介绍</h3><p>那么引入本篇的主角，Condition，Condition 将 Object的通信方法（wait、notify 和 notifyAll）分解成截然不同的对象，以便通过将这些对象与任意 Lock 实现组合使用，为每个对象提供多个等待 set （wait-set）。其中，Lock 替代了 synchronized 方法和语句的使用，Condition 替代了 Object 通信方法的使用。</p>
-<p>在Condition中，用await()替换wait()，用signal()替换notify()，用signalAll()替换notifyAll()，传统线程的通信方式，Condition都可以实现，这里注意，Condition是被绑定到Lock上的，要创建一个Lock的Condition必须用newCondition()方法。</p>
-<p>Condition的强大之处在于它可以为多个线程间建立不同的Condition， 使用synchronized/wait()只有一个阻塞队列，notifyAll会唤起所有阻塞队列下的线程，而使用lock/condition，可以实现多个阻塞队列，signalAll只会唤起某个阻塞队列下的阻塞线程。</p>
+          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>代理(Proxy)是一种设计模式,提供了对目标对象另外的访问方式;即通过代理对象访问目标对象.这样做的好处是:可以在目标对象实现的基础上,增强额外的功能操作,即扩展目标对象的功能。</p>
+<p>这里使用到编程中的一个思想:不要随意去修改别人已经写好的代码或者方法,如果需改修改,可以通过代理的方式来扩展该方法。</p>
+<p>举个例子来说明代理的作用:假设我们想邀请一位明星,那么并不是直接连接明星,而是联系明星的经纪人,来达到同样的目的.明星就是一个目标对象,他只要负责活动中的节目,而其他琐碎的事情就交给他的代理人(经纪人)来解决.这就是代理思想在现实中的一个例子。</p>
+<p>用图表示如下:</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%9B%BE%E8%A7%A3.png?raw=true" alt=""></p>
+<p>代理模式的关键点是:代理对象与目标对象。代理对象是对目标对象的扩展,并会调用目标对象。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/多条件condition学习笔记/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/代理模式/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -878,7 +870,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/阻塞队列BlockingQueue学习笔记/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/工厂设计模式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -897,7 +889,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/阻塞队列BlockingQueue学习笔记/" itemprop="url">阻塞队列BlockingQueue学习笔记</a></h1>
+                <a class="post-title-link" href="/2018/01/07/工厂设计模式/" itemprop="url">工厂设计模式</a></h1>
         
 
         <div class="post-meta">
@@ -909,7 +901,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:08:04+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:37:33+08:00">
                 2018-01-07
               </time>
             
@@ -932,8 +924,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Thread/" itemprop="url" rel="index">
-                    <span itemprop="name">Thread</span>
+                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
+                    <span itemprop="name">Design Pattern</span>
                   </a>
                 </span>
 
@@ -963,7 +955,195 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,709
+                  2,164
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>主要用来实例化有共同接口的类，工厂模式可以动态决定应该实例化那一个类。</p>
+<h3 id="工厂模式的形态"><a href="#工厂模式的形态" class="headerlink" title="工厂模式的形态"></a>工厂模式的形态</h3><ol>
+<li>简单工厂（Simple Factory）。又称为静态工厂方法(Static Factory Method)模式</li>
+<li>工厂方法（Factory Method）。</li>
+<li>抽象工厂（Abstract Factory）。</li>
+</ol>
+<h3 id="简单工厂-（Simple-Factory）"><a href="#简单工厂-（Simple-Factory）" class="headerlink" title="简单工厂 （Simple Factory）"></a>简单工厂 （Simple Factory）</h3><p>又叫静态工厂，是工厂模式三中状态中结构最为简单的。主要有一个静态方法，用来接受参数，并根据参数来决定返回实现同一接口的不同类的实例。我们来看一个具体的例子：</p>
+<p>假设一家工厂，有生产洗衣机，有生产冰箱，还有空调等等..</p>
+<p>我们先为所有产品定义一个共同的产品接口<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着我们让这个工厂的所有产品都必须实现此接口</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/07/工厂设计模式/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/单例设计模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/07/单例设计模式/" itemprop="url">单例设计模式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:31:50+08:00">
+                2018-01-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
+                    <span itemprop="name">Design Pattern</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,999
                 </span>
               
 
@@ -1001,237 +1181,18 @@
 
       
         
-          <h3 id="阻塞队列-BlockingQueue-介绍"><a href="#阻塞队列-BlockingQueue-介绍" class="headerlink" title="阻塞队列 (BlockingQueue)介绍"></a>阻塞队列 (BlockingQueue)介绍</h3><p>阻塞队列 (BlockingQueue)是Java util.concurrent包下重要的数据结构，BlockingQueue提供了线程安全的队列访问方式：当阻塞队列进行插入数据时，如果队列已满，线程将会阻塞等待直到队列非满；从阻塞队列取数据时，如果队列已空，线程将会阻塞等待直到队列非空。并发包下很多高级同步类的实现都是基于BlockingQueue实现的。</p>
-<h3 id="BlockingQueue-的操作方法"><a href="#BlockingQueue-的操作方法" class="headerlink" title="BlockingQueue 的操作方法"></a>BlockingQueue 的操作方法</h3><p>BlockingQueue 具有 4 组不同的方法用于插入、移除以及对队列中的元素进行检查。如果请求的操作不能得到立即执行的话，每个方法的表现也不同。这些方法如下： </p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>抛异常</th>
-<th>特定值</th>
-<th>阻塞</th>
-<th>超时</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>插入</td>
-<td>add(o)</td>
-<td>offer(o)</td>
-<td>put(o)</td>
-<td>offer(o,timeout,timeunit)</td>
-</tr>
-<tr>
-<td>移除</td>
-<td>remove(o)</td>
-<td>poll(o)</td>
-<td>take(o)</td>
-<td>poll(timeout,timeunit)</td>
-</tr>
-<tr>
-<td>检查</td>
-<td>element(o)</td>
-<td>peek(o)</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>四组不同的行为方式解释：</p>
-<ul>
-<li>抛异常：如果试图的操作无法立即执行，抛一个异常。</li>
-<li>特定值：如果试图的操作无法立即执行，返回一个特定的值(常常是 true / false)。</li>
-<li>阻塞：如果试图的操作无法立即执行，该方法调用将会发生阻塞，直到能够执行。</li>
-<li>超时：如果试图的操作无法立即执行，该方法调用将会发生阻塞，直到能够执行，但等待时间不会超过给定值。返回一个特定值以告知该操作是否成功(典型的是true / false)。</li>
-</ul>
-<p>无法向一个 BlockingQueue 中插入 null。如果你试图插入 null，BlockingQueue 将会抛出一个 NullPointerException。</p>
+          <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>java中单例模式是一种常见的设计模式，单例模式的写法有好几种，这里主要介绍三种：懒汉式单例、饿汉式单例、登记式单例。</p>
+<p>单例模式有以下特点：</p>
+<ol>
+<li>单例类只能有一个实例。</li>
+<li>单例类必须自己创建自己的唯一实例。</li>
+<li>单例类必须给所有其他对象提供这一实例。</li>
+</ol>
+<p>单例模式确保某个类只有一个实例，而且自行实例化并向整个系统提供这个实例。在计算机系统中，线程池、缓存、日志对象、对话框、打印机、显卡的驱动程序对象常被设计成单例。这些应用都或多或少具有资源管理器的功能。每台计算机可以有若干个打印机，但只能有一个Printer Spooler，以避免两个打印作业同时输出到打印机中。每台计算机可以有若干通信端口，系统应当集中管理这些通信端口，以避免一个通信端口同时被两个请求同时调用。总之，选择单例模式就是为了避免不一致状态，避免政出多头。</p>
+<h3 id="单例模式的实现方式-列出6种可行的实现"><a href="#单例模式的实现方式-列出6种可行的实现" class="headerlink" title="单例模式的实现方式(列出6种可行的实现)"></a>单例模式的实现方式(列出6种可行的实现)</h3><p>饿汉式和懒汉式是以往最经典和常用的方式。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/阻塞队列BlockingQueue学习笔记/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/Lock学习笔记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mr.CrazyDC">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyIT">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/07/Lock学习笔记/" itemprop="url">Lock学习笔记</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T18:32:11+08:00">
-                2018-01-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Thread/" itemprop="url" rel="index">
-                    <span itemprop="name">Thread</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  4,325
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  17
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="API说明"><a href="#API说明" class="headerlink" title="API说明"></a>API说明</h2><ul>
-<li><h3 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a>Lock</h3><p>  Lock是一个接口</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Condition <span class="title">newCondition</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><h3 id="Lock接口中方法的说明与使用"><a href="#Lock接口中方法的说明与使用" class="headerlink" title="Lock接口中方法的说明与使用"></a>Lock接口中方法的说明与使用</h3><p>  lock()方法是平常使用得最多的一个方法，就是用来获取锁。如果锁已被其他线程获取，则进行等待。</p>
-<p>  如果采用Lock，必须主动去释放锁，并且在发生异常时，不会自动释放锁。因此一般来说，使用Lock必须在try{}catch{}块中进行，并且将释放锁的操作放在finally块中进行，以保证锁一定被被释放，防止死锁的发生。通常使用Lock来进行同步的话，是以下面这种形式去使用的：</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/Lock学习笔记/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/单例设计模式/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1275,7 +1236,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1325,7 +1286,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1336,7 +1297,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1347,7 +1308,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1487,7 +1448,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共69.8k字</span>
+  <span class="post-count">博客全站共90.8k字</span>
 </div>
 
         

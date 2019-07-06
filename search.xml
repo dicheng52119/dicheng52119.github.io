@@ -3,6 +3,855 @@
   
     
     <entry>
+      <title><![CDATA[Redis主从，哨兵，以及redis cluster解析]]></title>
+      <url>/2019/07/06/Redis%E4%B8%BB%E4%BB%8E%EF%BC%8C%E5%93%A8%E5%85%B5%EF%BC%8C%E4%BB%A5%E5%8F%8Aredis%20cluster%E8%A7%A3%E6%9E%90/</url>
+      <content type="html"><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>高性能就是做分片（可以类比为分库分表，将数据分到不同服务器上），在Kafka中叫分区，在mongodb中叫shard，在HDFS上叫DataNode。而保证高可用的方式就是做交叉备份。然后我很好奇Redis是怎么部署的。一个Redis实例其实有很多问题，最起码Redis崩了就没法提供服务了，而且单机能够承载的QPS在上万到几万不等。</p>
+<h3 id="replication（复制）"><a href="#replication（复制）" class="headerlink" title="replication（复制）"></a>replication（复制）</h3><p>如果业务要承载的QPS在几十万，单机是不可能做到的，此时就可以用到复制。做一个主从架构，一主多从，master节点负责写，slave节点负责读，假如说一个节点可以承载的5w读QPS，那么两个节点就可以承载10w的读QPS，水平扩容非常方便。</p>
+<a id="more"></a>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%E4%B8%BB%E4%BB%8E%E7%BB%93%E6%9E%84%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>master节点挂太多slave节点会有性能问题，此时就可以在slave节点上挂slave节点</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B9.jpg?raw=true" alt=""></p>
+<h3 id="redis-replication的核心机制"><a href="#redis-replication的核心机制" class="headerlink" title="redis replication的核心机制"></a>redis replication的核心机制</h3><ol>
+<li>redis采用异步方式复制数据到slave node，不会block master node的正常工作</li>
+<li>一个master node可以配置多个slave node，slave node也可以连接其他的slave node</li>
+<li>slave node主要用来进行横向扩容，做读写分离，扩容的slave node可以提高读的吞吐量</li>
+</ol>
+<h3 id="主从复制的实现原理"><a href="#主从复制的实现原理" class="headerlink" title="主从复制的实现原理"></a>主从复制的实现原理</h3><ol>
+<li>slave连接master，发送SYNC命令；</li>
+<li>master接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令；</li>
+<li>master BGSAVE执行完后，向slave发送快照文件，并在发送期间继续记录被执行的写命令；</li>
+<li>slave收到快照文件后丢弃所有旧数据，载入收到的快照；</li>
+<li>master快照发送完毕后开始向salve发送缓冲区中的写命令；</li>
+<li>slave完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令；</li>
+</ol>
+<h3 id="sentine（哨兵）"><a href="#sentine（哨兵）" class="headerlink" title="sentine（哨兵）"></a>sentine（哨兵）</h3><p>主从架构有一个缺点就是如果master节点挂了，那么写服务是不可用的，因为slave节点默认是只读的，这时就重启master节点或者重新配置主从，有没有更好的方案呢？类似zookeeper的组件，能自动完成主从切换。在Redis中还真有，就是sentinel节点，当master节点发生故障能自动完成主从切换。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/reids%20sentinel%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6.jpg?raw=true" alt=""></p>
+<p>当master节点挂掉时，sentinel将一个slave节点变成master节点，当原先的master节点可用时，以slave的角色加入集群。</p>
+<p>一个高可用的系统是很忌讳有单点问题的。看到没，sentinel就是一个单点，如果sentinel挂了，主从切换也就没人做了。所以应该将sentinel也做成一个集群。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/reids%20sentinel%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4.jpg?raw=true" alt=""></p>
+<h3 id="哨兵的作用"><a href="#哨兵的作用" class="headerlink" title="哨兵的作用"></a>哨兵的作用</h3><ol>
+<li>集群监控，负责监控redis master和slave进程是否正常工作</li>
+<li>消息通知，如果某个redis实例有故障，那么哨兵负责发送消息作为报警通知给管理员</li>
+<li>故障转移，如果master node挂掉了，会自动转移到slave node上</li>
+<li>配置中心，客户端初始化时，通过哨兵获得master地址，如果故障转移发生了，通知客户端新的master地址</li>
+</ol>
+<h3 id="redis-cluster（集群）"><a href="#redis-cluster（集群）" class="headerlink" title="redis cluster（集群）"></a>redis cluster（集群）</h3><p>主从+哨兵，只能保证Redis的高可用，并不能保证Redis的高性能，因为一个master节点并不能放海量数据，而且单个Redis的实例过大时，会导致rdb文件过大，当执行主从同步时时间过长。</p>
+<p>如果想做到高性能该怎么办？分片啊，我一开始就提到了，都是一个套路。redis搞几个节点，每个节点存储一部分数据。可想而之，此时查询和插入都得按照一定的分片策略，总不能查询一个数据把所有的redis节点遍历一遍吧。而这种操作不应该放在客户端，中间件兴起了，常见的有codis，twemproxy。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%20codis%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.jpg?raw=true" alt=""></p>
+<p>客户端不连接具体的Redis，而是连接Codis，2个Codis节点保证高可用，和Mycat一个套路。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Redis </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> replication </tag>
+            
+            <tag> cluster </tag>
+            
+            <tag> sentine </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[MySQL binlog 主从同步解析]]></title>
+      <url>/2019/07/06/MySQL%20binlog%20%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E8%A7%A3%E6%9E%90/</url>
+      <content type="html"><![CDATA[<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/mysql/mysqlbinlog%E4%BB%8B%E7%BB%8D%E5%9B%BE.jpg?raw=true" alt=""></p>
+<a id="more"></a>
+<h3 id="binlog-的基础知识"><a href="#binlog-的基础知识" class="headerlink" title="binlog 的基础知识"></a>binlog 的基础知识</h3><hr>
+<ul>
+<li><p><strong>binlog 的概念</strong><br>Server 层的日志系统（归档日志），binlog 中跟踪对其数据库的所有更改操作。是逻辑日志，以追加日志的形式记录。</p>
+</li>
+<li><p><strong>binLog 的三种格式</strong></p>
+<ol>
+<li>statement<br>记录 SQL 语句的原文。风险点：如果主/从用到的索引不同，操作语句带 limit 时，处理的可能是不同行的记录数据。</li>
+<li>row<br>仅记录某条记录的数据修改细节，不关系上下文。缺点：占用空间，同时写 binlog 很耗费 I/O 资源，影响执行速度。</li>
+<li>mixed<br>一般语句使用 statement 格式保存，如果使用了一些函数，statement 格式无法完成主从复制的操作，采用 row 格式。MySQL 自己会判断这条 SQL 语句是否可能引起主备不一致，如果有可能就用 row 格式，否则就用 statement 格式。</li>
+</ol>
+</li>
+</ul>
+<h3 id="主从同步的基础流程"><a href="#主从同步的基础流程" class="headerlink" title="主从同步的基础流程"></a>主从同步的基础流程</h3><hr>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/mysql/mysql%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B%E5%9B%BE.jpg?raw=true" alt=""></p>
+<ol>
+<li>主库接收到更新命令，执行更新操作，生成 binlog</li>
+<li>从库在主从之间建立长连接</li>
+<li>主库 dump_thread 从本地读取 binlog 传送给从库</li>
+<li>从库从主库获取到 binlog 后存储到本地，成为 relay log（中继日志）</li>
+<li>sql_thread 线程读取 relay log 解析、执行命令更新数据</li>
+</ol>
+<p>每个主/从连接都有三个线程，具有多个从库的主库会为每个连接创建一个 dump thread，每个从库都有自己的 I/O thread 和 sql thread。从库使用两个线程将读取主库 binlog 日志和执行更新操作分离开，通过 relay log 机制，使 binlog 的读取和执行互不影响。如果从库某段时间没有运行，重启后从库可以快速读取主库的 binlog 日志；如果从库在 sql thread 执行完 binlog 日志前停止，在重启后也可以在本地的 relay log 中读取到命令继续执行。</p>
+<ol>
+<li>dump thread：在从库与主库创建连接后，主库创建 dump thread 日志将 binlog 发送到从库，如果该线程追上了主控，它将进入休眠状态直到主库发送信号通知其有新的事件产生时才会被唤醒</li>
+<li>I/O thread：在从库执行 start slave 语句时，创建 I/O thread，该线程连接到主库，将 binlog 日志记录到中继日志</li>
+<li>sql thread：读取 relay log 执行命令实现从库数据的更新</li>
+</ol>
+<h3 id="主从延迟问题"><a href="#主从延迟问题" class="headerlink" title="主从延迟问题"></a>主从延迟问题</h3><hr>
+<ul>
+<li><p><strong>什么是主从延迟</strong><br>主从延迟指的是同一个事务在从库执行完成的时间和主库执行完成的时间直接的差值。</p>
+<p>延迟时间 = 主库执行完事务写入 binlog 的时刻 - 从库执行完事务的时刻</p>
+</li>
+<li><p><strong>主从延迟的来源</strong></p>
+<ol>
+<li>在一些部署条件下，备库所在机器的性能比主库的机器差</li>
+<li>备库读压力大</li>
+<li>大事务场景</li>
+<li>从库的并行复制能力</li>
+<li>从库并行复制策略</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/mysql/mysql%E4%BB%8E%E5%BA%93%E5%B9%B6%E8%A1%8C%E5%A4%8D%E5%88%B6%E7%AD%96%E7%95%A5.jpg?raw=true" alt=""></p>
+<ul>
+<li><p><strong>核心思想</strong><br>由 sql_thread 作为分配者（coordinator）的角色，负责读取中转日志（relay log）和分发事务，由 worker 线程来执行命令更新数据。</p>
+</li>
+<li><p><strong>原则</strong></p>
+<ol>
+<li>不能造成更新覆盖，要求更新同一行的两个事务必须分发到同一个 worker 中</li>
+<li>同一个事务不能被拆开，必须放到同一个 worker 中</li>
+</ol>
+</li>
+<li><p><strong>现有的一些并行复制策略</strong></p>
+<ol>
+<li><p>5.6 按库并行复制<br>coordinator 将 relay log 按照 DB 的维度分发给不同的 worker。</p>
+<p>优点：构造映射关系快，只需要库名；不要求 binlog 格式<br>缺点：如果主库上只有一个 DB，那这个策略就没有效果了，或者存在热点 DB，也起不到并行的效果</p>
+</li>
+<li><p>MariaDB 组提交优化<br>组提交（group commit）主要有以下特性：</p>
+<ul>
+<li>一组提交的事务有一个相同的 commit_id 直接写到 bin log 里；能够在同一组里提交的事务一定不会修改同一行；主库上可以并行执行的事务备库上也一定可以并行执行。MariaDB 利用组提交的特性对并行复制进行优化，将相同 commit_id 的事务分发到多个 worker 执行，一组全部执行完毕后再执行下一批。</li>
+<li>缺点：在从库上执行时，要等一组事务执行完成后再开始执行下一批事务，这样系统的吞吐量就不够，此外，如果出现大事务，那么这段时间就只用一个 worker 线程在工作，造成资源的浪费。</li>
+</ul>
+</li>
+<li><p>5.7.22 增加 binlog-transaction-dependency-tracking 参数控制并行复制策略<br>commit_order ，根据同时进入 prepare 和 commit 来判断是否可以并行的策略。</p>
+<p>原则：</p>
+<ul>
+<li>同时出入 prepare 状态的事务在从库执行时是可以并行的；</li>
+<li>处于 prepare 状态的事务与处于 commit 状态的事务之间在备库执行时也是可以并行的。</li>
+</ul>
+<p>可以通过 binlog_group_commit_sync_delay 和 bin_log_group_commit_sync_no_delay_count 拉长 binlog write 和 fsync 之间的时间，制造更多同时处于 prepare 阶段的事务。</p>
+<p>writeset，对于事务涉及更新的每一行计算出这行的 hash 值组成集合 writeset，如果两个事务没有操作相同的行，也就是说它们的 writeset 没有交集，就可以并行。</p>
+<p>wrtieset_session，是在 writeset 的基础上多了个约束，在主库上同一个线程先后执行的两个事务，在备库执行的时候要保证先后顺序。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h3><hr>
+<ul>
+<li><p><strong>从库连接到主库请求 binlog 日志</strong><br>从库主动从主库请求 binlog 的副本，而不是主库主动将数据推送到从库。也就是说每个从库都是独立地与主库进行连接，每个从库只能通过向主库请求来接收 binlog 的副本，因此从库能够以自己的速度读取和更新数据库的副本，并且可以随意启动和停止赋值过程，而不会影响到主库或者其他从库的状态。</p>
+</li>
+<li><p><strong>relay log（中继日志）</strong><br>中继日志与 binlog 相同，由一组包含描述数据库更改的文件和一个包含所有已使用的中继日志文件名称的索引文件组成。在5.6以前，日志是存在 relay log.info 文件中的，在5.6以后可以使用 –relay log info repository=table 启动 slave，将此日志写入 mysql.slave_relay_log_info 表，而不是文件。</p>
+</li>
+<li><p><strong>复制通道概念</strong><br>MySQL5.7.6 引入了复制通道的概念，表示事务从主库流到从库的路径。MySQL 服务器会在启动时自动创建一个默认通道，其名称为空字符串（””）。此通道始终存在；用户无法创建或销毁它。如果没有创建其他通道（具有非空名称），则复制语句仅作用于默认通道，以便所有来自旧从属服务器的复制语句都按预期工作。应用于复制通道的语句只能在至少有一个命名通道时使用。</p>
+<p>在多源复制中，从库打开多个通道，每个主通道一个，每个通道都有自己的中继日志和 sql thread，一旦复制通道的接收器（I/O 线程）接收到事务，他们将被添加到通道的中继日志文件中并传递到 sql thread，使通道能够独立工作。</p>
+</li>
+<li><p><strong>主库和从库用不同引擎</strong><br>对于复制过程来说，主库表和从库表是否使用不同的引擎类型并不重要，实际上，在复制过程中不会复制存储引擎系统变量，用户可以针对不同的复制方案为从库设置不同的存储引擎。</p>
+</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> Mysql </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> mysql </tag>
+            
+            <tag> binlog </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[全文搜索引擎 Elasticsearch 入门教程]]></title>
+      <url>/2019/07/06/%E5%85%A8%E6%96%87%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%20Elasticsearch%20%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/</url>
+      <content type="html"><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>全文搜索属于最常见的需求，开源的 Elasticsearch （以下简称 Elastic）是目前全文搜索引擎的首选。</p>
+<p>它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 都采用它。</p>
+<p>Elastic 的底层是开源库 Lucene。但是，你没法直接用 Lucene，必须自己写代码去调用它的接口。Elastic 是 Lucene 的封装，提供了 REST API 的操作接口，开箱即用。</p>
+<p>本文从零开始，讲解如何使用 Elastic 搭建自己的全文搜索引擎。每一步都有详细的说明，大家跟着做就能学会。</p>
+<a id="more"></a>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>Elastic 需要 Java 8 环境。安装完 Java，就可以跟着官方文档安装 Elastic。直接下载压缩包比较简单。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.1.zip</span><br><span class="line">$ unzip elasticsearch-5.5.1.zip</span><br><span class="line">$ <span class="built_in">cd</span> elasticsearch-5.5.1/</span><br></pre></td></tr></table></figure></p>
+<p>接着，进入解压后的目录，运行下面的命令，启动 Elastic。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./bin/elasticsearch</span><br></pre></td></tr></table></figure>
+<p>如果这时报错”max virtual memory areas vm.maxmapcount [65530] is too low”，要运行下面的命令。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo sysctl -w vm.max_map_count=262144</span><br></pre></td></tr></table></figure></p>
+<p>如果一切正常，Elastic 就会在默认的9200端口运行。这时，打开另一个命令行窗口，请求该端口，会得到说明信息。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl localhost:9200</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span> : <span class="string">"atntrTf"</span>,</span><br><span class="line">  <span class="string">"cluster_name"</span> : <span class="string">"elasticsearch"</span>,</span><br><span class="line">  <span class="string">"cluster_uuid"</span> : <span class="string">"tf9250XhQ6ee4h7YI11anA"</span>,</span><br><span class="line">  <span class="string">"version"</span> : &#123;</span><br><span class="line">    <span class="string">"number"</span> : <span class="string">"5.5.1"</span>,</span><br><span class="line">    <span class="string">"build_hash"</span> : <span class="string">"19c13d0"</span>,</span><br><span class="line">    <span class="string">"build_date"</span> : <span class="string">"2017-07-18T20:44:24.823Z"</span>,</span><br><span class="line">    <span class="string">"build_snapshot"</span> : <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"lucene_version"</span> : <span class="string">"6.6.0"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"tagline"</span> : <span class="string">"You Know, for Search"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面代码中，请求9200端口，Elastic 返回一个 JSON 对象，包含当前节点、集群、版本等信息。</p>
+<p>按下 Ctrl + C，Elastic 就会停止运行。</p>
+<p>默认情况下，Elastic 只允许本机访问，如果需要远程访问，可以修改 Elastic 安装目录的config/elasticsearch.yml文件，去掉network.host的注释，将它的值改成0.0.0.0，然后重新启动 Elastic。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">network.host: 0.0.0.0</span><br></pre></td></tr></table></figure></p>
+<p>上面代码中，设成0.0.0.0让任何人都可以访问。线上服务不要这样设置，要设成具体的 IP。</p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li><p><strong>Node 与 Cluster</strong><br>Elastic 本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个 Elastic 实例。单个 Elastic 实例称为一个节点（node）。一组节点构成一个集群（cluster）。</p>
+</li>
+<li><p><strong>Index</strong><br>Elastic 会索引所有字段，经过处理后写入一个反向索引（Inverted Index）。查找数据的时候，直接查找该索引。</p>
+<p>所以，Elastic 数据管理的顶层单位就叫做 Index（索引）。它是单个数据库的同义词。每个 Index （即数据库）的名字必须是小写。</p>
+<p>下面的命令可以查看当前节点的所有 Index。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X GET <span class="string">'http://localhost:9200/_cat/indices?v'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Document</strong><br>Index 里面单条的记录称为 Document（文档）。许多条 Document 构成了一个 Index。</p>
+<p>Document 使用 JSON 格式表示，下面是一个例子。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"user"</span>: <span class="string">"张三"</span>,</span><br><span class="line">	<span class="attr">"title"</span>: <span class="string">"工程师"</span>,</span><br><span class="line">	<span class="attr">"desc"</span>: <span class="string">"数据库管理"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同一个 Index 里面的 Document，不要求有相同的结构（scheme），但是最好保持相同，这样有利于提高搜索效率。</p>
+</li>
+<li><p><strong>Type</strong><br>Document 可以分组，比如weather这个 Index 里面，可以按城市分组（北京和上海），也可以按气候分组（晴天和雨天）。这种分组就叫做 Type，它是虚拟的逻辑分组，用来过滤 Document。</p>
+<p>不同的 Type 应该有相似的结构（schema），举例来说，id字段不能在这个组是字符串，在另一个组是数值。这是与关系型数据库的表的一个区别。性质完全不同的数据（比如products和logs）应该存成两个 Index，而不是一个 Index 里面的两个 Type（虽然可以做到）。</p>
+<p>下面的命令可以列出每个Index所包含的Type。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/_mapping?pretty=true'</span></span><br></pre></td></tr></table></figure>
+<p>根据规划，Elastic 6.x 版只允许每个 Index 包含一个 Type，7.x 版将会彻底移除 Type。</p>
+<p>用一个表格来做类比，如下：</p>
+<p>​</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/elasticsearch/es%E7%BB%93%E6%9E%84%E4%B8%8Emysql%E7%B1%BB%E6%AF%94%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>​</p>
+<p>使用 Elasticsearch 提供的 RESTful API 来执行上述操作，如图所示：</p>
+<p>​</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/elasticsearch/es%20restful%E8%A7%A3%E6%9E%90.jpg?raw=true" alt=""></p>
+</li>
+</ul>
+<h3 id="新建和删除-Index"><a href="#新建和删除-Index" class="headerlink" title="新建和删除 Index"></a>新建和删除 Index</h3><p>新建 Index，可以直接向 Elastic 服务器发出 PUT 请求。下面的例子是新建一个名叫weather的 Index。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X PUT <span class="string">'localhost:9200/weather'</span></span><br></pre></td></tr></table></figure></p>
+<p>服务器返回一个 JSON 对象，里面的acknowledged字段表示操作成功。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"acknowledged"</span>:<span class="literal">true</span>,</span><br><span class="line">  <span class="string">"shards_acknowledged"</span>:<span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后，我们发出 DELETE 请求，删除这个 Index。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X DELETE <span class="string">'localhost:9200/weather'</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="中文分词设置"><a href="#中文分词设置" class="headerlink" title="中文分词设置"></a>中文分词设置</h3><p>首先，安装中文分词插件。这里使用的是 ik，也可以考虑其他插件（比如 smartcn）。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.5.1/elasticsearch-analysis-ik-5.5.1.zip</span><br></pre></td></tr></table></figure></p>
+<p>上面代码安装的是5.5.1版的插件，与 Elastic 5.5.1 配合使用。</p>
+<p>接着，重新启动 Elastic，就会自动加载这个新安装的插件。</p>
+<p>然后，新建一个 Index，指定需要分词的字段。这一步根据数据结构而异，下面的命令只针对本文。基本上，凡是需要搜索的中文字段，都要单独设置一下。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X PUT <span class="string">'localhost:9200/accounts'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  "mappings": &#123;</span></span><br><span class="line"><span class="string">    "person": &#123;</span></span><br><span class="line"><span class="string">      "properties": &#123;</span></span><br><span class="line"><span class="string">        "user": &#123;</span></span><br><span class="line"><span class="string">          "type": "text",</span></span><br><span class="line"><span class="string">          "analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">          "search_analyzer": "ik_max_word"</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        "title": &#123;</span></span><br><span class="line"><span class="string">          "type": "text",</span></span><br><span class="line"><span class="string">          "analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">          "search_analyzer": "ik_max_word"</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        "desc": &#123;</span></span><br><span class="line"><span class="string">          "type": "text",</span></span><br><span class="line"><span class="string">          "analyzer": "ik_max_word",</span></span><br><span class="line"><span class="string">          "search_analyzer": "ik_max_word"</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure></p>
+<p>上面代码中，首先新建一个名称为accounts的 Index，里面有一个名称为person的 Type。person有三个字段。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">user</span><br><span class="line">title</span><br><span class="line">desc</span><br></pre></td></tr></table></figure></p>
+<p>这三个字段都是中文，而且类型都是文本（text），所以需要指定中文分词器，不能使用默认的英文分词器。</p>
+<p>Elastic 的分词器称为 analyzer。我们对每个字段指定分词器。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="string">"user"</span>: &#123;</span><br><span class="line">  <span class="string">"type"</span>: <span class="string">"text"</span>,</span><br><span class="line">  <span class="string">"analyzer"</span>: <span class="string">"ik_max_word"</span>,</span><br><span class="line">  <span class="string">"search_analyzer"</span>: <span class="string">"ik_max_word"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中，analyzer是字段文本的分词器，search_analyzer是搜索词的分词器。ik_max_word分词器是插件ik提供的，可以对文本进行最大数量的分词。</p>
+<h3 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h3><ul>
+<li><p><strong>新增记录</strong><br>向指定的 /Index/Type 发送 PUT 请求，就可以在 Index 里面新增一条记录。比如，向/accounts/person发送请求，就可以新增一条人员记录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X PUT <span class="string">'localhost:9200/accounts/person/1'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"user": "张三",</span></span><br><span class="line"><span class="string">	"title": "工程师",</span></span><br><span class="line"><span class="string">	"desc": "数据库管理"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>服务器返回的 JSON 对象，会给出 Index、Type、Id、Version 等信息。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"_index"</span>:<span class="string">"accounts"</span>,</span><br><span class="line">	<span class="attr">"_type"</span>:<span class="string">"person"</span>,</span><br><span class="line">	<span class="attr">"_id"</span>:<span class="string">"1"</span>,</span><br><span class="line">	<span class="attr">"_version"</span>:<span class="number">1</span>,</span><br><span class="line">	<span class="attr">"result"</span>:<span class="string">"created"</span>,</span><br><span class="line">	<span class="attr">"_shards"</span>:&#123;<span class="attr">"total"</span>:<span class="number">2</span>,<span class="attr">"successful"</span>:<span class="number">1</span>,<span class="attr">"failed"</span>:<span class="number">0</span>&#125;,</span><br><span class="line">	<span class="attr">"created"</span>:<span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你仔细看，会发现请求路径是/accounts/person/1，最后的1是该条记录的 Id。它不一定是数字，任意字符串（比如abc）都可以。</p>
+<p>新增记录的时候，也可以不指定 Id，这时要改成 POST 请求。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X POST <span class="string">'localhost:9200/accounts/person'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"user": "李四",</span></span><br><span class="line"><span class="string">	"title": "工程师",</span></span><br><span class="line"><span class="string">	"desc": "系统管理"</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>上面代码中，向/accounts/person发出一个 POST 请求，添加一个记录。这时，服务器返回的 JSON 对象里面，_id字段就是一个随机字符串。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"_index"</span>:<span class="string">"accounts"</span>,</span><br><span class="line">	<span class="attr">"_type"</span>:<span class="string">"person"</span>,</span><br><span class="line">	<span class="attr">"_id"</span>:<span class="string">"AV3qGfrC6jMbsbXb6k1p"</span>,</span><br><span class="line">	<span class="attr">"_version"</span>:<span class="number">1</span>,</span><br><span class="line">	<span class="attr">"result"</span>:<span class="string">"created"</span>,</span><br><span class="line">	<span class="attr">"_shards"</span>:&#123;<span class="attr">"total"</span>:<span class="number">2</span>,<span class="attr">"successful"</span>:<span class="number">1</span>,<span class="attr">"failed"</span>:<span class="number">0</span>&#125;,</span><br><span class="line">	<span class="attr">"created"</span>:<span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，如果没有先创建 Index（这个例子是accounts），直接执行上面的命令，Elastic 也不会报错，而是直接生成指定的 Index。所以，打字的时候要小心，不要写错 Index 的名称。</p>
+</li>
+<li><p><strong>查看记录</strong><br>向/Index/Type/Id发出 GET 请求，就可以查看这条记录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/1?pretty=true'</span></span><br></pre></td></tr></table></figure>
+<p>上面代码请求查看/accounts/person/1这条记录，URL 的参数pretty=true表示以易读的格式返回。</p>
+<p>返回的数据中，found字段表示查询成功，_source字段返回原始记录。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"_index"</span> : <span class="string">"accounts"</span>,</span><br><span class="line">	<span class="attr">"_type"</span> : <span class="string">"person"</span>,</span><br><span class="line">	<span class="attr">"_id"</span> : <span class="string">"1"</span>,</span><br><span class="line">	<span class="attr">"_version"</span> : <span class="number">1</span>,</span><br><span class="line">	<span class="attr">"found"</span> : <span class="literal">true</span>,</span><br><span class="line">	<span class="attr">"_source"</span> : &#123;</span><br><span class="line">  		<span class="attr">"user"</span> : <span class="string">"张三"</span>,</span><br><span class="line">  		<span class="attr">"title"</span> : <span class="string">"工程师"</span>,</span><br><span class="line">  		<span class="attr">"desc"</span> : <span class="string">"数据库管理"</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果 Id 不正确，就查不到数据，found字段就是false。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/weather/beijing/abc?pretty=true'</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"_index"</span> : <span class="string">"accounts"</span>,</span><br><span class="line">	<span class="string">"_type"</span> : <span class="string">"person"</span>,</span><br><span class="line">	<span class="string">"_id"</span> : <span class="string">"abc"</span>,</span><br><span class="line">	<span class="string">"found"</span> : <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>删除记录</strong><br>删除记录就是发出 DELETE 请求。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X DELETE <span class="string">'localhost:9200/accounts/person/1'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>更新记录</strong><br>更新记录就是使用 PUT 请求，重新发送一次数据。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl -X PUT <span class="string">'localhost:9200/accounts/person/1'</span> -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  	"user" : "张三",</span></span><br><span class="line"><span class="string">  	"title" : "工程师",</span></span><br><span class="line"><span class="string">  	"desc" : "数据库管理，软件开发"</span></span><br><span class="line"><span class="string">&#125;'</span> </span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"_index"</span>:<span class="string">"accounts"</span>,</span><br><span class="line">	<span class="string">"_type"</span>:<span class="string">"person"</span>,</span><br><span class="line">	<span class="string">"_id"</span>:<span class="string">"1"</span>,</span><br><span class="line">	<span class="string">"_version"</span>:2,</span><br><span class="line">	<span class="string">"result"</span>:<span class="string">"updated"</span>,</span><br><span class="line">	<span class="string">"_shards"</span>:&#123;<span class="string">"total"</span>:2,<span class="string">"successful"</span>:1,<span class="string">"failed"</span>:0&#125;,</span><br><span class="line">	<span class="string">"created"</span>:<span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中，我们将原始数据从”数据库管理”改成”数据库管理，软件开发”。 返回结果里面，有几个字段发生了变化。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="string">"_version"</span> : 2,</span><br><span class="line"><span class="string">"result"</span> : <span class="string">"updated"</span>,</span><br><span class="line"><span class="string">"created"</span> : <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，记录的 Id 没变，但是版本（version）从1变成2，操作类型（result）从created变成updated，created字段变成false，因为这次不是新建记录。</p>
+</li>
+</ul>
+<h3 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h3><ul>
+<li><p><strong>返回所有记录</strong><br>使用 GET 方法，直接请求/Index/Type/_search，就会返回所有记录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/_search'</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	<span class="string">"took"</span>:2,</span><br><span class="line">	<span class="string">"timed_out"</span>:<span class="literal">false</span>,</span><br><span class="line">	<span class="string">"_shards"</span>:&#123;<span class="string">"total"</span>:5,<span class="string">"successful"</span>:5,<span class="string">"failed"</span>:0&#125;,</span><br><span class="line">	<span class="string">"hits"</span>:&#123;</span><br><span class="line">  		<span class="string">"total"</span>:2,</span><br><span class="line">  		<span class="string">"max_score"</span>:1.0,</span><br><span class="line">  		<span class="string">"hits"</span>:[</span><br><span class="line">    		&#123;</span><br><span class="line">      			<span class="string">"_index"</span>:<span class="string">"accounts"</span>,</span><br><span class="line">      			<span class="string">"_type"</span>:<span class="string">"person"</span>,</span><br><span class="line">      			<span class="string">"_id"</span>:<span class="string">"AV3qGfrC6jMbsbXb6k1p"</span>,</span><br><span class="line">      			<span class="string">"_score"</span>:1.0,</span><br><span class="line">      			<span class="string">"_source"</span>: &#123;</span><br><span class="line">        			<span class="string">"user"</span>: <span class="string">"李四"</span>,</span><br><span class="line">        			<span class="string">"title"</span>: <span class="string">"工程师"</span>,</span><br><span class="line">        			<span class="string">"desc"</span>: <span class="string">"系统管理"</span></span><br><span class="line">      			&#125;</span><br><span class="line">    		&#125;,</span><br><span class="line">    		&#123;</span><br><span class="line">      			<span class="string">"_index"</span>:<span class="string">"accounts"</span>,</span><br><span class="line">      			<span class="string">"_type"</span>:<span class="string">"person"</span>,</span><br><span class="line">      			<span class="string">"_id"</span>:<span class="string">"1"</span>,</span><br><span class="line">      			<span class="string">"_score"</span>:1.0,</span><br><span class="line">      			<span class="string">"_source"</span>: &#123;</span><br><span class="line">        			<span class="string">"user"</span> : <span class="string">"张三"</span>,</span><br><span class="line">        			<span class="string">"title"</span> : <span class="string">"工程师"</span>,</span><br><span class="line">        			<span class="string">"desc"</span> : <span class="string">"数据库管理，软件开发"</span></span><br><span class="line">      			&#125;</span><br><span class="line">    		&#125;</span><br><span class="line">  		]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中，返回结果的 took字段表示该操作的耗时（单位为毫秒），timed_out字段表示是否超时，hits字段表示命中的记录，里面子字段的含义如下。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">1. total：返回记录数，本例是2条。</span><br><span class="line">2. max_score：最高的匹配程度，本例是1.0。</span><br><span class="line">3. hits：返回的记录组成的数组。</span><br></pre></td></tr></table></figure>
+<p>返回的记录中，每条记录都有一个_score字段，表示匹配的程序，默认是按照这个字段降序排列。</p>
+</li>
+<li><p><strong>全文搜索</strong><br>Elastic 的查询非常特别，使用自己的查询语法，要求 GET 请求带有数据体。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/_search'</span>  -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"query" : &#123; "match" : &#123; "desc" : "软件" &#125;&#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>上面代码使用 Match 查询，指定的匹配条件是desc字段里面包含”软件”这个词。返回结果如下。</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"took"</span>:<span class="number">3</span>,</span><br><span class="line">	<span class="attr">"timed_out"</span>:<span class="literal">false</span>,</span><br><span class="line">	<span class="attr">"_shards"</span>:&#123;<span class="attr">"total"</span>:<span class="number">5</span>,<span class="attr">"successful"</span>:<span class="number">5</span>,<span class="attr">"failed"</span>:<span class="number">0</span>&#125;,</span><br><span class="line">	<span class="attr">"hits"</span>:&#123;</span><br><span class="line">  		<span class="attr">"total"</span>:<span class="number">1</span>,</span><br><span class="line">  		<span class="attr">"max_score"</span>:<span class="number">0.28582606</span>,</span><br><span class="line">  		<span class="attr">"hits"</span>:[</span><br><span class="line">    		&#123;</span><br><span class="line">      			<span class="attr">"_index"</span>:<span class="string">"accounts"</span>,</span><br><span class="line">      			<span class="attr">"_type"</span>:<span class="string">"person"</span>,</span><br><span class="line">      			<span class="attr">"_id"</span>:<span class="string">"1"</span>,</span><br><span class="line">      			<span class="attr">"_score"</span>:<span class="number">0.28582606</span>,</span><br><span class="line">      			<span class="attr">"_source"</span>: &#123;</span><br><span class="line">        			<span class="attr">"user"</span> : <span class="string">"张三"</span>,</span><br><span class="line">        			<span class="attr">"title"</span> : <span class="string">"工程师"</span>,</span><br><span class="line">        			<span class="attr">"desc"</span> : <span class="string">"数据库管理，软件开发"</span></span><br><span class="line">      			&#125;</span><br><span class="line">    		&#125;</span><br><span class="line">  		]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Elastic 默认一次返回10条结果，可以通过size字段改变这个设置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/_search'</span>  -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"query" : &#123; "match" : &#123; "desc" : "管理" &#125;&#125;,</span></span><br><span class="line"><span class="string">	"size": 1</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>上面代码指定，每次只返回一条结果。</p>
+<p>还可以通过from字段，指定位移。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/_search'</span>  -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"query" : &#123; "match" : &#123; "desc" : "管理" &#125;&#125;,</span></span><br><span class="line"><span class="string">	"from": 1,</span></span><br><span class="line"><span class="string">	"size": 1</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>上面代码指定，从位置1开始（默认是从位置0开始），只返回一条结果。</p>
+</li>
+<li><p><strong>逻辑运算</strong><br>如果有多个搜索关键字， Elastic 认为它们是or关系。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/_search'</span>  -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"query" : &#123; "match" : &#123; "desc" : "软件 系统" &#125;&#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>上面代码搜索的是软件 or 系统。</p>
+<p>如果要执行多个关键词的and搜索，必须使用布尔查询。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ curl <span class="string">'localhost:9200/accounts/person/_search'</span>  -d <span class="string">'</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">	"query": &#123;</span></span><br><span class="line"><span class="string">  		"bool": &#123;</span></span><br><span class="line"><span class="string">    		"must": [</span></span><br><span class="line"><span class="string">      			&#123; "match": &#123; "desc": "软件" &#125; &#125;,</span></span><br><span class="line"><span class="string">      			&#123; "match": &#123; "desc": "系统" &#125; &#125;</span></span><br><span class="line"><span class="string">    		]</span></span><br><span class="line"><span class="string">  		&#125;</span></span><br><span class="line"><span class="string">	&#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html" target="_blank" rel="noopener">ElasticSearch 官方手册</a></li>
+<li><a href="https://www.elastic.co/cn/blog/a-practical-introduction-to-elasticsearch" target="_blank" rel="noopener">A Practical Introduction to Elasticsearch</a></li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> Elasticsearch </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> elasticsearch </tag>
+            
+            <tag> index </tag>
+            
+            <tag> document </tag>
+            
+            <tag> Lucene </tag>
+            
+            <tag> IK Analyzer </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[分布式限流组件-基于Redis的RateLimter]]></title>
+      <url>/2019/07/06/%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81%E7%BB%84%E4%BB%B6-%E5%9F%BA%E4%BA%8ERedis%E7%9A%84RateLimter/</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>在分布式领域，我们难免会遇到并发量突增，对后端服务造成高压力，严重甚至会导致系统宕机。为避免这种问题，我们通常会为接口添加限流、降级、熔断等能力，从而使接口更为健壮。Java领域常见的开源组件有Netflix的hystrix，阿里系开源的sentinel等，都是蛮不错的限流熔断框架。</p>
+<p>今天我们就基于Redis组件的特性，实现一个分布式限流组件，名字就定为shield-ratelimiter。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><hr>
+<p>首先解释下为何采用Redis作为限流组件的核心。</p>
+<p>通俗地讲，假设一个用户（用IP判断）每秒访问某服务接口的次数不能超过10次，那么我们可以在Redis中创建一个键，并设置键的过期时间为60秒。</p>
+<p>当一个用户对此服务接口发起一次访问就把键值加1，在单位时间（此处为1s）内当键值增加到10的时候，就禁止访问服务接口。PS:在某种场景中添加访问时间间隔还是很有必要的。我们本次不考虑间隔时间，只关注单位时间内的访问次数。</p>
+<a id="more"></a>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><hr>
+<p>原理已经讲过了，说下需求。</p>
+<ol>
+<li>基于Redis的incr及过期机制开发</li>
+<li>调用方便，声明式</li>
+<li>Spring支持</li>
+</ol>
+<p>基于上述需求，我们决定基于注解方式进行核心功能开发，基于Spring-boot-starter作为基础环境，从而能够很好的适配Spring环境。</p>
+<p>另外，在本次开发中，我们不通过简单的调用Redis的java类库API实现对Redis的incr操作。</p>
+<p>原因在于，我们要保证整个限流的操作是原子性的，如果用Java代码去做操作及判断，会有并发问题。这里我决定采用Lua脚本进行核心逻辑的定义。</p>
+<h3 id="为何使用Lua"><a href="#为何使用Lua" class="headerlink" title="为何使用Lua"></a>为何使用Lua</h3><hr>
+<p>在正式开发前，我简单介绍下对Redis的操作中，为何推荐使用Lua脚本。</p>
+<ol>
+<li>减少网络开销: 不使用 Lua 的代码需要向 Redis 发送多次请求, 而脚本只需一次即可, 减少网络传输; </li>
+<li>原子操作: Redis 将整个脚本作为一个原子执行, 无需担心并发, 也就无需事务; </li>
+<li>复用: 脚本会永久保存 Redis 中, 其他客户端可继续使用.</li>
+</ol>
+<p>Redis添加了对Lua的支持，能够很好的满足原子性、事务性的支持，让我们免去了很多的异常逻辑处理。对于Lua的语法不是本文的主要内容。</p>
+<h3 id="正式开发"><a href="#正式开发" class="headerlink" title="正式开发"></a>正式开发</h3><hr>
+<p>到这里，我们正式开始手写限流组件的进程。</p>
+<ul>
+<li><p><strong>工程定义</strong><br>项目基于maven构建，主要依赖Spring-boot-starter，我们主要在springboot上进行开发，因此自定义的开发包可以直接依赖下面这个坐标，方便进行包管理。版本号自行选择稳定版。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  	&lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;</span><br><span class="line">  	&lt;version&gt;1.4.2.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Redis整合</strong><br>由于我们是基于Redis进行的限流操作，因此需要整合Redis的类库，上面已经讲到，我们是基于Springboot进行的开发，因此这里可以直接整合RedisTemplate。</p>
+<p>这里我们引入spring-boot-starter-redis的依赖。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  	&lt;artifactId&gt;spring-boot-starter-redis&lt;/artifactId&gt;</span><br><span class="line">  	&lt;version&gt;1.4.2.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>新建一个Redis的配置类，命名为RedisCacheConfig，使用javaconfig形式注入CacheManager及RedisTemplate。为了操作方便，我们采用了Jackson进行序列化。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableCaching</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisCacheConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(RedisCacheConfig.class);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> CacheManager <span class="title">cacheManager</span><span class="params">(RedisTemplate&lt;?, ?&gt; redisTemplate)</span> </span>&#123;</span><br><span class="line">      CacheManager cacheManager = <span class="keyword">new</span> RedisCacheManager(redisTemplate);</span><br><span class="line">      <span class="keyword">if</span> (LOGGER.isDebugEnabled()) &#123;</span><br><span class="line">          LOGGER.debug(<span class="string">"Springboot Redis cacheManager 加载完成"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> cacheManager;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Bean</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> RedisTemplate&lt;String, Object&gt; <span class="title">redisTemplate</span><span class="params">(RedisConnectionFactory factory)</span> </span>&#123;</span><br><span class="line">      RedisTemplate&lt;String, Object&gt; template = <span class="keyword">new</span> RedisTemplate&lt;&gt;();</span><br><span class="line">      template.setConnectionFactory(factory);</span><br><span class="line"></span><br><span class="line">      <span class="comment">//使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）</span></span><br><span class="line">      Jackson2JsonRedisSerializer serializer = <span class="keyword">new</span> Jackson2JsonRedisSerializer(Object.class);</span><br><span class="line"></span><br><span class="line">      ObjectMapper mapper = <span class="keyword">new</span> ObjectMapper();</span><br><span class="line">      mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);</span><br><span class="line">      mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);</span><br><span class="line">      serializer.setObjectMapper(mapper);</span><br><span class="line"></span><br><span class="line">      template.setValueSerializer(serializer);</span><br><span class="line">      <span class="comment">//使用StringRedisSerializer来序列化和反序列化redis的key值</span></span><br><span class="line">      template.setKeySerializer(<span class="keyword">new</span> StringRedisSerializer());</span><br><span class="line">      template.afterPropertiesSet();</span><br><span class="line">      LOGGER.info(<span class="string">"Springboot RedisTemplate 加载完成"</span>);</span><br><span class="line">      <span class="keyword">return</span> template;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意要使用@Configuration 标注此类为一个配置类，当然你可以使用@Component ， 但是不推荐，原因在于@Component 注解虽然也可以当作配置类，但是并不会为其生成CGLIB代理Class，而使用@Configuration ，CGLIB会为其生成代理类，进行性能的提升。</p>
+<p>调用方application.propertie需要增加Redis配置。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#单机模式redis</span></span><br><span class="line">spring.redis.host=127.0.0.1</span><br><span class="line">spring.redis.port=6379</span><br><span class="line">spring.redis.pool.maxActive=8</span><br><span class="line">spring.redis.pool.maxWait=-1</span><br><span class="line">spring.redis.pool.maxIdle=8</span><br><span class="line">spring.redis.pool.minIdle=0</span><br><span class="line">spring.redis.timeout=10000</span><br><span class="line">spring.redis.password=pwd123</span><br></pre></td></tr></table></figure>
+<p>这里为单机配置，如果需要支持哨兵集群，则配置如下，Java代码不需要改动，只需要变动配置即可。注意 两种配置不能共存！</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#哨兵集群模式</span></span><br><span class="line"><span class="comment"># database name</span></span><br><span class="line">spring.redis.database=0</span><br><span class="line"><span class="comment"># server password 密码，如果没有设置可不配</span></span><br><span class="line">spring.redis.password=</span><br><span class="line"><span class="comment"># pool settings ...池配置</span></span><br><span class="line">spring.redis.pool.max-idle=8</span><br><span class="line">spring.redis.pool.min-idle=0</span><br><span class="line">spring.redis.pool.max-active=8</span><br><span class="line">spring.redis.pool.max-wait=-1</span><br><span class="line"><span class="comment"># name of Redis server  哨兵监听的Redis server的名称</span></span><br><span class="line">spring.redis.sentinel.master=mymaster</span><br><span class="line"><span class="comment"># comma-separated list of host:port pairs  哨兵的配置列表</span></span><br><span class="line">spring.redis.sentinel.nodes=127.0.0.1:26379,127.0.0.1:26479,127.0.0.1:26579</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义注解<br>为了调用方便，我们定义一个名为RateLimiter 的注解，内容如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> snowalker</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 1.0</span></span><br><span class="line"><span class="comment">* <span class="doctag">@date</span> 2018/10/27 1:25</span></span><br><span class="line"><span class="comment">* <span class="doctag">@className</span> RateLimiter</span></span><br><span class="line"><span class="comment">* <span class="doctag">@desc</span> 限流注解</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RateLimiter &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 限流key</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function">String <span class="title">key</span><span class="params">()</span> <span class="keyword">default</span> "rate:limiter"</span>;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 单位时间限制通过请求数</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function"><span class="keyword">long</span> <span class="title">limit</span><span class="params">()</span> <span class="keyword">default</span> 10</span>;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 过期时间，单位秒</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="function"><span class="keyword">long</span> <span class="title">expire</span><span class="params">()</span> <span class="keyword">default</span> 1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该注解明确只用于方法，主要有三个属性。</p>
+<ol>
+<li>key–表示限流模块名，指定该值用于区分不同应用，不同场景，推荐格式为：应用名:模块名:ip:接口名:方法名。</li>
+<li>limit–表示单位时间允许通过的请求数。</li>
+<li>expire–incr的值的过期时间，业务中表示限流的单位时间。</li>
+</ol>
+</li>
+<li><p>解析注解<br>定义好注解后，需要开发注解使用的切面，这里我们直接使用aspectj进行切面的开发。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RateLimterHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(RateLimterHandler.class);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Autowired</span></span><br><span class="line">  RedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> DefaultRedisScript&lt;Long&gt; getRedisScript;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@PostConstruct</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      getRedisScript = <span class="keyword">new</span> DefaultRedisScript&lt;&gt;();</span><br><span class="line">      getRedisScript.setResultType(Long.class);</span><br><span class="line">      getRedisScript.setScriptSource(<span class="keyword">new</span> ResourceScriptSource(<span class="keyword">new</span> ClassPathResource(<span class="string">"rateLimter.lua"</span>)));</span><br><span class="line">      LOGGER.info(<span class="string">"RateLimterHandler[分布式限流处理器]脚本加载完成"</span>);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这里是注入了RedisTemplate，使用其API进行Lua脚本的调用。</p>
+<p>init() 方法在应用启动时会初始化DefaultRedisScript，并加载Lua脚本，方便进行调用。</p>
+<p>PS: Lua脚本放置在classpath下，通过ClassPathResource进行加载。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Pointcut</span>(<span class="string">"@annotation(com.snowalker.shield.ratelimiter.core.annotation.RateLimiter)"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">rateLimiter</span><span class="params">()</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们定义了一个切点，表示只要注解了@RateLimiter 的方法，均可以触发限流操作。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">  <span class="meta">@Around</span>(<span class="string">"@annotation(rateLimiter)"</span>)</span><br><span class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">around</span><span class="params">(ProceedingJoinPoint proceedingJoinPoint, RateLimiter rateLimiter)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (LOGGER.isDebugEnabled()) &#123;</span><br><span class="line">          LOGGER.debug(<span class="string">"RateLimterHandler[分布式限流处理器]开始执行限流操作"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      Signature signature = proceedingJoinPoint.getSignature();</span><br><span class="line">      <span class="keyword">if</span> (!(signature <span class="keyword">instanceof</span> MethodSignature)) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"the Annotation @RateLimter must used on method!"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 获取注解参数</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">      <span class="comment">// 限流模块key</span></span><br><span class="line">      String limitKey = rateLimiter.key();</span><br><span class="line">      Preconditions.checkNotNull(limitKey);</span><br><span class="line">      <span class="comment">// 限流阈值</span></span><br><span class="line">      <span class="keyword">long</span> limitTimes = rateLimiter.limit();</span><br><span class="line">      <span class="comment">// 限流超时时间</span></span><br><span class="line">      <span class="keyword">long</span> expireTime = rateLimiter.expire();</span><br><span class="line">      <span class="keyword">if</span> (LOGGER.isDebugEnabled()) &#123;</span><br><span class="line">          LOGGER.debug(<span class="string">"RateLimterHandler[分布式限流处理器]参数值为-limitTimes=&#123;&#125;,limitTimeout=&#123;&#125;"</span>, limitTimes, expireTime);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 执行Lua脚本</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">      List&lt;String&gt; keyList = <span class="keyword">new</span> ArrayList();</span><br><span class="line">      <span class="comment">// 设置key值为注解中的值</span></span><br><span class="line">      keyList.add(limitKey);</span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">      * 调用脚本并执行</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line">      Long result = (Long) redisTemplate.execute(getRedisScript, keyList, expireTime, limitTimes);</span><br><span class="line">      <span class="keyword">if</span> (result == <span class="number">0</span>) &#123;</span><br><span class="line">          String msg = <span class="string">"由于超过单位时间="</span> + expireTime + <span class="string">"-允许的请求次数="</span> + limitTimes + <span class="string">"[触发限流]"</span>;</span><br><span class="line">          LOGGER.debug(msg);</span><br><span class="line">          <span class="keyword">return</span> <span class="string">"false"</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (LOGGER.isDebugEnabled()) &#123;</span><br><span class="line">          LOGGER.debug(<span class="string">"RateLimterHandler[分布式限流处理器]限流执行结果-result=&#123;&#125;,请求[正常]响应"</span>, result);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> proceedingJoinPoint.proceed();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码的逻辑为，获取 @RateLimiter 注解配置的属性：key、limit、expire，并通过redisTemplate.execute(RedisScriptscript,Listkeys,Object…args) 方法传递给Lua脚本进行限流相关操作，逻辑很清晰。</p>
+<p>这里我们定义如果脚本返回状态为0则为触发限流，1表示正常请求。</p>
+</li>
+<li><p>Lua脚本<br>这里是我们整个限流操作的核心，通过执行一个Lua脚本进行限流的操作。脚本内容如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--获取KEY</span><br><span class="line">local key1 = KEYS[1]</span><br><span class="line"></span><br><span class="line">local val = redis.call(&apos;incr&apos;, key1)</span><br><span class="line">local ttl = redis.call(&apos;ttl&apos;, key1)</span><br><span class="line"></span><br><span class="line">--获取ARGV内的参数并打印</span><br><span class="line">local expire = ARGV[1]</span><br><span class="line">local times = ARGV[2]</span><br><span class="line"></span><br><span class="line">redis.log(redis.LOG_DEBUG,tostring(times))</span><br><span class="line">redis.log(redis.LOG_DEBUG,tostring(expire))</span><br><span class="line"></span><br><span class="line">redis.log(redis.LOG_NOTICE, &quot;incr &quot;..key1..&quot; &quot;..val);</span><br><span class="line">if val == 1 then</span><br><span class="line">  redis.call(&apos;expire&apos;, key1, tonumber(expire))</span><br><span class="line">else</span><br><span class="line">  if ttl == -1 then</span><br><span class="line">      redis.call(&apos;expire&apos;, key1, tonumber(expire))</span><br><span class="line">  end</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">if val &gt; tonumber(times) then</span><br><span class="line">  return 0</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">return 1</span><br></pre></td></tr></table></figure>
+<p>逻辑很通俗，我简单介绍下。</p>
+<ol>
+<li>首先脚本获取Java代码中传递而来的要限流的模块的key，不同的模块key值一定不能相同，否则会覆盖！</li>
+<li>redis.call(‘incr’, key1)对传入的key做incr操作，如果key首次生成，设置超时时间ARGV[1]；（初始值为1）</li>
+<li>ttl是为防止某些key在未设置超时时间并长时间已经存在的情况下做的保护的判断；</li>
+<li>每次请求都会做+1操作，当限流的值val大于我们注解的阈值，则返回0表示已经超过请求限制，触发限流。否则为正常请求。</li>
+</ol>
+<p>当过期后，又是新的一轮循环，整个过程是一个原子性的操作，能够保证单位时间不会超过我们预设的请求阈值。</p>
+<p>到这里我们便可以在项目中进行测试。</p>
+</li>
+</ul>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><hr>
+<p><a href="https://github.com/dicheng52119/shield-ratelimter" target="_blank" rel="noopener">demo地址</a></p>
+<p>这里我贴一下核心代码，我们定义一个接口，并注解@RateLimiter(key=“ratedemo:1.0.0”,limit=5,expire=100) 表示模块ratedemo:sendPayment:1.0.0 在100s内允许通过5个请求，这里的参数设置是为了方便看结果。实际中，我们通常会设置1s内允许通过的次数。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(TestController.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"ratelimiter"</span>)</span><br><span class="line">    <span class="meta">@RateLimiter</span>(key = <span class="string">"ratedemo:1.0.0"</span>, limit = <span class="number">5</span>, expire = <span class="number">100</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sendPayment</span><span class="params">(HttpServletRequest request)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"正常请求"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们通过RestClient请求接口，日志返回如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2018-10-28 00:00:00.602 DEBUG 17364 --- [nio-8888-exec-1] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:00.688 DEBUG 17364 --- [nio-8888-exec-1] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]限流执行结果-result=1,请求[正常]响应</span><br><span class="line"></span><br><span class="line">2018-10-28 00:00:00.860 DEBUG 17364 --- [nio-8888-exec-3] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:01.183 DEBUG 17364 --- [nio-8888-exec-4] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:01.520 DEBUG 17364 --- [nio-8888-exec-3] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]限流执行结果-result=1,请求[正常]响应</span><br><span class="line">2018-10-28 00:00:01.521 DEBUG 17364 --- [nio-8888-exec-4] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]限流执行结果-result=1,请求[正常]响应</span><br><span class="line"></span><br><span class="line">2018-10-28 00:00:01.557 DEBUG 17364 --- [nio-8888-exec-5] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:01.558 DEBUG 17364 --- [nio-8888-exec-5] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]限流执行结果-result=1,请求[正常]响应</span><br><span class="line"></span><br><span class="line">2018-10-28 00:00:01.774 DEBUG 17364 --- [nio-8888-exec-7] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:02.111 DEBUG 17364 --- [nio-8888-exec-8] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始</span><br><span class="line">2018-10-28 00:00:02.169 DEBUG 17364 --- [nio-8888-exec-7] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]限流执行结果-result=1,请求[正常]响应</span><br><span class="line"></span><br><span class="line">2018-10-28 00:00:02.169 DEBUG 17364 --- [nio-8888-exec-8] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> 由于超过单位时间=100-允许的请求次数=5[触发限流]</span><br><span class="line">2018-10-28 00:00:02.276 DEBUG 17364 --- [io-8888-exec-10] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:02.276 DEBUG 17364 --- [io-8888-exec-10] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]参数值为-limitTimes=5,limitTimeout=100</span><br><span class="line">2018-10-28 00:00:02.278 DEBUG 17364 --- [io-8888-exec-10] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> 由于超过单位时间=100-允许的请求次数=5[触发限流]</span><br><span class="line">2018-10-28 00:00:02.445 DEBUG 17364 --- [nio-8888-exec-2] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:02.445 DEBUG 17364 --- [nio-8888-exec-2] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]参数值为-limitTimes=5,limitTimeout=100</span><br><span class="line">2018-10-28 00:00:02.446 DEBUG 17364 --- [nio-8888-exec-2] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> 由于超过单位时间=100-允许的请求次数=5[触发限流]</span><br><span class="line">2018-10-28 00:00:02.628 DEBUG 17364 --- [nio-8888-exec-4] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]开始执行限流操作</span><br><span class="line">2018-10-28 00:00:02.628 DEBUG 17364 --- [nio-8888-exec-4] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> RateLimterHandler[分布式限流处理器]参数值为-limitTimes=5,limitTimeout=100</span><br><span class="line">2018-10-28 00:00:02.629 DEBUG 17364 --- [nio-8888-exec-4] c.s.s.r.core.handler.RateLimterHandler   :</span><br><span class="line"> 由于超过单位时间=100-允许的请求次数=5[触发限流]</span><br></pre></td></tr></table></figure></p>
+<p>根据日志能够看到，正常请求5次后，返回限流触发，说明我们的逻辑生效，对前端而言也是可以看到false标记，表明我们的Lua脚本限流逻辑是正确的，这里具体返回什么标记需要调用方进行明确的定义。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>我们通过Redis的incr及expire功能特性，开发定义了一套基于注解的分布式限流操作，核心逻辑基于Lua保证了原子性。达到了很好的限流的目的，生产上，可以基于该特点进行定制自己的限流组件。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> Redis </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> rateLimter </tag>
+            
+            <tag> lua </tag>
+            
+            <tag> incr </tag>
+            
+            <tag> expire </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Redis为什么是单线程且可以高并发]]></title>
+      <url>/2019/07/06/Redis%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%94%E5%8F%AF%E4%BB%A5%E9%AB%98%E5%B9%B6%E5%8F%91/</url>
+      <content type="html"><![CDATA[<h3 id="Redis的高并发和快速原因"><a href="#Redis的高并发和快速原因" class="headerlink" title="Redis的高并发和快速原因"></a>Redis的高并发和快速原因</h3><hr>
+<ol>
+<li>redis是基于内存的，内存的读写速度非常快；</li>
+<li>redis是单线程的，省去了很多上下文切换线程的时间；</li>
+<li>redis使用多路复用技术，可以处理并发的连接。非阻塞IO 内部实现采用epoll，采用了epoll+自己实现的简单的事件框架。epoll中的读、写、关闭、连接都转化成了事件，然后利用epoll的多路复用特性，绝不在io上浪费一点时间。</li>
+</ol>
+<p>下面重点介绍单线程设计和IO多路复用核心设计快的原因。</p>
+<a id="more"></a>
+<h3 id="为什么Redis是单线程的"><a href="#为什么Redis是单线程的" class="headerlink" title="为什么Redis是单线程的"></a>为什么Redis是单线程的</h3><hr>
+<ul>
+<li><p><strong>官方答案</strong><br>因为Redis是基于内存的操作，CPU不是Redis的瓶颈，Redis的瓶颈最有可能是机器内存的大小或者网络带宽。既然单线程容易实现，而且CPU不会成为瓶颈，那就顺理成章地采用单线程的方案了。</p>
+</li>
+<li><p><strong>性能指标</strong><br>关于redis的性能，官方网站也有，普通笔记本轻松处理每秒几十万的请求。</p>
+</li>
+<li><p><strong>详细原因</strong></p>
+<ol>
+<li><p>不需要各种锁的性能消耗<br>Redis的数据结构并不全是简单的Key-Value，还有list，hash等复杂的结构，这些结构有可能会进行很细粒度的操作，比如在很长的列表后面添加一个元素，在hash当中添加或者删除一个对象。这些操作可能就需要加非常多的锁，导致的结果是同步开销大大增加。</p>
+<p>总之，在单线程的情况下，就不用去考虑各种锁的问题，不存在加锁释放锁操作，没有因为可能出现死锁而导致的性能消耗。</p>
+</li>
+<li><p>单线程多进程集群方案<br>单线程的威力实际上非常强大，每核心效率也非常高，多线程自然是可以比单线程有更高的性能上限，但是在今天的计算环境中，即使是单机多线程的上限也往往不能满足需要了，需要进一步摸索的是多服务器集群化的方案，这些方案中多线程的技术照样是用不上的。</p>
+<p>所以单线程、多进程的集群不失为一个时髦的解决方案。</p>
+</li>
+<li><p>CPU消耗<br>采用单线程，避免了不必要的上下文切换和竞争条件，也不存在多进程或者多线程导致的切换而消耗 CPU。</p>
+<p>但是如果CPU成为Redis瓶颈，或者不想让服务器其他CUP核闲置，那怎么办？</p>
+<p>可以考虑多起几个Redis进程，Redis是key-value数据库，不是关系数据库，数据之间没有约束。只要客户端分清哪些key放在哪个Redis进程上就可以了。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="Redis单线程的优劣势"><a href="#Redis单线程的优劣势" class="headerlink" title="Redis单线程的优劣势"></a>Redis单线程的优劣势</h3><hr>
+<p>单进程单线程优势：</p>
+<pre><code>1. 代码更清晰，处理逻辑更简单
+2. 不用去考虑各种锁的问题，不存在加锁释放锁操作，没有因为可能出现死锁而导致的性能消耗
+3. 不存在多进程或者多线程导致的切换而消耗CPU
+</code></pre><p>单进程单线程弊端：</p>
+<pre><code>1. 无法发挥多核CPU性能，不过可以通过在单机开多个Redis实例来完善；
+</code></pre><h3 id="IO多路复用技术"><a href="#IO多路复用技术" class="headerlink" title="IO多路复用技术"></a>IO多路复用技术</h3><hr>
+<p>redis 采用网络IO多路复用技术来保证在多连接的时候， 系统的高吞吐量。</p>
+<p>多路-指的是多个socket连接，复用-指的是复用一个线程。多路复用主要有三种技术：select，poll，epoll。epoll是最新的也是目前最好的多路复用技术。</p>
+<p>这里”多路”指的是多个网络连接，”复用”指的是复用同一个线程。采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络IO的时间消耗），且Redis在内存中操作数据的速度非常快（内存内的操作不会成为这里的性能瓶颈），主要以上两点造就了Redis具有很高的吞吐量。</p>
+<h3 id="Redis高并发快总结"><a href="#Redis高并发快总结" class="headerlink" title="Redis高并发快总结"></a>Redis高并发快总结</h3><hr>
+<ol>
+<li>Redis是纯内存数据库，一般都是简单的存取操作，线程占用的时间很多，时间的花费主要集中在IO上，所以读取速度快。</li>
+<li>再说一下IO，Redis使用的是非阻塞IO，IO多路复用，使用了单线程来轮询描述符，将数据库的开、关、读、写都转换成了事件，减少了线程切换时上下文的切换和竞争。</li>
+<li>Redis采用了单线程的模型，保证了每个操作的原子性，也减少了线程的上下文切换和竞争。</li>
+<li>另外，数据结构也帮了不少忙，Redis全程使用hash结构，读取速度快，还有一些特殊的数据结构，对数据存储进行了优化，如压缩表，对短数据进行压缩存储，再如，跳表，使用有序的数据结构加快读取的速度。</li>
+<li>还有一点，Redis采用自己实现的事件分离器，效率比较高，内部采用非阻塞的执行方式，吞吐能力比较大。</li>
+</ol>
+]]></content>
+      
+        <categories>
+            
+            <category> Redis </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> epoll </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[JVM内存结构解析]]></title>
+      <url>/2019/07/06/JVM%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Jvm的内存结构是由《java虚拟机规范》制定的，《java虚拟机规范》只负责制定标准，具体的实现多种多样，比如：sun公司的HotSpot、BEA的JRockit、IBM的J9（前两个目前都已被Oracle收购），另外Apache、Google、微软等组织或公司都有自己的java虚拟机实现。只是我们目前开发比较常用的是HotSpot。</p>
+<p>《java虚拟机规范》与具体的java虚拟机的关系，有点类似于接口和实现类。《java虚拟机规范》负责制定接口，具体的java虚拟机去实现这些接口。我们编写的java代码最终会被编译成class文件，通过java虚拟机解析加载执行。Java语句的“跨平台性”，其实就是通过java虚拟机实现的，不同的平台需要实现不同jvm版本（windows版、linux版等）。我们业务代码只需要开发一份，编译成同一份class文件，却可以在windows、linux等不同的操作系统中执行。</p>
+<p>这里提到的class文件的格式、规范也是由《java虚拟机规范》制定的。换句话讲不管采用什么语言编写的程序，只要按照《java虚拟机规范》编译成class文件就可以在java虚拟机中执行。比如现在常见的可以在jvm（等同java虚拟机）上运行的语言：Scala、Groovy、Jython等等数十种语言（笔者只使用过这里列出三种）。这是jvm虚拟机除了“跨平台性”之外的另一个强大之处—“跨语言性”。</p>
+<a id="more"></a>
+<p>现在越来越多的语言都有基于jvm实现版本，比如：JavaScript对应的Rhino、Lua对应的Luaj、Python对应的Jyhon等等。利用jvm的“跨语言”特性，可以实现不管你使用什么语言编写的代码最终可以在同一个平台jvm中运行，实现跨语言调用。Jvm不再是java语言的专属，它属于世界上个各种编程语言。</p>
+<p>为什么这么多语言都要争相实现基于jvm的实现版本呢？前面已经提到两点：借助jvm可以实现“跨平台”；借助jvm可以实现“跨语言”。还有一点其实跟今天主题相关：借助jvm实现自动“内存管理”。</p>
+<p>众所周知，与c、c++不同（需要自己控制内存），java可以自动实现垃圾内存回收。其实这份工作不是java语言本身实现的，而是jvm实现的，也就是说任何一种其他语言只要能遵循《java虚拟机规范》可以编译成可以执行class文件，其内存管理就可以放心的交给jvm。</p>
+<p>话又说回来，主流的jvm实现本质上还是使用的c、c++写的（当然理论上用什么语言写都可以，只要符合《java虚拟机规范》），其内存管理还是通过c、c++控制内存空间的开辟和销毁。只是把这部分工作交给了jvm来做，java程序员只需要关心自己的业务逻辑即可。这有点类似架构设计，架构师把通用的功能提到框架中统一处理，普通程序员只需编写业务代码即可。或者可以说Jvm是更顶层的架构设计，只是架构师变成jvm源码实现那帮家伙而已。</p>
+<p>另外《java虚拟机规范》有多个版本，笔者只阅读过“周老师”翻译的《java虚拟机规范 java SE7》，感兴趣的可以直接研究oracle官网最新的版本（英文原版）。</p>
+<h3 id="Jvm的内存结构"><a href="#Jvm的内存结构" class="headerlink" title="Jvm的内存结构"></a>Jvm的内存结构</h3><p>根据java虚拟机规范可以完成java虚拟机的开发，Java虚拟机可以看作是一台抽象的计算机。如同真实的计算机那样，它有自己的指令集以及各种运行时内存区域。本次主题是讨论jvm的内存结构，对应的就是jvm“运行时内存区”。</p>
+<p>该区域大致分为5部分：方法区、java堆、PC寄存器(或者程序计数器)、java虚拟机栈、本地方法栈。大致流程为程序启动时：先把class文件加载到方法区；初始化bean对象放到java堆（比如spring ioc容器中的bean）；每个线程执行时会对应一个自己私有的PC寄存器；同时还会创建一个私有的 “java虚拟机栈”或者“本地方法栈”。</p>
+<p>由此可以看出：方法区和java堆是所有线程公有的，PC寄存器、java虚拟机栈和本地方法栈是线程私有的。结构图如下（来至《深入理解Java虚拟机》）：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E8%BF%90%E8%A1%8C%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84%E5%9B%BE.jpg?raw=true" alt=""></p>
+<ul>
+<li><p><strong>方法区</strong></p>
+<p>在程序启动时jvm会读取class文件，把每个类的结构信息放到“方法区”，这里的class文件包括jar包、war包中的所有class文件。所以程序中应该尽量避免引入无用的、重复的（不同版本）jar包。类的结构信息包括：运行时常量池（Runtime Constant Pool）、字段和方法数据、构造函数和普通方法的字节码内容、还包括一些在类、实例、接口初始化时用到的特殊方法（<init>和<cinit>方法）。该区域所有线程共享。</cinit></init></p>
+<p>在jdk1.8（对应不同的jvm实现）以前，我们常用的hotspot java虚拟机内存分代中有“永久代”的概念，这个“永久代”等价于“方法区”。可以通过PermSize 和 MaxPermSize来设置“永久代”大小。如果超过MaxPermSize，系统会抛出OutOfMemoryError: PermGen异常。</p>
+<p>在jdk1.8之后，hotspot jvm在内存空间中完全移除了“永久代”。“方法区”中“类的元数据信息”被放到“元空间”（Metaspace），“运行时常量池”被放到“java堆”（这部分是从jdk1.7开始）。</p>
+<p>在jdk1.8之后，PermSize 和 MaxPermSize参数设置失效，启动时会有警告信息。改用新的参数MaxMetaspaceSize来限制“元空间”的大小，如果不设置默认最大为本机内存容量（动态调整）。建议通过MaxMetaspaceSize设置最大“元空间”，如果类元数据的空间占用达到参数“MaxMetaspaceSize”设置的值，将会触发对死亡对象和类加载器的垃圾回收。</p>
+</li>
+<li><p><strong>java堆</strong></p>
+<p>通过-Xms -Xmx指定堆内存大小，Java堆在jvm启动时创建，所有对象的创建和销毁都在这个区域进行，是jvm管理的最大的一块内存（可以不是连续的）。对象的销毁指的就是垃圾回收，为了更合理的回收对象（对象存活时间的长短），通常的jvm实现把java堆分为年轻代和年老代，并采用不同的垃圾回收算法、以及垃圾回收器进行垃圾回收（对象销毁）。这里不对分代算法、垃圾回收器详细讲解。</p>
+<p>该区域中的对象是所有线程共享的，典型的运用场景就是spring的ioc容器，在程序启动时创建一系列对象放到一个全局的map数据结构里，防止被垃圾回收。线程中可以直接使用这些对象，而不需要重复创建和销毁。</p>
+<p>在创建新对象时，如果该区域已没有足够的空间 会抛出OutOfMemoryError异常。</p>
+</li>
+<li><p><strong>程序计数器</strong></p>
+<p>由于jvm是支持多线程执行的，但本质上是cpu在多个线程之间切换，为了记录每个线程执行的位置，每个线程都有自己独有的程序计数器，多个线程之间互不干扰。对于非native方法程序计数器记录的是正在执行的虚拟机字节码指令地址，可以看做所执行字节码的指示器，通过字节解释器改变其值来保证程序按照特定的顺序执行。</p>
+<p>PC寄存器的容量至少应当能保存一个returnAddress类型的数据或者一个与平台相关的本地指针的值，其大小是能确定的。</p>
+<p>该区域需要注意以下三点：</p>
+<ol>
+<li>如果线程正在执行的是非native方法，那么计数器记录的是正在执行的虚拟机字节码指令地址</li>
+<li>如果执行的native方法，计数器当中的内容应当是空。执行顺序交给jvm的native方法控制。</li>
+<li>该区域是java的虚拟机规范当中，唯一一个没有规定OutOfMemoryError的区域。</li>
+</ol>
+</li>
+<li><p><strong>java虚拟机栈</strong></p>
+<p>每一条java虚拟机线程在创建时会创建自己的java虚拟机栈，因此它是线程私有的。其主要作用是：用于存储局部变量与一些过程计算结果的地方。其工作方式是结合“程序计数器”读入变量到栈，根据不同的指令读取值出栈进行运算（先入后出），运算结果再入栈。</p>
+<p>java虚拟机栈的总容量可以动态扩展，但每个线程的栈大小是固定的，可以通过-Xss参数指定。总内存固定其值越小就可以支持创建更多的线程，同时每个栈的容量就越小，当该线程需要的容量超过这个值时，就会抛出StackOverflowError异常。同理 如果-Xss参数指定的值越大，每个线程可以用的栈内存空间就越大可以存放更多的局部变量等信息，但支持的线程就越小，如果总内存耗尽 没有足够的空间开辟新的线程，会抛出OutOfMemoryError异常。简单的讲如果抛出“抛出StackOverflowError异常”，增大-Xss的值；如果抛出OutOfMemoryError异常，减小-Xss的值。</p>
+<p><strong>Java虚拟机栈里数据结构叫“栈帧”</strong></p>
+<p>栈帧随着方法调用而创建，随着方法结束而销毁，也就是说一个线程里执行多个方法，对应会产生和销毁多个栈帧，这里的销毁时机是指方法调用结束，也就是说栈的内存回收不像java堆 没有复杂的垃圾回收机制。虽然同一个线程里会有多个栈帧，但同一时间只有一个栈帧，上面提到的-Xms指定的空间，其实是每个栈帧的空间。当线程中一个方法返回时，当前栈帧会传回此方法的执行结果给前一个栈帧，在方法返回之后，当前栈帧就随之被丢弃，前一个栈帧就重新成为当前栈帧了。</p>
+<p>每个“栈帧”都有自己的：局部变量表、操作数栈、动态链接、返回地址。其中局部变量表和操作数栈的容量是在编译期确定，因此栈帧实际消耗容量的大小仅仅取决于Java虚拟机的实现和方法调用时可被分配的内存。</p>
+<p><strong>局部变量表：</strong>存放局部变量的列表，一个局部变量类型为boolean、byte、char、short、float、reference和returnAddress的数据，两个局部变量可以保存一个类型为long和double的数据。局部变量使用索引来进行定位访问，第一个局部变量的索引值为零。</p>
+<p><strong>操作数栈：</strong>后进先出（Last-In-First-Out，LIFO）栈，长度由编译期决定，在任意时刻，即任意一个栈帧中的操作数栈都会有一个确定的栈深度，一个long或者double类型的数据会占用两个单位的栈深度，其他数据类型则会占用一个单位深度。</p>
+<p><strong>动态链接：</strong>简单的理解为指向运行时常量池的引用。在Class文件里面，描述一个方法调用了其他方法，或者访问其成员变量是通过符号引用（Symbolic Reference）来表示的，动态链接的作用就是将这些符号引用所表示的方法转换为实际方法的直接引用。</p>
+<p><strong>返回地址：</strong>方法调用的返回，包括正常返回（有返回值）和异常返回（没有返回值），不同的返回类型有不同的指令。</p>
+</li>
+<li><p><strong>本地方法栈</strong></p>
+<p>用于支持native方法，和java虚拟机栈相似，是线程私有，只是这个栈是采用其他语言实现。同样会有可能抛出StackOverflowError、OutOfMemoryError异常。-Xss设置栈内存的大小同样适用于本地方法栈。</p>
+<p><strong>关于内存溢出和内存泄漏</strong></p>
+<p>内存泄漏一定会导致内存溢出，但内存溢出不一定是内存泄漏导致，也有可能是服务器内存本来就不足，可以通过增加服务器内存 同时增大-Xms –Xmx配置。</p>
+<p>内存泄漏一般比较隐蔽，难于发现。典型的发生场景就是，多线程的的线程中中使用ThreadLocal，在线程执行结束时没有remove，导致对象无法被回收，日积月累内存耗尽，抛出OutOfMemoryError异常。</p>
+</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> JVM </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> JVM </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Git Flow的使用]]></title>
+      <url>/2019/07/06/Git%20Flow%E7%9A%84%E4%BD%BF%E7%94%A8/</url>
+      <content type="html"><![CDATA[<h3 id="Git-Flow简介"><a href="#Git-Flow简介" class="headerlink" title="Git Flow简介"></a>Git Flow简介</h3><p>Gitflow工作流程围绕项目发布定义了严格的分支模型。它为管理更大规模的项目提供了坚实的框架。</p>
+<p>其特色在于，它为不同的分支分配了非常明确的角色，并且定义了使用场景和用法。除了用于功能开发的分支，它还使用独立的分支进行发布前的准备、记录以及后期维护。流程仍然使用一个中央代码仓库，它是所有开发者的信息交流中心。</p>
+<p>跟其他的工作流程一样，开发者在本地完成开发，然后再将分支代码推送到中央仓库。唯一不同的是项目中分支的结构。</p>
+<p>Gitflow使用两个分支来记录项目开发的历史，而不是使用单一的master分支。在Gitflow流程中，master只是用于保存官方的发布历史，而develop分支才是用于集成各种功能开发的分支。使用版本号为master上的所有提交打标签（tag）也很方便。develop分支将包含项目的所有历史，而master会是一个缩减版本。</p>
+<a id="more"></a>
+<h3 id="Git-Flow常用分支"><a href="#Git-Flow常用分支" class="headerlink" title="Git Flow常用分支"></a>Git Flow常用分支</h3><h4 id="master"><a href="#master" class="headerlink" title="master"></a>master</h4><ul>
+<li>主分支 , 产品的功能全部实现后 , 最终在master分支对外发布</li>
+<li>该分支为只读唯一分支 , 只能从其他分支(release/hotfix)合并 , 不能在此分支修改</li>
+<li>另外所有在master分支的推送应该打标签做记录,方便追溯</li>
+<li>例如release合并到master , 或hotfix合并到master</li>
+</ul>
+<h4 id="develop"><a href="#develop" class="headerlink" title="develop"></a>develop</h4><ul>
+<li>主开发分支 , 基于master分支克隆</li>
+<li>包含所有要发布到下一个release的代码</li>
+<li>该分支为只读唯一分支 , 只能从其他分支合并</li>
+<li>feature功能分支完成 , 合并到develop(不推送)</li>
+<li>develop拉取release分支 , 提测</li>
+<li>release/hotfix 分支上线完毕 , 合并到develop并推送</li>
+</ul>
+<h4 id="feature"><a href="#feature" class="headerlink" title="feature"></a>feature</h4><ul>
+<li>功能开发分支 , 基于develop分支克隆 , 主要用于新需求新功能的开发</li>
+<li>功能开发完毕后合到develop分支(未正式上线之前不推送到远程中央仓库!!!)</li>
+<li>feature分支可同时存在多个 , 用于团队中多个功能同时开发 , 属于临时分支 , 功能完成后可选删除</li>
+</ul>
+<h4 id="release"><a href="#release" class="headerlink" title="release"></a>release</h4><ul>
+<li>测试分支 , 基于feature分支合并到develop之后  , 从develop分支克隆</li>
+<li>主要用于提交给测试人员进行功能测试 , 测试过程中发现的BUG在本分支进行修复 , 修复完成上线后合并到develop/master分支并推送(完成功能) , 打Tag</li>
+<li>属于临时分支 , 功能上线后可选删除</li>
+</ul>
+<h4 id="hotfix"><a href="#hotfix" class="headerlink" title="hotfix"></a>hotfix</h4><ul>
+<li>补丁分支 , 基于master分支克隆 , 主要用于对线上的版本进行BUG修复</li>
+<li>修复完毕后合并到develop/master分支并推送 , 打Tag</li>
+<li>属于临时分支 , 补丁修复上线后可选删除</li>
+<li>所有hotfix分支的修改会进入到下一个release</li>
+</ul>
+<h3 id="Git-Flow主要工作流程"><a href="#Git-Flow主要工作流程" class="headerlink" title="Git Flow主要工作流程"></a>Git Flow主要工作流程</h3><ol>
+<li>初始化项目为gitflow , 默认创建master分支 , 然后从master拉取第一个develop分支</li>
+<li>从develop拉取feature分支进行编码开发(多个开发人员拉取多个feature同时进行并行开发 , 互不影响)</li>
+<li>feature分支完成后 , 合并到develop(不推送 , feature功能完成还未提测 , 推送后会影响其他功能分支的开发)合并feature到develop , 可以选择删除当前feature , 也可以不删除 . 但当前feature就不可更改了 , 必须从release分支继续编码修改</li>
+<li>从develop拉取release分支进行提测 , 提测过程中在release分支上修改BUG</li>
+<li>release分支上线后 , 合并release分支到develop/master并推送合并之后 , 可选删除当前release分支 , 若不删除 , 则当前release不可修改 . 线上有问题也必须从master拉取hotfix分支进行修改</li>
+<li>上线之后若发现线上BUG , 从master拉取hotfix进行BUG修改</li>
+<li>hotfix通过测试上线后 , 合并hotfix分支到develop/master并推送合并之后 , 可选删除当前hostfix , 若不删除 , 则当前hotfix不可修改 , 若补丁未修复 , 需要从master拉取新的hotfix继续修改</li>
+<li>当进行一个feature时 , 若develop分支有变动 , 如其他开发人员完成功能并上线 , 则需要将完成的功能合并到自己分支上，即合并develop到当前feature分支</li>
+<li>当进行一个release分支时 , 若develop分支有变动 , 如其他开发人员完成功能并上线 , 则需要将完成的功能合并到自己分支上，即合并develop到当前release分支 (!!! 因为当前release分支通过测试后会发布到线上 , 如果不合并最新的develop分支 , 就会发生丢代码的情况)</li>
+</ol>
+<h3 id="Git-Flow工作流程图"><a href="#Git-Flow工作流程图" class="headerlink" title="Git Flow工作流程图"></a>Git Flow工作流程图</h3><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/git/Git%20Flow%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE.png?raw=true" alt=""></p>
+<h3 id="Git-Flow常用命令"><a href="#Git-Flow常用命令" class="headerlink" title="Git Flow常用命令"></a>Git Flow常用命令</h3><ul>
+<li><strong>初始化：</strong>git flow init</li>
+<li><strong>开始新Feature：</strong>git flow feature start MYFEATURE</li>
+<li><strong>Publish一个Feature(也就是push到远程): </strong>git flow feature publish MYFEATURE</li>
+<li><strong>获取Publish的Feature:</strong>git flow feature pull origin MYFEATURE</li>
+<li><strong>完成一个Feature: </strong>git flow feature finish MYFEATURE</li>
+<li><strong>开始一个Release:</strong>git flow release start RELEASE [BASE]</li>
+<li><strong>Publish一个Release: </strong>git flow release publish RELEASE</li>
+<li><strong>发布Release:</strong>git flow release finish RELEASE(别忘了git push –tags)</li>
+<li><strong>开始一个Hotfix: </strong>git flow hotfix start VERSION [BASENAME]</li>
+<li><strong>发布一个Hotfix: </strong>git flow hotfix finish VERSION</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow init</span><br></pre></td></tr></table></figure>
+<p>这个命令会进行一些默认的配置，可以自动创建上面介绍的所有分支：master、develop、feature、relase、hotfix等分支。</p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> ssh://user@host/path/to/repo.git</span><br><span class="line">git checkout -b develop master</span><br><span class="line">git checkout -b some-feature develop</span><br><span class="line">git checkout -b release-0.1 develop</span><br><span class="line">git checkout -b issue-<span class="comment">#001 master</span></span><br></pre></td></tr></table></figure></p>
+<p>完成后当前所在分支就变成 develop. 任何开发都必须从 develop 开始：</p>
+<p>当进行新功能开发的时候：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow feature start some_awesome_feature</span><br></pre></td></tr></table></figure></p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b some-feature develop</span><br></pre></td></tr></table></figure></p>
+<p>完成功能开发之后：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow feature finish some_awesome_feature</span><br></pre></td></tr></table></figure></p>
+<p>该命令将会把feature/some_awesome_feature合并到develope分支，然后删除功能(feature)分支。</p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git status</span><br><span class="line">git add &lt;some-file&gt;</span><br><span class="line">git commit</span><br><span class="line">git pull origin develop</span><br><span class="line">git checkout develop</span><br><span class="line">git merge some-feature</span><br><span class="line">git push</span><br><span class="line">git branch -d some-feature</span><br></pre></td></tr></table></figure></p>
+<p>将一个 feature 分支推到远程服务器：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow feature publish some_awesome_feature 或者 git push origin feature/some_awesome_feature</span><br></pre></td></tr></table></figure></p>
+<p>当你的功能点都完成时（需要发布新版本了），就基于develop创建一个发布(release)分支：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow release start v0.1.0</span><br></pre></td></tr></table></figure></p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b release-0.1 develop</span><br></pre></td></tr></table></figure></p>
+<p>当你在完成（finish)一个发布分支时，它会把你所作的修改合并到master分支，同时合并回develop分支，所以，你不需要担心你的master分支比develop分支更加超前：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow release finish v0.1.0</span><br></pre></td></tr></table></figure></p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git merge release-0.1</span><br><span class="line">git push</span><br><span class="line">git checkout develop</span><br><span class="line">git merge release-0.1</span><br><span class="line">git push</span><br><span class="line">git branch -d release-0.1</span><br></pre></td></tr></table></figure></p>
+<p>发布分支扮演的角色是功能开发（develop）与官方发布（master）之间的一个缓冲。无论什么时候你把一些东西合并入master，你都应该随即打上合适的标签。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -a 0.1 -m <span class="string">"Initial public release"</span> master</span><br><span class="line">git push --tags</span><br></pre></td></tr></table></figure></p>
+<p>Git支持钩子（hook）的功能，也就是说，在代码仓库里某些特定的事件发生的时候，可以执行一些预定义的脚本。因此，一种可行的做法是：在服务器端配置一个钩子，当你把master推送到中央仓库或者推送标签时，Git服务器能为产品发布进行一次自动的构建。</p>
+<p>当系统出现问题的时候，需要进行紧急修改的时候，就好基于master创建一个维护（hotfix）分支：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow hotfix start v0.1.0</span><br></pre></td></tr></table></figure></p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout -b issue-<span class="comment">#001 master</span></span><br></pre></td></tr></table></figure></p>
+<p>当你在完成（finish)一个维护分支时，它会把你所作的修改合并到master分支，同时合并回develop分支：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git flow hotfix finish v0.1.0</span><br></pre></td></tr></table></figure></p>
+<p>等同命令：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Fix the bug</span></span><br><span class="line">git checkout master</span><br><span class="line">git merge issue-<span class="comment">#001</span></span><br><span class="line">git push</span><br><span class="line">git checkout develop</span><br><span class="line">git merge issue-<span class="comment">#001</span></span><br><span class="line">git push</span><br><span class="line">git branch -d issue-<span class="comment">#001</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git tag -a 0.1 -m <span class="string">"Initial public release"</span> master</span><br><span class="line">git push --tags</span><br></pre></td></tr></table></figure>
+<p>Git Flow命令行图如下所示：<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/git/Git%20Flow%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%9B%BE.png?raw=true" alt=""></p>
+]]></content>
+      
+        <categories>
+            
+            <category> Git </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> terminal command </tag>
+            
+            <tag> git flow </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Java内存模型]]></title>
+      <url>/2019/07/06/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</url>
+      <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>Java 内存模型（JMM）描述了 JVM 如何使用计算机的内存（RAM）。JVM 是一个完整计算机的模型，因此该模型包含了内存模型的设计 —— JMM。</p>
+<p>如果要正确地设计并发程序，了解 JMM 非常重要。JMM 描述了不同线程间如何以及何时可以看到其它线程写入共享变量的值，以及如何在必要时同步访问共享变量。</p>
+<p>最初的 JMM 设计不充分，因此 JMM 在 Java 1.5 进行了修订。此版本的 JMM 仍在 Java 8 中使用。</p>
+<a id="more"></a>
+<h3 id="Java-Memory-Model-内部实现"><a href="#Java-Memory-Model-内部实现" class="headerlink" title="Java Memory Model 内部实现"></a>Java Memory Model 内部实现</h3><hr>
+<p>JVM 内部使用的 JMM 将内存划分为线程栈和堆。下图从逻辑角度说明了 JMM：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E6%9E%84%E9%80%A0%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>在 JVM 中运行的每个线程都有它自己的线程栈，线程栈包含了线程调用了哪些方法以到达当前执行点的信息，我们把它成为“调用栈（Call Stack）“。当线程执行其代码时，调用栈会发生变化。</p>
+<p>线程栈还包含了正在执行的每个方法的所有的局部变量（调用栈上的所有方法）。一个线程只能访问它自己的线程栈，由线程创建的局部变量对于创建它的线程以外的所有其他线程都是不可见的。即使两个线程正在执行完全相同的代码，两个线程仍将在各自的线程栈中创建自己的局部变量。因此，每个线程都有自己的每个局部变量的版本。</p>
+<p>基本类型（boolean，byte，short，char，int，long，float，double）完全存储在线程栈里，因此对其他线程是不可见的。一个线程可以将一个基本类型的变量副本传递给另一个线程，但它不能共享原始局部变量本身。</p>
+<p>堆包含了 Java 应用程序中创建的所有对象，不管对象是哪个线程创建的，这包括基本类型的包装版本（如 Byte，Integer，Long 等）。无论对象是创建成局部变量，还是作为另一个对象的成员变量被创建，对象都存储在堆中。</p>
+<p>下图说明了调用栈和局部变量存储在线程栈中，而对象存储在堆中。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%AF%B4%E6%98%8E%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>局部变量如果是基本类型，这种情况下，变量完全存储在线程栈上。</p>
+<p>局部变量如果是对象的引用，这种情况下，引用（局部变量）存储在线程栈上，但对象本身存储在堆上。</p>
+<p>对象中可能包含方法，而这些方法中可能包含局部变量，这种情况下，即使方法所属的对象存储在堆上，但这些局部变量却是存储在线程栈上的。</p>
+<p>对象的成员变量与对象本身一起存储在堆上，当成员变量是基本类型以及是对象的引用时都是如此。</p>
+<p>静态类型变量与类定义一起存储在堆上。</p>
+<p>所有线程通过拥有对象引用去访问堆中的对象。当一个线程有权访问一个对象时，它也能访问该对象的成员变量。如果两个线程同一时间调用同一对象的一个方法，它们都可以访问该对象的成员变量，但每个线程都有自己局部变量的副本。</p>
+<p>这是一个说明上述要点的图表：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>两个线程各有一组局部变量，其中一个局部变量（Local Variable 2）指向堆中的共享对象（Object 3）。两个线程各自对同一各对象拥有不同的引用，它们的引用是局部变量，因此它们存储在各自线程的线程栈中。但是，这两个不同引用指向堆中的同一个对象。</p>
+<p>请注意，共享对象（Object 3）将 Object 2 和 Object 4 作为成员变量引用（如从 Object 3 到 Object 2 和 Object 4 的箭头所示），通过对象 3 中的这些成员变量引用，两个线程可以访问对象 2 和 对象 4。</p>
+<p>上图还显示了一个局部变量指向堆中的两个不同对象。这种情况下，引用指向两个不同的对象（Object 1 和 Object 5），而不是同一个对象。理论上，如果两个线程都引用了两个对象，那两个线程都可以访问对象 1 和 对象 5。但在上图中，每个线程只引用了两个对象中的一个。</p>
+<p>那么，什么样的 Java 代码可以导致上面的内存图？好吧，代码就如下面的代码一样简单：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%811.jpg?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%812.jpg?raw=true" alt=""></p>
+<p>如果两个线程正在执行 run() 方法，则前面的结果就会出现。run() 方法会调用 methodOne()，而 methodOne() 会调用 methodTwo()。</p>
+<p>方法 methodOne() 中声明了一个基本类型的局部变量（localVariable1 类型 int）和一个对象引用的局部变量（localVariable2）。</p>
+<p>每个执行 methodOne() 的线程将在各自的线程栈上创建自己的 localVariable1 和 localVariable2 副本。localVariable 1 变量将完全分离，只存在于每个线程的线程栈中。一个线程无法看到另一个线程对其 localVariable 1 副本所做的更改。</p>
+<p>执行 methodOne() 的每个线程还将创建它们自己的 localVariable2 副本。然而，localVariable 2 的两个不同副本最终都指向堆上的同一个对象。代码将 localVariable 2 设置为指向静态变量引用的对象。静态变量只有一个副本，这个副本存储在堆上。因此，localVariable 2 的两个副本最终都指向静态变量所指向的 MySharedObject 的同一个实例。MySharedObject 实例也存储在堆中，它对应于上图中的对象 3。</p>
+<p>注意 MySharedObject 类也包含两个成员变量。成员变量本身同对象一起存储在堆中。这两个成员变量指向另外两个 Integer 对象，这些 Integer 对象对应于上图中的对象 2和对象 4。</p>
+<p>还要注意 methodTwo() 创建的一个名为 localVariable 1 的本地变量。这个局部变量是一个指向 Integer 对象的对象引用。该方法将 localVariable 1 引用设置为指向一个新的 Integer 实例。localVariable 1 引用将存储在每个执行 methodTwo() 的线程的一个副本中。实例化的两个 Integer 对象存储在堆上，但是由于方法每次执行都会创建一个新的 Integer 对象，因此执行该方法的两个线程将创建单独的 Integer 实例。methodTwo() 中创建的 Integer 对象对应于上图中的对象 1和对象 5。还要注意类 MySharedObject 中的两个成员变量，它们的类型是 long，这是一个基本类型。由于这些变量是成员变量，所以它们仍然与对象一起存储在堆中。只有本地变量存储在线程堆栈中。</p>
+<h3 id="硬件内存架构"><a href="#硬件内存架构" class="headerlink" title="硬件内存架构"></a>硬件内存架构</h3><hr>
+<p>现代硬件内存架构与 Java 内存模型略有不同。了解硬件内存架构也很重要，以了解 Java 内存模型如何与其一起工作。本节介绍了常见的硬件内存架构，后面的部分将介绍 Java 内存模型如何与其配合使用。</p>
+<p>这是现代计算机硬件架构的简化图：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E6%9E%B6%E6%9E%84.jpg?raw=true" alt=""></p>
+<p>现代计算机通常有两个或更多的 CPU，其中一些 CPU 也可能有多个内核。关键是，在具有2个或更多 CPU 的现代计算机上，可以同时运行多个线程。每个 CPU 都能够在任何给定时间运行一个线程。这意味着如果您的 Java 应用程序是多线程的，那么每个 CPU 可能同时（并发地）运行 Java 应用程序中的一个线程。</p>
+<p>每个 CPU 包含一组寄存器，这些寄存器本质上是在 CPU 内存中。CPU 在这些寄存器上执行操作的速度要比在主内存中执行变量的速度快得多。这是因为 CPU 访问这些寄存器的速度要比访问主内存快得多。</p>
+<p>每个 CPU 还可以有一个 CPU 缓存内存层。事实上，大多数现代 CPU 都有某种大小的缓存内存层。CPU 访问缓存内存的速度比主内存快得多，但通常没有访问内部寄存器的速度快。因此，CPU 高速缓存存储器介于内部寄存器和主存储器的速度之间。某些 CPU 可能有多个缓存层（L1 和 L2），但要了解 Java 内存模型如何与内存交互，这一点并不重要。重要的是要知道 CPU 可以有某种缓存存储层。</p>
+<p>计算机还包含一个主内存区域（RAM）。所有 CPU 都可以访问主存，主内存区域通常比 CPU 的缓存内存大得多。</p>
+<p>通常，当 CPU 需要访问主内存时，它会将部分主内存读入 CPU 缓存。它甚至可以将缓存的一部分读入内部寄存器，然后对其执行操作。当 CPU 需要将结果写回主内存时，它会将值从内部寄存器刷新到缓存内存，并在某个时候将值刷新回主内存。</p>
+<p>当CPU需要在高速缓存中存储其他内容时，通常会将存储在高速缓存中的值刷新回主内存。CPU 缓存可以一次将数据写入一部分内存，并一次刷新一部分内存。它不必每次更新时都读取/写入完整的缓存。通常，缓存是在称为“缓存线（Cache Line）”的较小内存块中更新的。可以将一条或多条高速缓存线读入高速缓存内存，并将一条或多条高速缓存线再次刷新回主内存。</p>
+<h3 id="JMM-和硬件内存结构之间的差别"><a href="#JMM-和硬件内存结构之间的差别" class="headerlink" title="JMM 和硬件内存结构之间的差别"></a>JMM 和硬件内存结构之间的差别</h3><hr>
+<p>如前所述，JMM 和硬件内存结构是不同的。硬件内存体系结构不区分线程栈和堆。在硬件上，线程栈和堆都位于主内存中。线程栈和堆的一部分有时可能存在于 CPU 高速缓存和内部 CPU 寄存器中。如下图所示:</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E4%B8%8E%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E4%BA%A4%E4%BA%92%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>当对象和变量可以存储在计算机的不同内存区域时，可能会出现某些问题。主要有两个问题：</p>
+<ol>
+<li>线程更新（写入）对共享变量的可见性</li>
+<li>读取、检查和写入共享变量时的竞争条件</li>
+</ol>
+<p><strong>共享对象的可见性</strong></p>
+<p>如果两个或多个线程共享一个对象，而没有正确使用 volatile 声明或同步，那么一个线程对共享对象的更新可能对其他线程不可见。</p>
+<p>假设共享对象最初存储在主内存中。在 CPU 1 上运行的线程然后将共享对象读入它的 CPU 缓存。在这里，它对共享对象进行更改。只要没有将 CPU 缓存刷新回主内存，在其他 CPU 上运行的线程就不会看到共享对象的更改版本。这样，每个线程都可能最终拥有自己的共享对象副本，每个副本位于不同的 CPU缓 存中。</p>
+<p>下图说明了大致的情况。在左 CPU 上运行的一个线程将共享对象复制到其 CPU 缓存中，并将其 count 变量更改为2。此更改对运行在正确 CPU 上的其他线程不可见，因为尚未将更新刷新回主内存。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8F%AF%E8%A7%81%E6%80%A7.jpg?raw=true" alt=""></p>
+<p>要解决这个问题，可以使用 Java 的 volatile 关键字。volatile 关键字可以确保直接从主内存读取给定的变量，并在更新时始终将其写回主内存。</p>
+<p><strong>竞态条件</strong></p>
+<p>如果两个或多个线程共享一个对象，且多个线程更新该共享对象中的变量，则可能出现竞争条件。</p>
+<p>假设线程 A 将共享对象的变量计数读入其 CPU 缓存。再想象一下，线程 B 执行相同的操作，但是进入了不同的 CPU 缓存。现在线程 A 向 count 加一，线程 B 也这样做。现在 var1 已经增加了两次，每次在每个 CPU 缓存中增加一次。</p>
+<p>如果按顺序执行这些增量，变量计数将增加两次，并将原始值 + 2 写回主内存。</p>
+<p>但是，这两个增量是同时执行的，没有适当的同步。无论哪个线程 A 和线程 B 将其更新版本的 count 写回主内存，更新后的值只比原始值高1，尽管有两个增量。</p>
+<p>该图说明了上述竞态条件问题的发生情况：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6%E5%8F%91%E7%94%9F%E6%83%85%E5%86%B5.jpg?raw=true" alt=""></p>
+<p>要解决这个问题，可以使用 Java synchronized 块。同步块保证在任何给定时间只有一个线程可以进入代码的给定临界段。Synchronized 块还保证在 Synchronized 块中访问的所有变量都将从主内存中读入，当线程退出 Synchronized 块时，所有更新的变量将再次刷新回主内存，而不管变量是否声明为 volatile。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> JVM </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> JVM </tag>
+            
+            <tag> JMM </tag>
+            
+            <tag> RAM </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Java 的类加载机制解析]]></title>
+      <url>/2019/07/06/Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</url>
+      <content type="html"><![CDATA[<h3 id="字节码"><a href="#字节码" class="headerlink" title="字节码"></a>字节码</h3><p>在聊 Java 类加载机制之前，需要先了解一下 Java 字节码，因为它和类加载机制息息相关。</p>
+<p>计算机只认识 0 和 1，所以任何语言编写的程序都需要编译成机器码才能被计算机理解，然后执行，Java 也不例外。</p>
+<p>Java 在诞生的时候喊出了一个非常牛逼的口号：“Write Once, Run Anywhere”，为了达成这个目的，Sun 公司发布了许多可以在不同平台（Windows、Linux）上运行的 Java 虚拟机（JVM）——负责载入和执行 Java 编译后的字节码。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/java-base/java%E5%AD%97%E8%8A%82%E7%A0%81%E8%BD%AC%E6%8D%A2.jpg?raw=true" alt=""></p>
+<p>到底 Java 字节码是什么样子，我们借助一段简单的代码来看一看。</p>
+<a id="more"></a>
+<p>源码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"> 	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"> 		System.out.println(<span class="string">"沉默王二"</span>);</span><br><span class="line"> 	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码编译通过后，通过 xxd Test.class 命令查看一下这个字节码文件。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">xxd Test.class</span><br><span class="line">00000000: cafe babe 0000 0034 0022 0700 0201 0019 .......4.&quot;......</span><br><span class="line">00000010: 636f 6d2f 636d 6f77 6572 2f6a 6176 615f com/cmower/java_</span><br><span class="line">00000020: 6465 6d6f 2f54 6573 7407 0004 0100 106a demo/Test......j</span><br><span class="line">00000030: 6176 612f 6c61 6e67 2f4f 626a 6563 7401 ava/lang/Object.</span><br><span class="line">00000040: 0006 3c69 6e69 743e 0100 0328 2956 0100 ..&lt;init&gt;...()V..</span><br><span class="line">00000050: 0443 6f64 650a 0003 0009 0c00 0500 0601 .Code...........</span><br><span class="line">00000060: 000f 4c69 6e65 4e75 6d62 6572 5461 626c ..LineNumberTabl</span><br></pre></td></tr></table></figure>
+<p>感觉有点懵逼，对不对？</p>
+<p>懵就对了。</p>
+<p>这段字节码中的 cafe babe 被称为“魔数”，是 JVM 识别 .class 文件的标志。文件格式的定制者可以自由选择魔数值（只要没用过），比如说 .png 文件的魔数是 8950 4e47 。</p>
+<h3 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h3><p>了解了 Java 字节码后，我们来聊聊 Java 的类加载过程。</p>
+<p>Java 的类加载过程可以分为 5 个阶段：载入、验证、准备、解析和初始化。这 5 个阶段一般是顺序发生的，但在动态绑定的情况下，解析阶段发生在初始化阶段之后。</p>
+<ul>
+<li><p><strong>Loading（载入）</strong><br>JVM 在该阶段的主要目的是将字节码从不同的数据源（可能是 class 文件、也可能是 jar 包，甚至网络）转化为二进制字节流加载到内存中，并生成一个代表该类的 java.lang.Class 对象。</p>
+</li>
+<li><p><strong>Verification（验证）</strong><br>JVM 会在该阶段对二进制字节流进行校验，只有符合 JVM 字节码规范的才能被 JVM 正确执行。该阶段是保证 JVM 安全的重要屏障，下面是一些主要的检查。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cafe bene</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Preparation（准备）</strong><br>JVM 会在该阶段对类变量（也称为静态变量， static 关键字修饰的）分配内存并初始化（对应数据类型的默认初始值，如 0、0L、null、false 等）。</p>
+<p>也就是说，假如有这样一段代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> String chenmo = <span class="string">"沉默"</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String wanger = <span class="string">"王二"</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String cmower = <span class="string">"沉默王二"</span>;</span><br><span class="line">​``` java</span><br><span class="line"></span><br><span class="line">chenmo 不会被分配内存，而 wanger 会；但 wanger 的初始值不是“王二”而是 <span class="keyword">null</span> 。</span><br><span class="line"></span><br><span class="line">需要注意的是， <span class="keyword">static</span> <span class="keyword">final</span> 修饰的变量被称作为常量，和类变量不同。常量一旦赋值就不会改变了，所以 cmower 在准备阶段的值为“沉默王二”而不是 <span class="keyword">null</span> 。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Resolution（解析）</strong><br>该阶段将常量池中的符号引用转化为直接引用。</p>
+<p>what？符号引用，直接引用？</p>
+<p>符号引用以一组符号（任何形式的字面量，只要在使用时能够无歧义的定位到目标即可）来描述所引用的目标。</p>
+<p>在编译时，Java 类并不知道所引用的类的实际地址，因此只能使用符号引用来代替。比如 com.Wanger 类引用了 com.Chenmo 类，编译时 Wanger 类并不知道 Chenmo 类的实际内存地址，因此只能使用符号 com.Chenmo 。</p>
+<p>直接引用通过对符号引用进行解析，找到引用的实际内存地址。</p>
+</li>
+<li><p><strong>Initialization（初始化）</strong><br>该阶段是类加载过程的最后一步。在准备阶段，类变量已经被赋过默认初始值，而在初始化阶段，类变量将被赋值为代码期望赋的值。换句话说，初始化阶段是执行类构造器方法的过程。</p>
+<p>oh，no，上面这段话说得很抽象，不好理解，对不对，我来举个例子。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String cmower = <span class="keyword">new</span> String(<span class="string">"沉默王二"</span>);</span><br></pre></td></tr></table></figure>
+<p>上面这段代码使用了 new 关键字来实例化一个字符串对象，那么这时候，就会调用 String 类的构造方法对 cmower 进行实例化。</p>
+</li>
+</ul>
+<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><p>聊完类加载过程，就不得不聊聊类加载器。</p>
+<p>一般来说，Java 程序员并不需要直接同类加载器进行交互。JVM 默认的行为就已经足够满足大多数情况的需求了。不过，如果遇到了需要和类加载器进行交互的情况，而对类加载器的机制又不是很了解的话，就不得不花大量的时间去调试 ClassNotFoundException 和 NoClassDefFoundError 等异常。</p>
+<p>对于任意一个类，都需要由它的类加载器和这个类本身一同确定其在 JVM 中的唯一性。也就是说，如果两个类的加载器不同，即使两个类来源于同一个字节码文件，那这两个类就必定不相等（比如两个类的 Class 对象不 equals ）。</p>
+<p>站在程序员的角度来看，Java 类加载器可以分为三种。</p>
+<ol>
+<li>启动类加载器（Bootstrap Class-Loader），加载 jre/lib 包下面的 jar 文件，比如说常见的 rt.jar。</li>
+<li>扩展类加载器（Extension or Ext Class-Loader），加载 jre/lib/ext 包下面的 jar 文件。</li>
+<li>应用类加载器（Application or App Clas-Loader），根据程序的类路径（classpath）来加载 Java 类。</li>
+</ol>
+<p>通过一段简单的代码了解下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ClassLoader loader = Test.class.getClassLoader();</span><br><span class="line">		<span class="keyword">while</span> (loader != <span class="keyword">null</span>) &#123;</span><br><span class="line">			System.out.println(loader.toString());</span><br><span class="line">			loader = loader.getParent();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个 Java 类都维护着一个指向定义它的类加载器的引用，通过类名.class.getClassLoader()可以获取到此引用；然后通过 loader.getParent() 可以获取类加载器的上层类加载器。</p>
+<p>这段代码的输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sun.misc.Launcher$AppClassLoader@73d16e93</span><br><span class="line">sun.misc.Launcher$ExtClassLoader@15db9742</span><br></pre></td></tr></table></figure>
+<p>第一行输出为 Test 的类加载器，即应用类加载器，它是 sun.misc.Launcher$AppClassLoader类的实例；第二行输出为扩展类加载器，是 sun.misc.Launcher$ExtClassLoader 类的实例。那启动类加载器呢？</p>
+<p>按理说，扩展类加载器的上层类加载器是启动类加载器，但在我这个版本的 JDK 中， 扩展类加载器的 getParent() 返回 null 。所以没有输出。</p>
+<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><p>如果以上三种类加载器不能满足要求的话，程序员还可以自定义类加载器（继承 java.lang.ClassLoader 类），它们之间的层级关系如下图所示。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/java-base/java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B.jpg?raw=true" alt=""></p>
+<p>这种层次关系被称作为 双亲委派模型 ：如果一个类加载器收到了加载类的请求，它会先把请求委托给上层加载器去完成，上层加载器又会委托上上层加载器，一直到最顶层的类加载器；如果上层加载器无法完成类的加载工作时，当前类加载器才会尝试自己去加载这个类。</p>
+<p>PS：双亲委派模型突然让我联想到朱元璋同志，这个同志当上了皇帝之后连宰相都不要了，所有的事情都亲力亲为，只有自己没精力没时间做的事才交给大臣们去干。</p>
+<p>使用双亲委派模型有一个很明显的好处，那就是 Java 类随着它的类加载器一起具备了一种带有优先级的层次关系，这对于保证 Java 程序的稳定运作很重要。</p>
+<p>上文中曾提到，如果两个类的加载器不同，即使两个类来源于同一个字节码文件，那这两个类就必定不相等——双亲委派模型能够保证同一个类最终会被特定的类加载器加载。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> JVM </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> technology </tag>
+            
+            <tag> classLoader </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[服务容错保护：Spring Cloud Hystrix 总结]]></title>
       <url>/2018/02/04/Spring%20Cloud%20Hystrix%20%E6%80%BB%E7%BB%93/</url>
       <content type="html"><![CDATA[<h3 id="Hystrix使用说明"><a href="#Hystrix使用说明" class="headerlink" title="Hystrix使用说明"></a>Hystrix使用说明</h3><ul>
@@ -2883,9 +3732,9 @@
 <p>有时候，一支优美的音乐，或是因为它的旋律动人，或是因为它的伤感离愁，总是勾勒起对过去的往往。这种微妙的情感，唯泪流满面不止。因为，它触动的是你内心最柔弱的那一点。</p>
 <p>创作的源泉，或者说是素材，来源于不平凡的点点滴滴。心跳般的跌宕人生，必是一段刻骨铭心的经历。</p>
 <p>忆千年久远，古有勇赴鸿门宴，逼至西楚霸王乌江自刎，开创大汉王朝的汉高祖刘邦。亦有耻受胯下之辱，一雪前耻的西汉开国名将韩信。亦有令汉朝皇室皇叔刘备三顾茅庐、令号称拥有百万雄狮的丞相曹操心不甘，情不愿草船借箭、令东吴最为倚重的大都督周瑜感叹既生瑜，何生亮、北征前作催人泪下，留芳百世，肺腑之言绝笔出师表、于城上敌楼前，凭栏而坐，焚香抚琴，不费一兵一卒击退魏国军师司马懿十万大军，坐唱空城计的三国诸葛孔明。亦有放荡不羁，把酒吟月，钟鼓馔玉不足贵，但愿长醉不复醒，留下千古绝唱的李白。数风流人物，还看今朝。指挥红军万里长征，八年抗战，三年内战的辉煌胜利，开国伟大的领袖毛泽东同志亦是最可爱的人。</p>
+<a id="more"></a>
 <p>如果说在这个静谧深邃、月光如水的夜晚，配上一支优美的音乐，浮现不平凡的点点滴滴，你的内心是否还依然如此平静，你是否被这个寂静的深夜所深深吸引而无法入睡。</p>
 <p>明天，是美好的一天。</p>
-<a id="more"></a>
 <p><br></p>
 <h3 id="nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接"><a href="#nbsp-nbsp-nbsp-版权声明：本文为博主原创文章，转载请标明作者和原链接" class="headerlink" title="| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接"></a><font color="red"><b>| &nbsp;&nbsp;&nbsp;版权声明：本文为博主原创文章，转载请标明作者和原链接<br></b></font></h3>]]></content>
       
@@ -3621,7 +4470,7 @@
 </li>
 <li><p>命令行运行npm install hexo-deployer-git —save 命令</p>
 </li>
-<li><p>运行hexo &amp;&amp; hexo g &amp;&amp; hexo s在本地运行，查看博客的部署情况</p>
+<li><p>运行hexo clean &amp;&amp; hexo g &amp;&amp; hexo s在本地运行，查看博客的部署情况</p>
 </li>
 <li><p>运行hexo clean &amp;&amp; hexo g &amp;&amp; hexo d,分别代表着hexo clean，hexo generate，hexo deploy，hexo server，部署到github 上进行运行，访问第二步你所定义的仓库名称，查看效果</p>
 </li>
@@ -3808,12 +4657,12 @@
 <p>这是一趟开往北京南站的列车，此行的任务是接待本人媳妇的闺蜜，可谓是任重而道远。</p>
 <p>对于一个刚踏入社会，即将开启北漂生活的妹子来说，这简直可以说是一种天上掉馅饼被爽死的幸福。行李托运、温馨提示、行程导航、美食招待、住所安排、行李托管、安全护送…</p>
 <p>一切的一切，让本人的眼光不再清澈，恍然间，回到过去的某个时刻。</p>
+<a id="more"></a>
 <p>遥想铖哥当年，回到了解放前的某一天，也就是两年前的那一天，本人携内人初来帝都，可谓是人生地不熟，行李放到一个不靠谱的托管处，然后凭借高德地图强大的导航能力，拖着坐酸了一夜的老腰，来到了帝都恢弘气势的天安门广场。</p>
 <p>匆匆过客，来不及欣赏百年沉淀的文化，便已踏入寻房苦途，经过了一番折腾和斗智斗勇的完美体验后，与次日凌晨入驻几平的小房间，期间包括与房东一窝战斗的情形，与中介讨价还价的心跳，这里不必细谈，因为均以战败告终。一把伤心泪，从此，开启了梦幻的北漂之旅。</p>
 <p>房间的憋屈，环境的脏乱，地铁的拥堵，人与人之间的嫌弃，人心的浮躁，工作的忙碌等等，使得生活在这个灯红酒绿城市的人们看似没有光鲜亮丽外表的美好，使得人生观一度发生改变和扭曲。</p>
 <p>时间在流逝，世界在变化！这个世界难道就因此而变得不美好了吗？答案是你知道。</p>
 <p>细数一下，短短两年时光，住所已更换了数次，在每一次的迭代更新中，都慢慢熟悉了这里面满满的套路，经济实惠舒适的房子已然出现（相对而言)。十九大的顺利召开，蓝天白云不再是普通人心目中的完美车标，奢饰品你也值得拥有！每日运载上千万乘客的庞大地铁系统，承载了太多太多人的辛勤和汗水，共同维护着这座城中城。童叟无欺，主动让出身边的座位时常发生。同事的帮助和关怀，让你感觉自己不是一个人在奋斗！皎洁月光下的深夜，是如此的宁静，宁静的可以听到工位上微微的心跳，向仍在此刻奋斗的同僚们致敬！你们是专业的，你们是敬业的，你们是爱业的！沉淀自己，你们会成功的！</p>
-<a id="more"></a>
 <p>生活在这个城市是痛苦的，但是无数人却迷恋这个曾让他们痛恨和责骂的城市，并为之疯狂。因为这个城市是有魔力的，吸引着他们不忍离去。他们始终坚信，通过自己的不懈努力，自己不再是在这座城市生存，而是生活！</p>
 <p>有喜欢做并激发内心强大欲望的事，是美好的;有计划并付诸实践，点滴实现的过程，是美好的;有一群志同道合，兴趣相投的朋友相互追随，是美好的。如果所有美好的事情相互碰撞与摩擦，那必定会有美好的事情发生！</p>
 <p>感慨万千，也抵不过寥寥数笔。其中的辛酸苦辣，唯镜中人冷暖自知。谨以此，献给奋斗在一线的朋友们，心中所想，所盼之事，有朝一日，必会实现！</p>

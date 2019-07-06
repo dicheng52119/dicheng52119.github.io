@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="technology,JVM,JMM,RAM," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="CrazyIT" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="前言 Java 内存模型（JMM）描述了 JVM 如何使用计算机的内存（RAM）。JVM 是一个完整计算机的模型，因此该模型包含了内存模型的设计 —— JMM。 如果要正确地设计并发程序，了解 JMM 非常重要。JMM 描述了不同线程间如何以及何时可以看到其它线程写入共享变量的值，以及如何在必要时同步访问共享变量。 最初的 JMM 设计不充分，因此 JMM 在 Java 1.5 进行了修订。此版本">
+<meta name="keywords" content="technology,JVM,JMM,RAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存模型">
+<meta property="og:url" content="http://yoursite.com/2019/07/06/Java内存模型/index.html">
+<meta property="og:site_name" content="CrazyIT">
+<meta property="og:description" content="前言 Java 内存模型（JMM）描述了 JVM 如何使用计算机的内存（RAM）。JVM 是一个完整计算机的模型，因此该模型包含了内存模型的设计 —— JMM。 如果要正确地设计并发程序，了解 JMM 非常重要。JMM 描述了不同线程间如何以及何时可以看到其它线程写入共享变量的值，以及如何在必要时同步访问共享变量。 最初的 JMM 设计不充分，因此 JMM 在 Java 1.5 进行了修订。此版本">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E6%9E%84%E9%80%A0%E5%9B%BE.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%AF%B4%E6%98%8E%E5%9B%BE.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E%E5%9B%BE.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%811.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%812.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E6%9E%B6%E6%9E%84.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E4%B8%8E%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E4%BA%A4%E4%BA%92%E5%9B%BE.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8F%AF%E8%A7%81%E6%80%A7.jpg?raw=true">
+<meta property="og:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6%E5%8F%91%E7%94%9F%E6%83%85%E5%86%B5.jpg?raw=true">
+<meta property="og:updated_time" content="2019-07-06T09:30:38.516Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java内存模型">
+<meta name="twitter:description" content="前言 Java 内存模型（JMM）描述了 JVM 如何使用计算机的内存（RAM）。JVM 是一个完整计算机的模型，因此该模型包含了内存模型的设计 —— JMM。 如果要正确地设计并发程序，了解 JMM 非常重要。JMM 描述了不同线程间如何以及何时可以看到其它线程写入共享变量的值，以及如何在必要时同步访问共享变量。 最初的 JMM 设计不充分，因此 JMM 在 Java 1.5 进行了修订。此版本">
+<meta name="twitter:image" content="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E6%9E%84%E9%80%A0%E5%9B%BE.jpg?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/06/Java内存模型/"/>
+
+
+
+
+
+  <title>Java内存模型 | CrazyIT</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <a href="https://github.com/dicheng52119" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CrazyIT</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Toss more than life</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/Java内存模型/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java内存模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-06T16:40:00+08:00">
+                2019-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3,316
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><hr>
+<p>Java 内存模型（JMM）描述了 JVM 如何使用计算机的内存（RAM）。JVM 是一个完整计算机的模型，因此该模型包含了内存模型的设计 —— JMM。</p>
+<p>如果要正确地设计并发程序，了解 JMM 非常重要。JMM 描述了不同线程间如何以及何时可以看到其它线程写入共享变量的值，以及如何在必要时同步访问共享变量。</p>
+<p>最初的 JMM 设计不充分，因此 JMM 在 Java 1.5 进行了修订。此版本的 JMM 仍在 Java 8 中使用。</p>
+<a id="more"></a>
+<h3 id="Java-Memory-Model-内部实现"><a href="#Java-Memory-Model-内部实现" class="headerlink" title="Java Memory Model 内部实现"></a>Java Memory Model 内部实现</h3><hr>
+<p>JVM 内部使用的 JMM 将内存划分为线程栈和堆。下图从逻辑角度说明了 JMM：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E6%9E%84%E9%80%A0%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>在 JVM 中运行的每个线程都有它自己的线程栈，线程栈包含了线程调用了哪些方法以到达当前执行点的信息，我们把它成为“调用栈（Call Stack）“。当线程执行其代码时，调用栈会发生变化。</p>
+<p>线程栈还包含了正在执行的每个方法的所有的局部变量（调用栈上的所有方法）。一个线程只能访问它自己的线程栈，由线程创建的局部变量对于创建它的线程以外的所有其他线程都是不可见的。即使两个线程正在执行完全相同的代码，两个线程仍将在各自的线程栈中创建自己的局部变量。因此，每个线程都有自己的每个局部变量的版本。</p>
+<p>基本类型（boolean，byte，short，char，int，long，float，double）完全存储在线程栈里，因此对其他线程是不可见的。一个线程可以将一个基本类型的变量副本传递给另一个线程，但它不能共享原始局部变量本身。</p>
+<p>堆包含了 Java 应用程序中创建的所有对象，不管对象是哪个线程创建的，这包括基本类型的包装版本（如 Byte，Integer，Long 等）。无论对象是创建成局部变量，还是作为另一个对象的成员变量被创建，对象都存储在堆中。</p>
+<p>下图说明了调用栈和局部变量存储在线程栈中，而对象存储在堆中。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%AF%B4%E6%98%8E%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>局部变量如果是基本类型，这种情况下，变量完全存储在线程栈上。</p>
+<p>局部变量如果是对象的引用，这种情况下，引用（局部变量）存储在线程栈上，但对象本身存储在堆上。</p>
+<p>对象中可能包含方法，而这些方法中可能包含局部变量，这种情况下，即使方法所属的对象存储在堆上，但这些局部变量却是存储在线程栈上的。</p>
+<p>对象的成员变量与对象本身一起存储在堆上，当成员变量是基本类型以及是对象的引用时都是如此。</p>
+<p>静态类型变量与类定义一起存储在堆上。</p>
+<p>所有线程通过拥有对象引用去访问堆中的对象。当一个线程有权访问一个对象时，它也能访问该对象的成员变量。如果两个线程同一时间调用同一对象的一个方法，它们都可以访问该对象的成员变量，但每个线程都有自己局部变量的副本。</p>
+<p>这是一个说明上述要点的图表：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E8%AF%B4%E6%98%8E%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>两个线程各有一组局部变量，其中一个局部变量（Local Variable 2）指向堆中的共享对象（Object 3）。两个线程各自对同一各对象拥有不同的引用，它们的引用是局部变量，因此它们存储在各自线程的线程栈中。但是，这两个不同引用指向堆中的同一个对象。</p>
+<p>请注意，共享对象（Object 3）将 Object 2 和 Object 4 作为成员变量引用（如从 Object 3 到 Object 2 和 Object 4 的箭头所示），通过对象 3 中的这些成员变量引用，两个线程可以访问对象 2 和 对象 4。</p>
+<p>上图还显示了一个局部变量指向堆中的两个不同对象。这种情况下，引用指向两个不同的对象（Object 1 和 Object 5），而不是同一个对象。理论上，如果两个线程都引用了两个对象，那两个线程都可以访问对象 1 和 对象 5。但在上图中，每个线程只引用了两个对象中的一个。</p>
+<p>那么，什么样的 Java 代码可以导致上面的内存图？好吧，代码就如下面的代码一样简单：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%811.jpg?raw=true" alt=""></p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/jvm%E5%86%85%E5%AD%98%E5%8F%98%E9%87%8F%E8%B0%83%E7%94%A8%E4%BB%A3%E7%A0%812.jpg?raw=true" alt=""></p>
+<p>如果两个线程正在执行 run() 方法，则前面的结果就会出现。run() 方法会调用 methodOne()，而 methodOne() 会调用 methodTwo()。</p>
+<p>方法 methodOne() 中声明了一个基本类型的局部变量（localVariable1 类型 int）和一个对象引用的局部变量（localVariable2）。</p>
+<p>每个执行 methodOne() 的线程将在各自的线程栈上创建自己的 localVariable1 和 localVariable2 副本。localVariable 1 变量将完全分离，只存在于每个线程的线程栈中。一个线程无法看到另一个线程对其 localVariable 1 副本所做的更改。</p>
+<p>执行 methodOne() 的每个线程还将创建它们自己的 localVariable2 副本。然而，localVariable 2 的两个不同副本最终都指向堆上的同一个对象。代码将 localVariable 2 设置为指向静态变量引用的对象。静态变量只有一个副本，这个副本存储在堆上。因此，localVariable 2 的两个副本最终都指向静态变量所指向的 MySharedObject 的同一个实例。MySharedObject 实例也存储在堆中，它对应于上图中的对象 3。</p>
+<p>注意 MySharedObject 类也包含两个成员变量。成员变量本身同对象一起存储在堆中。这两个成员变量指向另外两个 Integer 对象，这些 Integer 对象对应于上图中的对象 2和对象 4。</p>
+<p>还要注意 methodTwo() 创建的一个名为 localVariable 1 的本地变量。这个局部变量是一个指向 Integer 对象的对象引用。该方法将 localVariable 1 引用设置为指向一个新的 Integer 实例。localVariable 1 引用将存储在每个执行 methodTwo() 的线程的一个副本中。实例化的两个 Integer 对象存储在堆上，但是由于方法每次执行都会创建一个新的 Integer 对象，因此执行该方法的两个线程将创建单独的 Integer 实例。methodTwo() 中创建的 Integer 对象对应于上图中的对象 1和对象 5。还要注意类 MySharedObject 中的两个成员变量，它们的类型是 long，这是一个基本类型。由于这些变量是成员变量，所以它们仍然与对象一起存储在堆中。只有本地变量存储在线程堆栈中。</p>
+<h3 id="硬件内存架构"><a href="#硬件内存架构" class="headerlink" title="硬件内存架构"></a>硬件内存架构</h3><hr>
+<p>现代硬件内存架构与 Java 内存模型略有不同。了解硬件内存架构也很重要，以了解 Java 内存模型如何与其一起工作。本节介绍了常见的硬件内存架构，后面的部分将介绍 Java 内存模型如何与其配合使用。</p>
+<p>这是现代计算机硬件架构的简化图：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E6%9E%B6%E6%9E%84.jpg?raw=true" alt=""></p>
+<p>现代计算机通常有两个或更多的 CPU，其中一些 CPU 也可能有多个内核。关键是，在具有2个或更多 CPU 的现代计算机上，可以同时运行多个线程。每个 CPU 都能够在任何给定时间运行一个线程。这意味着如果您的 Java 应用程序是多线程的，那么每个 CPU 可能同时（并发地）运行 Java 应用程序中的一个线程。</p>
+<p>每个 CPU 包含一组寄存器，这些寄存器本质上是在 CPU 内存中。CPU 在这些寄存器上执行操作的速度要比在主内存中执行变量的速度快得多。这是因为 CPU 访问这些寄存器的速度要比访问主内存快得多。</p>
+<p>每个 CPU 还可以有一个 CPU 缓存内存层。事实上，大多数现代 CPU 都有某种大小的缓存内存层。CPU 访问缓存内存的速度比主内存快得多，但通常没有访问内部寄存器的速度快。因此，CPU 高速缓存存储器介于内部寄存器和主存储器的速度之间。某些 CPU 可能有多个缓存层（L1 和 L2），但要了解 Java 内存模型如何与内存交互，这一点并不重要。重要的是要知道 CPU 可以有某种缓存存储层。</p>
+<p>计算机还包含一个主内存区域（RAM）。所有 CPU 都可以访问主存，主内存区域通常比 CPU 的缓存内存大得多。</p>
+<p>通常，当 CPU 需要访问主内存时，它会将部分主内存读入 CPU 缓存。它甚至可以将缓存的一部分读入内部寄存器，然后对其执行操作。当 CPU 需要将结果写回主内存时，它会将值从内部寄存器刷新到缓存内存，并在某个时候将值刷新回主内存。</p>
+<p>当CPU需要在高速缓存中存储其他内容时，通常会将存储在高速缓存中的值刷新回主内存。CPU 缓存可以一次将数据写入一部分内存，并一次刷新一部分内存。它不必每次更新时都读取/写入完整的缓存。通常，缓存是在称为“缓存线（Cache Line）”的较小内存块中更新的。可以将一条或多条高速缓存线读入高速缓存内存，并将一条或多条高速缓存线再次刷新回主内存。</p>
+<h3 id="JMM-和硬件内存结构之间的差别"><a href="#JMM-和硬件内存结构之间的差别" class="headerlink" title="JMM 和硬件内存结构之间的差别"></a>JMM 和硬件内存结构之间的差别</h3><hr>
+<p>如前所述，JMM 和硬件内存结构是不同的。硬件内存体系结构不区分线程栈和堆。在硬件上，线程栈和堆都位于主内存中。线程栈和堆的一部分有时可能存在于 CPU 高速缓存和内部 CPU 寄存器中。如下图所示:</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/JMM%E4%B8%8E%E7%A1%AC%E4%BB%B6%E5%86%85%E5%AD%98%E4%BA%A4%E4%BA%92%E5%9B%BE.jpg?raw=true" alt=""></p>
+<p>当对象和变量可以存储在计算机的不同内存区域时，可能会出现某些问题。主要有两个问题：</p>
+<ol>
+<li>线程更新（写入）对共享变量的可见性</li>
+<li>读取、检查和写入共享变量时的竞争条件</li>
+</ol>
+<p><strong>共享对象的可见性</strong></p>
+<p>如果两个或多个线程共享一个对象，而没有正确使用 volatile 声明或同步，那么一个线程对共享对象的更新可能对其他线程不可见。</p>
+<p>假设共享对象最初存储在主内存中。在 CPU 1 上运行的线程然后将共享对象读入它的 CPU 缓存。在这里，它对共享对象进行更改。只要没有将 CPU 缓存刷新回主内存，在其他 CPU 上运行的线程就不会看到共享对象的更改版本。这样，每个线程都可能最终拥有自己的共享对象副本，每个副本位于不同的 CPU缓 存中。</p>
+<p>下图说明了大致的情况。在左 CPU 上运行的一个线程将共享对象复制到其 CPU 缓存中，并将其 count 变量更改为2。此更改对运行在正确 CPU 上的其他线程不可见，因为尚未将更新刷新回主内存。</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E5%85%B1%E4%BA%AB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%8F%AF%E8%A7%81%E6%80%A7.jpg?raw=true" alt=""></p>
+<p>要解决这个问题，可以使用 Java 的 volatile 关键字。volatile 关键字可以确保直接从主内存读取给定的变量，并在更新时始终将其写回主内存。</p>
+<p><strong>竞态条件</strong></p>
+<p>如果两个或多个线程共享一个对象，且多个线程更新该共享对象中的变量，则可能出现竞争条件。</p>
+<p>假设线程 A 将共享对象的变量计数读入其 CPU 缓存。再想象一下，线程 B 执行相同的操作，但是进入了不同的 CPU 缓存。现在线程 A 向 count 加一，线程 B 也这样做。现在 var1 已经增加了两次，每次在每个 CPU 缓存中增加一次。</p>
+<p>如果按顺序执行这些增量，变量计数将增加两次，并将原始值 + 2 写回主内存。</p>
+<p>但是，这两个增量是同时执行的，没有适当的同步。无论哪个线程 A 和线程 B 将其更新版本的 count 写回主内存，更新后的值只比原始值高1，尽管有两个增量。</p>
+<p>该图说明了上述竞态条件问题的发生情况：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/jvm/%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6%E5%8F%91%E7%94%9F%E6%83%85%E5%86%B5.jpg?raw=true" alt=""></p>
+<p>要解决这个问题，可以使用 Java synchronized 块。同步块保证在任何给定时间只有一个线程可以进入代码的给定临界段。Synchronized 块还保证在 Synchronized 块中访问的所有变量都将从主内存中读入，当线程退出 Synchronized 块时，所有更新的变量将再次刷新回主内存，而不管变量是否声明为 volatile。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+      </div>
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/technology/" rel="tag"><i class="fa fa-tag"></i> technology</a>
+          
+            <a href="/tags/JVM/" rel="tag"><i class="fa fa-tag"></i> JVM</a>
+          
+            <a href="/tags/JMM/" rel="tag"><i class="fa fa-tag"></i> JMM</a>
+          
+            <a href="/tags/RAM/" rel="tag"><i class="fa fa-tag"></i> RAM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/06/Java类加载机制解析/" rel="next" title="Java 的类加载机制解析">
+                <i class="fa fa-chevron-left"></i> Java 的类加载机制解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/06/Git Flow的使用/" rel="prev" title="Git Flow的使用">
+                Git Flow的使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Mr.CrazyDC" />
+            
+              <p class="site-author-name" itemprop="name">Mr.CrazyDC</p>
+              <p class="site-description motion-element" itemprop="description">Life is a crazy ride, all in or nothing.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/dicheng52119" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/profile.php?id=100023446571362" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/2936614971/home?leftnav=1" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:dicheng52119@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-mortar-board"></i>
+                推荐阅读
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.oschina.net/" title="开源中国社区" target="_blank">开源中国社区</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.csdn.net/" title="CSDN社区" target="_blank">CSDN社区</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.open-open.com/" title="深度开源" target="_blank">深度开源</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.zhihu.com/" title="知乎" target="_blank">知乎</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jianshu.com/" title="简书" target="_blank">简书</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.uisdc.com/" title="优设" target="_blank">优设</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.alloyteam.com/nav/" title="Web前端导航" target="_blank">Web前端导航</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.36zhen.com/t?id=3448" title="前端书籍资料" target="_blank">前端书籍资料</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x524D;&#x8A00;" class="headerlink" title="&#x524D;&#x8A00;"></a>&#x524D;&#x8A00;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Memory-Model-内部实现"><span class="nav-number">2.</span> <span class="nav-text"><a href="#Java-Memory-Model-&#x5185;&#x90E8;&#x5B9E;&#x73B0;" class="headerlink" title="Java Memory Model &#x5185;&#x90E8;&#x5B9E;&#x73B0;"></a>Java Memory Model &#x5185;&#x90E8;&#x5B9E;&#x73B0;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件内存架构"><span class="nav-number">3.</span> <span class="nav-text"><a href="#&#x786C;&#x4EF6;&#x5185;&#x5B58;&#x67B6;&#x6784;" class="headerlink" title="&#x786C;&#x4EF6;&#x5185;&#x5B58;&#x67B6;&#x6784;"></a>&#x786C;&#x4EF6;&#x5185;&#x5B58;&#x67B6;&#x6784;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM-和硬件内存结构之间的差别"><span class="nav-number">4.</span> <span class="nav-text"><a href="#JMM-&#x548C;&#x786C;&#x4EF6;&#x5185;&#x5B58;&#x7ED3;&#x6784;&#x4E4B;&#x95F4;&#x7684;&#x5DEE;&#x522B;" class="headerlink" title="JMM &#x548C;&#x786C;&#x4EF6;&#x5185;&#x5B58;&#x7ED3;&#x6784;&#x4E4B;&#x95F4;&#x7684;&#x5DEE;&#x522B;"></a>JMM &#x548C;&#x786C;&#x4EF6;&#x5185;&#x5B58;&#x7ED3;&#x6784;&#x4E4B;&#x95F4;&#x7684;&#x5DEE;&#x522B;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr.CrazyDC</span>
+
+  
+</div>
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span><span class="post-meta-divider">|</span>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共90.8k字</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+<div id="hexo-helper-live2d">
+  <canvas id="live2dcanvas" width="150" height="300"></canvas>
+</div>
+<style>
+  #live2dcanvas{
+    position: fixed;
+    width: 150px;
+    height: 300px;
+    opacity:0.7;
+    right: 0px;
+    z-index: 999;
+    pointer-events: none;
+    bottom: -20px;
+  }
+</style>
+<script type="text/javascript" src="/live2d/device.min.js"></script>
+<script type="text/javascript">
+const loadScript = function loadScript(c,b){var a=document.createElement("script");a.type="text/javascript";"undefined"!=typeof b&&(a.readyState?a.onreadystatechange=function(){if("loaded"==a.readyState||"complete"==a.readyState)a.onreadystatechange=null,b()}:a.onload=function(){b()});a.src=c;document.body.appendChild(a)};
+(function(){
+  if((typeof(device) != 'undefined') && (device.mobile())){
+    var trElement = document.getElementById('hexo-helper-live2d');
+    trElement.parentNode.removeChild(trElement);
+    return;
+  }else
+    if (typeof(device) === 'undefined') console.error('Cannot find current-device script.');
+  loadScript("/live2d/script.js", function(){loadlive2d("live2dcanvas", "/live2d/assets/hijiki.model.json", 0.5);});
+})();
+</script>
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

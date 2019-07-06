@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/24/一花一世界/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/ConcurrentHashMap并发集合学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -336,7 +336,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/24/一花一世界/" itemprop="url">一花一世界</a></h1>
+                <a class="post-title-link" href="/2018/01/07/ConcurrentHashMap并发集合学习笔记/" itemprop="url">ConcurrentHashMap并发集合学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -348,8 +348,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-24T12:44:38+08:00">
-                2017-12-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:17:42+08:00">
+                2018-01-07
               </time>
             
 
@@ -371,8 +371,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/情感/" itemprop="url" rel="index">
-                    <span itemprop="name">情感</span>
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
                   </a>
                 </span>
 
@@ -402,7 +402,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  268
+                  1,361
                 </span>
               
 
@@ -418,7 +418,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  5
                 </span>
               
             </div>
@@ -440,15 +440,13 @@
 
       
         
-          <p>闲来无事，总想写点东西，不知这种感觉你是否也从拥有。</p>
-<p>其实，这种感觉并非空穴来风，而是源自你内心深处最真实的想法。这可能就是所谓的感由心生。</p>
-<p>最近，爱上了一种安静，甚至可以说是宁静，时常地思考或者回忆，浮现出一幅幅画面，不知这种喜欢你是否也感同深受。</p>
-<p>其实，这种喜欢并非妙不可言，而是情感的变化凸显了这种微妙。这可能就是所谓的境由情生。</p>
-<p>很多时候，梦境中的情形似曾相识，在某年某月某日的某个时刻，你就是梦境中的主人公。</p>
-<p>其实，这种情景是对美好生活的极度渴望和向往。如果，梦不再那么模糊，梦中的细节得以延续，那将会是另一个世界。这可能就是所谓的一花一世界。</p>
+          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>HashMap是我们平时开发过程中用的比较多的集合，但它是非线程安全的，在涉及到多线程并发的情况，进行put操作有可能会引起死循环，导致CPU利用率接近100%。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">final</span> HashMap&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;(<span class="number">2</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            map.put(UUID.randomUUID().toString(), <span class="string">""</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解决方案有Hashtable和Collections.synchronizedMap(hashMap)，不过这两个方案基本上是对读写进行加锁操作，一个线程在读写元素，其余线程必须等待，性能可想而知。</p>
+<p>所以，Doug Lea给我们带来了并发安全的ConcurrentHashMap，它的实现是依赖于 Java 内存模型。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/24/一花一世界/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/ConcurrentHashMap并发集合学习笔记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -501,7 +499,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/24/岁月如光，时光静好/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/Executor并发框架学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -520,7 +518,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/24/岁月如光，时光静好/" itemprop="url">岁月如光，时光静好</a></h1>
+                <a class="post-title-link" href="/2018/01/07/Executor并发框架学习笔记/" itemprop="url">Executor并发框架学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -532,8 +530,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-24T12:44:21+08:00">
-                2017-12-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:07:45+08:00">
+                2018-01-07
               </time>
             
 
@@ -555,8 +553,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/情感/" itemprop="url" rel="index">
-                    <span itemprop="name">情感</span>
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
                   </a>
                 </span>
 
@@ -586,385 +584,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  520
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  2
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>不知道，失眠是否是对一个人意志上的考验，然而，此刻，在这个静谧深邃、月光如水的夜晚，我却辗转反侧。</p>
-<p>有时候，一支优美的音乐，或是因为它的旋律动人，或是因为它的伤感离愁，总是勾勒起对过去的往往。这种微妙的情感，唯泪流满面不止。因为，它触动的是你内心最柔弱的那一点。</p>
-<p>创作的源泉，或者说是素材，来源于不平凡的点点滴滴。心跳般的跌宕人生，必是一段刻骨铭心的经历。</p>
-<p>忆千年久远，古有勇赴鸿门宴，逼至西楚霸王乌江自刎，开创大汉王朝的汉高祖刘邦。亦有耻受胯下之辱，一雪前耻的西汉开国名将韩信。亦有令汉朝皇室皇叔刘备三顾茅庐、令号称拥有百万雄狮的丞相曹操心不甘，情不愿草船借箭、令东吴最为倚重的大都督周瑜感叹既生瑜，何生亮、北征前作催人泪下，留芳百世，肺腑之言绝笔出师表、于城上敌楼前，凭栏而坐，焚香抚琴，不费一兵一卒击退魏国军师司马懿十万大军，坐唱空城计的三国诸葛孔明。亦有放荡不羁，把酒吟月，钟鼓馔玉不足贵，但愿长醉不复醒，留下千古绝唱的李白。数风流人物，还看今朝。指挥红军万里长征，八年抗战，三年内战的辉煌胜利，开国伟大的领袖毛泽东同志亦是最可爱的人。</p>
-<p>如果说在这个静谧深邃、月光如水的夜晚，配上一支优美的音乐，浮现不平凡的点点滴滴，你的内心是否还依然如此平静，你是否被这个寂静的深夜所深深吸引而无法入睡。</p>
-<p>明天，是美好的一天。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/24/岁月如光，时光静好/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/24/Spring Cloud之Hystrix学习笔记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mr.CrazyDC">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyIT">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/24/Spring Cloud之Hystrix学习笔记/" itemprop="url">Spring Cloud之Hystrix学习笔记</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-24T12:15:05+08:00">
-                2017-12-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring-Cloud/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring Cloud</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  2,165
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  9
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="Hystrix介绍"><a href="#Hystrix介绍" class="headerlink" title="Hystrix介绍"></a>Hystrix介绍</h3><p>Spring Cloud Hystrix实现了断路器、线程隔离等一系列服务保护功能。它是基于Netflix的开源框架Hystrix实现的，该框架的目标在于通过控制那些访问远程系统、服务和第三方库的节点，从而对延迟和故障提供更强大的容错能力。Hystrix具备服务降级、服务熔断、线程和信号隔离、请求缓存、请求合并以及服务监控等强大功能。</p>
-<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><ul>
-<li>需要启动的工程：<ol>
-<li>eureka-server工程：服务注册中心。</li>
-<li>hello-service工程：HELLO-SERVICE的服务单元，启动两个不同端口的服务实例。</li>
-<li>ribbon-consume工程：使用Ribbon实现的服务消费者。</li>
-</ol>
-</li>
-</ul>
-<h3 id="引入Spring-Cloud-Hystrix"><a href="#引入Spring-Cloud-Hystrix" class="headerlink" title="引入Spring Cloud Hystrix"></a>引入Spring Cloud Hystrix</h3><ul>
-<li><p>在ribbon-consumer工程的pom.xml的dependency节点中引入spring-cloud-starter-hystrix依赖</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-cloud-starter-hystrix&lt;/artifactId&gt;</span><br><span class="line">dependency&gt;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>在ribbon-consumer工程的主类中使用@EnableCircuitBreaker注解开启断路器功能</p>
-</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/12/24/Spring Cloud之Hystrix学习笔记/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/19/Markdown的常用语法/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mr.CrazyDC">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyIT">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/19/Markdown的常用语法/" itemprop="url">Markdown的常用语法(个人总结)</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-19T14:02:02+08:00">
-                2017-12-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Markdown/" itemprop="url" rel="index">
-                    <span itemprop="name">Markdown</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1,570
+                  1,613
                 </span>
               
 
@@ -1002,20 +622,21 @@
 
       
         
-          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Markdown 是一种轻量级标记语言，它用简洁的语法代替排版，使我们专心于码字。它的目标是实现易读易写，成为一种适用于网络的书写语言。同时，Markdown支持嵌入html标签。</p>
-<p>注意：</p>
-<ul>
-<li>Markdown使用#、+、*等符号来标记， 符号后面必须跟上 至少1个 空格才有效！</li>
-<li>markdown中如果遇到有字符与markdown语法冲突,可以使用 反引号包裹  <code>需要转移的内容</code> </li>
-<li>markdown中如何让# * &gt;等符号原样显示，不被解析成对应的markdown语法，前加\转义</li>
+          <h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p>Eexecutor作为灵活且强大的异步执行框架，其支持多种不同类型的任务执行策略，提供了一种标准的方法将任务的提交过程和执行过程解耦开发，基于生产者-消费者模式，其提交任务的线程相当于生产者，执行任务的线程相当于消费者，并用Runnable来表示任务，Executor的实现还提供了对生命周期的支持，以及统计信息收集，应用程序管理机制和性能监视等机制。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ul>
+<li>Executor的UML图：（常用的几个接口和子类）<br><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/thread/Executor%E5%AE%B6%E8%B0%B1%E5%9B%BE.png?raw=true" alt=""></li>
 </ul>
-<p><br></p>
-<h2 id="Markdown的常用语法"><a href="#Markdown的常用语法" class="headerlink" title="Markdown的常用语法"></a>Markdown的常用语法</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><p>Markdown 标题支持两种形式：</p>
-<h4 id="1-用-标记"><a href="#1-用-标记" class="headerlink" title="1. 用#标记"></a>1. 用#标记</h4><p>在 <strong>标题开头</strong> 加上1~6个#，依次代表一级标题、二级标题….六级标题</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># 一级标题 </span><br><span class="line">## 二级标题</span><br><span class="line">### 三级标题</span><br><span class="line">##### 四级标题</span><br><span class="line">###### 五级标题</span><br><span class="line">###### 六级标题</span><br></pre></td></tr></table></figure>
+<ol>
+<li>Executor：一个接口，其定义了一个接收Runnable对象的方法executor，其方法签名为executor(Runnable command)</li>
+<li>ExecutorService：是一个比Executor使用更广泛的子类接口，其提供了生命周期管理的方法，以及可跟踪一个或多个异步任务执行状况返回Future的方法</li>
+<li>AbstractExecutorService：ExecutorService执行方法的默认实现</li>
+<li>ScheduledExecutorService：一个可定时调度任务的接口</li>
+<li>ScheduledThreadPoolExecutor：ScheduledExecutorService的实现，一个可定时调度任务的线程池</li>
+<li>ThreadPoolExecutor：线程池，可以通过调用Executors以下静态工厂方法来创建线程池并返回一个ExecutorService对象</li>
+</ol>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/19/Markdown的常用语法/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/Executor并发框架学习笔记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1068,7 +689,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/18/Hexo配置文件详细说明/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/Semaphore信号量学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -1087,7 +708,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/18/Hexo配置文件详细说明/" itemprop="url">Hexo配置文件详细说明</a></h1>
+                <a class="post-title-link" href="/2018/01/07/Semaphore信号量学习笔记/" itemprop="url">Semaphore信号量学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -1099,8 +720,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-18T22:16:19+08:00">
-                2017-12-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:02:39+08:00">
+                2018-01-07
               </time>
             
 
@@ -1122,8 +743,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
                   </a>
                 </span>
 
@@ -1153,7 +774,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  479
+                  1,891
                 </span>
               
 
@@ -1169,7 +790,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2
+                  8
                 </span>
               
             </div>
@@ -1191,73 +812,382 @@
 
       
         
-          <h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>您可以在 _config.yml 中修改大部份的配置。</p>
-<h3 id="网站"><a href="#网站" class="headerlink" title="网站"></a>网站</h3><table>
-<thead>
-<tr>
-<th style="text-align:left">参数</th>
-<th style="text-align:left">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">title</td>
-<td style="text-align:left">网站标题</td>
-</tr>
-<tr>
-<td style="text-align:left">subtitle</td>
-<td style="text-align:left">网站副标题</td>
-</tr>
-<tr>
-<td style="text-align:left">description</td>
-<td style="text-align:left">网站描述</td>
-</tr>
-<tr>
-<td style="text-align:left">author</td>
-<td style="text-align:left">您的名字</td>
-</tr>
-<tr>
-<td style="text-align:left">language</td>
-<td style="text-align:left">网站使用的语言</td>
-</tr>
-<tr>
-<td style="text-align:left">timezone</td>
-<td style="text-align:left">网站时区。Hexo 默认使用您电脑的时区。时区列表。比如说：America/New_York, Japan, 和 UTC 。</td>
-</tr>
-</tbody>
-</table>
-<p>其中，description主要用于SEO，告诉搜索引擎一个关于您站点的简单描述，通常建议在其中包含您网站的关键词。author参数用于主题显示文章的作者。</p>
-<h3 id="网址"><a href="#网址" class="headerlink" title="网址"></a>网址</h3><table>
-<thead>
-<tr>
-<th style="text-align:left">参数</th>
-<th style="text-align:left">描述</th>
-<th style="text-align:left">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">url</td>
-<td style="text-align:left">网址</td>
-</tr>
-<tr>
-<td style="text-align:left">root</td>
-<td style="text-align:left">网站根目录</td>
-</tr>
-<tr>
-<td style="text-align:left">permalink</td>
-<td style="text-align:left">文章的永久链接格式</td>
-<td style="text-align:left">:year/:month/:day/:title/</td>
-</tr>
-<tr>
-<td style="text-align:left">permalink_defaults</td>
-<td style="text-align:left">永久链接中各部分的默认值</td>
-</tr>
-</tbody>
-</table>
+          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在多线程程序设计中有三个同步工具需要我们掌握，分别是Semaphore(信号量)，countDownLatch（倒计数门闸锁），CyclicBarrier(可重用栅栏)</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Semaphore是一种基于计数的信号量。它可以设定一个阈值，基于此，多个线程竞争获取许可信号，做完自己的申请后归还，超过阈值后，线程申请许可信号将会被阻塞。Semaphore可以用来构建一些对象池，资源池之类的，比如数据库连接池，我们也可以创建计数为1的Semaphore，将其作为一种类似互斥锁的机制，这也叫二元信号量，表示两种互斥状态。它的用法如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建一个计数阈值为5的信号量对象  </span></span><br><span class="line"><span class="comment">// 只能5个线程同时访问  </span></span><br><span class="line">Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="comment">// 申请许可  </span></span><br><span class="line">    semp.acquire();  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        <span class="comment">// 业务逻辑  </span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">  </span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;  </span><br><span class="line">        <span class="comment">// 释放许可  </span></span><br><span class="line">        semp.release();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/18/Hexo配置文件详细说明/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/Semaphore信号量学习笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/CyclicBarrier学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/07/CyclicBarrier学习笔记/" itemprop="url">CyclicBarrier学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:56:26+08:00">
+                2018-01-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,518
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="类说明"><a href="#类说明" class="headerlink" title="类说明"></a>类说明</h3><p>一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环的 barrier。比如有一组线程，都要往数据库里面写入操作，只有当所有的线程都往数据库里面写入数据之后，这些线程才能继续往下执行，这时候就可以使用CyclicBarrier了。当所有的等待线程释放之后,CyclicBarrier是可重用的。</p>
+<p>CyclicBarrier有两个构造函数：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties, Runnable barrierAction)</span></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CyclicBarrier</span><span class="params">(<span class="keyword">int</span> parties)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数parties指让多少个线程或者任务等待至barrier状态；参数barrierAction为当这些线程都达到barrier状态时会执行的内容。</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>需要所有的子任务都完成时，才执行主任务，这个时候就可以选择使用CyclicBarrier。</p>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><p>对于CyclicBarrier来说，最重要的是await()方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, BrokenBarrierException</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">await</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br></pre></td></tr></table></figure>
+<p>第一个版本比较常用，用来挂起当前线程，直至所有线程都到达barrier状态再同时执行后续任务；</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/07/CyclicBarrier学习笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/CountDownLatch学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/07/CountDownLatch学习笔记/" itemprop="url">CountDownLatch学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:50:08+08:00">
+                2018-01-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  626
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>CountDownLatch是一个同步的辅助类，它可以允许一个或多个线程等待，直到一组在其它线程中的操作执行完成。</p>
+<p>一个CountDownLatch会通过一个给定的count数来被初始化。其中await()方法会一直阻塞，直到当前的count被减到0，而这个过程是通过调用countDown()方法来实现的。在await()方法不再阻塞以后，所有等待的线程都会被释放，并且任何await()的子调用都会立刻返回。这是一次性的－－count不能被重置。如果你需要一种能重置count的版本，请考虑使用CyclicBarrier。</p>
+<p>CountDownlatch是一个多功能的同步工具，可以被用于各种目的。一个CountDownLatch通过一个值为1的count被初始化，来作为一个开/关的门或门闩：所有调用了await()的线程都会在门前等待，直到门被一个线程通过调用countDown()打开。一个被初始化为N的CountDownLatch可以被用来“在N个线程都完成了某种操作（或者一些操作已经被完成了N次）之后创建一个线程”。</p>
+<p>CountDownLatch一个有用的属性就是它不需要线程们在继续执行之前，调用countDown来等待count被减到0。它简单地阻止了任何调用了await()的线程继续，直到所有的线程都能够通过。</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>下面请看一个应用场景：<br>有1个driver和5个worker，需要满足以下两点要求：</p>
+<p>当driver完成了全部的工作之后才允许worker们开始工作；<br>当所有的worker都完成了自己的工作之后，driver主线程才能结束。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/07/CountDownLatch学习笔记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1301,7 +1231,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1351,7 +1281,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1362,7 +1292,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1373,7 +1303,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1513,7 +1443,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共69.8k字</span>
+  <span class="post-count">博客全站共90.8k字</span>
 </div>
 
         

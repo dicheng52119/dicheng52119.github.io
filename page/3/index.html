@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/Mysql索引/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/28/Hexo的next主题个性化教程-打造炫酷网站/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -336,7 +336,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/Mysql索引/" itemprop="url">Mysql索引</a></h1>
+                <a class="post-title-link" href="/2018/01/28/Hexo的next主题个性化教程-打造炫酷网站/" itemprop="url">Hexo的next主题个性化教程:打造炫酷网站</a></h1>
         
 
         <div class="post-meta">
@@ -348,8 +348,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T21:11:34+08:00">
-                2018-01-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-28T12:40:08+08:00">
+                2018-01-28
               </time>
             
 
@@ -371,8 +371,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Mysql/" itemprop="url" rel="index">
-                    <span itemprop="name">Mysql</span>
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
                   </a>
                 </span>
 
@@ -402,7 +402,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,263
+                  6,892
                 </span>
               
 
@@ -418,7 +418,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  9
+                  32
                 </span>
               
             </div>
@@ -440,15 +440,46 @@
 
       
         
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>首先:先假设有一张表,表的数据有10W条数据,其中有一条数据是nickname=’css’,如果要拿这条数据的话需要些的sql是 SELECT * FROM award WHERE nickname = ‘css’</p>
-<p>一般情况下,在没有建立索引的时候,mysql需要扫描全表及扫描10W条数据找这条数据,如果我在nickname上建立索引,那么mysql只需要扫描一行数据及为我们找到这条nickname=’css’的数据,是不是感觉性能提升了好多咧….</p>
-<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>mysql的索引分为单列索引(主键索引,唯索引,普通索引)和组合索引。</p>
-<p>单列索引:一个索引只包含一个列,一个表可以有多个单列索引。</p>
-<p>组合索引:一个组合索引包含两个或两个以上的列。</p>
-<h3 id="案例使用的表"><a href="#案例使用的表" class="headerlink" title="案例使用的表"></a>案例使用的表</h3><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`award`</span> (</span><br><span class="line">   <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT <span class="keyword">COMMENT</span> <span class="string">'用户id'</span>,</span><br><span class="line">   <span class="string">`aty_id`</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">''</span> <span class="keyword">COMMENT</span> <span class="string">'活动场景id'</span>,</span><br><span class="line">   <span class="string">`nickname`</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">''</span> <span class="keyword">COMMENT</span> <span class="string">'用户昵称'</span>,</span><br><span class="line">   <span class="string">`is_awarded`</span> tinyint(<span class="number">1</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span> <span class="keyword">COMMENT</span> <span class="string">'用户是否领奖'</span>,</span><br><span class="line">   <span class="string">`award_time`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span> <span class="keyword">COMMENT</span> <span class="string">'领奖时间'</span>,</span><br><span class="line">   <span class="string">`account`</span> <span class="built_in">varchar</span>(<span class="number">12</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">''</span> <span class="keyword">COMMENT</span> <span class="string">'帐号'</span>,</span><br><span class="line">   <span class="string">`password`</span> <span class="built_in">char</span>(<span class="number">32</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">''</span> <span class="keyword">COMMENT</span> <span class="string">'密码'</span>,</span><br><span class="line">   <span class="string">`message`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">''</span> <span class="keyword">COMMENT</span> <span class="string">'获奖信息'</span>,</span><br><span class="line">   <span class="string">`created_time`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line">   <span class="string">`updated_time`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span> <span class="keyword">COMMENT</span> <span class="string">'更新时间'</span>,</span><br><span class="line">   PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line"> ) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> AUTO_INCREMENT=<span class="number">1</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8 <span class="keyword">COMMENT</span>=<span class="string">'获奖信息表'</span>;</span><br></pre></td></tr></table></figure>
+          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>看到有些next主题的网站很炫酷，那么是怎么配置的呢？接下来我会讲一讲如何实现一些炫酷的效果。</p>
+<h3 id="功能介绍-主要有以下33种"><a href="#功能介绍-主要有以下33种" class="headerlink" title="功能介绍(主要有以下33种)"></a>功能介绍(主要有以下33种)</h3><ul>
+<li>在右上角或者左上角实现fork me on github</li>
+<li>添加RSS</li>
+<li>添加动态背景</li>
+<li>实现点击出现桃心效果</li>
+<li>修改文章内链接文本样式</li>
+<li>修改文章底部的那个带#号的标签</li>
+<li>在每篇文章末尾统一添加“本文结束”标记</li>
+<li>修改作者头像并旋转</li>
+<li>博文压缩</li>
+<li>修改``代码块自定义样式</li>
+<li>侧边栏社交小图标设置</li>
+<li>主页文章添加阴影效果</li>
+<li>在网站底部加上访问量</li>
+<li>添加热度</li>
+<li>网站底部字数统计</li>
+<li>添加 README.md 文件</li>
+<li>设置网站的图标Favicon</li>
+<li>实现统计功能</li>
+<li>添加顶部加载条</li>
+<li>在文章底部增加版权信息</li>
+<li>添加网易云跟帖(跟帖关闭，已失效，改为来必力)</li>
+<li>隐藏网页底部powered By Hexo / 强力驱动</li>
+<li>修改网页底部的桃心</li>
+<li>文章加密访问</li>
+<li>添加jiathis分享</li>
+<li>博文置顶</li>
+<li>修改字体大小</li>
+<li>修改打赏字体不闪动</li>
+<li>侧边栏推荐阅读</li>
+<li>自定义鼠标样式</li>
+<li>为博客加上萌萌的宠物</li>
+<li>DaoVoice 在线联系</li>
+<li>点击爆炸效果</li>
+</ul>
+<hr>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/Mysql索引/#more" rel="contents">
+            <a class="btn" href="/2018/01/28/Hexo的next主题个性化教程-打造炫酷网站/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -501,7 +532,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/装饰者模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/Elastic-Job-Lite源码分析-作业配置/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -520,7 +551,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/装饰者模式/" itemprop="url">装饰者模式</a></h1>
+                <a class="post-title-link" href="/2018/01/27/Elastic-Job-Lite源码分析-作业配置/" itemprop="url">Elastic-Job-Lite源码分析---作业配置</a></h1>
         
 
         <div class="post-meta">
@@ -532,8 +563,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T21:07:18+08:00">
-                2018-01-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T22:27:49+08:00">
+                2018-01-27
               </time>
             
 
@@ -555,8 +586,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
-                    <span itemprop="name">Design Pattern</span>
+                  <a href="/categories/ElasticJob/" itemprop="url" rel="index">
+                    <span itemprop="name">ElasticJob</span>
                   </a>
                 </span>
 
@@ -586,7 +617,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,039
+                  2,074
                 </span>
               
 
@@ -624,16 +655,13 @@
 
       
         
-          <h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>装饰者模式：在不改变原类文件以及不使用继承的情况下，动态地将责任附加到对象上，从而实现动态拓展一个对象的功能。它是通过创建一个包装对象，也就是装饰来包裹真实的对象。</p>
-<h3 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h3><p>要使用装饰者模式，需要满足以下设计原则：</p>
-<ol>
-<li>多用组合，少用继承</li>
-<li>开放-关闭原则：类应该对拓展开放，对修改关闭</li>
-</ol>
-<h3 id="UML类图"><a href="#UML类图" class="headerlink" title="UML类图"></a>UML类图</h3><p>我们先来看看装饰者模式的类图，再来详细讲述：</p>
+          <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>涉及到主要类的类图如下：</p>
+<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/elastic-job/elastic-job%E9%85%8D%E7%BD%AE6.jpg?raw=true" alt=""></p>
+<h3 id="作业配置"><a href="#作业配置" class="headerlink" title="作业配置"></a>作业配置</h3><p>一个作业(ElasticJob)的调度，需要配置独有的一个作业调度器(JobScheduler),两者是1:1的关系，这点大家要注意下，当然下文看代码也会看到。</p>
+<p>作业调度器的创建可以配置四个参数：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/装饰者模式/#more" rel="contents">
+            <a class="btn" href="/2018/01/27/Elastic-Job-Lite源码分析-作业配置/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -686,7 +714,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/适配器模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/ElasticJob入门实战二/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -705,7 +733,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/适配器模式/" itemprop="url">适配器模式</a></h1>
+                <a class="post-title-link" href="/2018/01/27/ElasticJob入门实战二/" itemprop="url">ElasticJob入门实战二</a></h1>
         
 
         <div class="post-meta">
@@ -717,8 +745,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T21:02:49+08:00">
-                2018-01-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T22:22:04+08:00">
+                2018-01-27
               </time>
             
 
@@ -740,8 +768,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
-                    <span itemprop="name">Design Pattern</span>
+                  <a href="/categories/ElasticJob/" itemprop="url" rel="index">
+                    <span itemprop="name">ElasticJob</span>
                   </a>
                 </span>
 
@@ -771,7 +799,187 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,628
+                  2,287
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p>在上一节中，即ElasticJob入门实战一中已经介绍了使用springboot + elastic的<a href="https://github.com/dicheng52119/springboot-cloud-demo/tree/master/elastic-job" target="_blank" rel="noopener">application.properties配置方式</a>，由于使用springboot原生配置，很多job细腻化的配置无法实现。所以，本文介绍了其中关于job和注册中心的配置实用了spring的<a href="https://github.com/dicheng52119/springboot-elastic-job" target="_blank" rel="noopener">xml配置方式</a>。</p>
+<h3 id="SpringBoot整合ElasticJob-xml配置方式"><a href="#SpringBoot整合ElasticJob-xml配置方式" class="headerlink" title="SpringBoot整合ElasticJob(xml配置方式)"></a>SpringBoot整合ElasticJob(xml配置方式)</h3><p><strong>1）依赖pom.xml</strong></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/27/ElasticJob入门实战二/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/27/ElasticJob入门实战一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/27/ElasticJob入门实战一/" itemprop="url">ElasticJob入门实战一</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-27T22:06:29+08:00">
+                2018-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ElasticJob/" itemprop="url" rel="index">
+                    <span itemprop="name">ElasticJob</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,103
                 </span>
               
 
@@ -809,15 +1017,11 @@
 
       
         
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>适配器就是一种适配中间件，它存在于不匹配的二者之间，用于连接二者，将不匹配变得匹配，简单点理解就是平常所见的转接头，转换器之类的存在。</p>
-<p>适配器模式有三种：类适配器、对象适配器、接口适配器</p>
-<p>前二者在实现上有些许区别，作用一样，第三个接口适配器差别较大。</p>
-<h3 id="类适配器模式"><a href="#类适配器模式" class="headerlink" title="类适配器模式"></a>类适配器模式</h3><p>原理：通过继承来实现适配器功能。</p>
-<p>当我们要访问的接口A中没有我们想要的方法，却在另一个接口B中发现了合适的方法，我们又不能改变访问接口A，在这种情况下，我们可以定义一个适配器p来进行中转，这个适配器p要实现我们访问的接口A，这样我们就能继续访问当前接口A中的方法（虽然它目前不是我们的菜），然后再继承接口B的实现类BB，这样我们可以在适配器P中访问接口B的方法了，这时我们在适配器P中的接口A方法中直接引用BB中的合适方法，这样就完成了一个简单的类适配器。</p>
-<p>详见下方实例：我们以ps2与usb的转接为例</p>
+          <h3 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h3><p><code>ElasticJob</code>是一个分布式调度解决方案，由两个互相独立的子项目<code>Elastic-Job-Lite</code>和<code>Elastic-Job-Cloud</code>组成。<code>Elastic-Job-Lite</code>定位为轻量级无中心化解决方案，使用jar包形式提供分布式的协调服务。这一节我们将会介绍SpringBoot整合ElasticJob。</p>
+<h3 id="SpringBoot整合ElasticJob-application-properties配置方式"><a href="#SpringBoot整合ElasticJob-application-properties配置方式" class="headerlink" title="SpringBoot整合ElasticJob(application.properties配置方式)"></a>SpringBoot整合ElasticJob(application.properties配置方式)</h3><p><strong>1）依赖pom.xml</strong></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/适配器模式/#more" rel="contents">
+            <a class="btn" href="/2018/01/27/ElasticJob入门实战一/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -870,7 +1074,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/代理模式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/22/Spring Boot默认日志系统logback配置解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -889,7 +1093,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/07/代理模式/" itemprop="url">代理模式</a></h1>
+                <a class="post-title-link" href="/2018/01/22/Spring Boot默认日志系统logback配置解析/" itemprop="url">Spring Boot默认日志系统logback配置解析</a></h1>
         
 
         <div class="post-meta">
@@ -901,8 +1105,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:41:53+08:00">
-                2018-01-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-22T22:51:38+08:00">
+                2018-01-22
               </time>
             
 
@@ -924,8 +1128,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
-                    <span itemprop="name">Design Pattern</span>
+                  <a href="/categories/Spring-Boot/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring Boot</span>
                   </a>
                 </span>
 
@@ -955,7 +1159,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,117
+                  4,701
                 </span>
               
 
@@ -971,7 +1175,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  19
                 </span>
               
             </div>
@@ -993,203 +1197,19 @@
 
       
         
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>代理(Proxy)是一种设计模式,提供了对目标对象另外的访问方式;即通过代理对象访问目标对象.这样做的好处是:可以在目标对象实现的基础上,增强额外的功能操作,即扩展目标对象的功能。</p>
-<p>这里使用到编程中的一个思想:不要随意去修改别人已经写好的代码或者方法,如果需改修改,可以通过代理的方式来扩展该方法。</p>
-<p>举个例子来说明代理的作用:假设我们想邀请一位明星,那么并不是直接连接明星,而是联系明星的经纪人,来达到同样的目的.明星就是一个目标对象,他只要负责活动中的节目,而其他琐碎的事情就交给他的代理人(经纪人)来解决.这就是代理思想在现实中的一个例子。</p>
-<p>用图表示如下:</p>
-<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/design-mode/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%9B%BE%E8%A7%A3.png?raw=true" alt=""></p>
-<p>代理模式的关键点是:代理对象与目标对象。代理对象是对目标对象的扩展,并会调用目标对象。</p>
+          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>今天来介绍下Spring Boot如何配置日志logback,我刚学习的时候，是带着下面几个问题来查资料的，你呢</p>
+<ul>
+<li>如何引入日志？</li>
+<li>日志输出格式以及输出方式如何配置？</li>
+<li>代码中如何使用？</li>
+</ul>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Spring Boot在所有内部日志中使用Commons Logging，但是默认配置也提供了对常用日志的支持，如：Java Util Logging，Log4J, Log4J2和Logback。每种Logger都可以通过配置使用控制台或者文件输出日志内容。</p>
+<p>SLF4J——Simple Logging Facade For Java，它是一个针对于各类Java日志框架的统一Facade抽象。Java日志框架众多——常用的有java.util.logging, log4j, logback，commons-logging, Spring框架使用的是Jakarta Commons Logging API (JCL)。而SLF4J定义了统一的日志抽象接口，而真正的日志实现则是在运行时决定的——它提供了各类日志框架的binding。</p>
+<p>Logback是log4j框架的作者开发的新一代日志框架，它效率更高、能够适应诸多的运行环境，同时天然支持SLF4J。</p>
+<p>默认情况下，Spring Boot会用Logback来记录日志，并用INFO级别输出到控制台。在运行应用程序和其他例子时，你应该已经看到很多INFO级别的日志了。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/代理模式/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/工厂设计模式/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mr.CrazyDC">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyIT">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/07/工厂设计模式/" itemprop="url">工厂设计模式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T20:37:33+08:00">
-                2018-01-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Design-Pattern/" itemprop="url" rel="index">
-                    <span itemprop="name">Design Pattern</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  2,164
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  8
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>主要用来实例化有共同接口的类，工厂模式可以动态决定应该实例化那一个类。</p>
-<h3 id="工厂模式的形态"><a href="#工厂模式的形态" class="headerlink" title="工厂模式的形态"></a>工厂模式的形态</h3><ol>
-<li>简单工厂（Simple Factory）。又称为静态工厂方法(Static Factory Method)模式</li>
-<li>工厂方法（Factory Method）。</li>
-<li>抽象工厂（Abstract Factory）。</li>
-</ol>
-<h3 id="简单工厂-（Simple-Factory）"><a href="#简单工厂-（Simple-Factory）" class="headerlink" title="简单工厂 （Simple Factory）"></a>简单工厂 （Simple Factory）</h3><p>又叫静态工厂，是工厂模式三中状态中结构最为简单的。主要有一个静态方法，用来接受参数，并根据参数来决定返回实现同一接口的不同类的实例。我们来看一个具体的例子：</p>
-<p>假设一家工厂，有生产洗衣机，有生产冰箱，还有空调等等..</p>
-<p>我们先为所有产品定义一个共同的产品接口<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Product</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure></p>
-<p>接着我们让这个工厂的所有产品都必须实现此接口</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/07/工厂设计模式/#more" rel="contents">
+            <a class="btn" href="/2018/01/22/Spring Boot默认日志系统logback配置解析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1233,7 +1253,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1283,7 +1303,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1294,7 +1314,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1305,7 +1325,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1445,7 +1465,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共69.8k字</span>
+  <span class="post-count">博客全站共90.8k字</span>
 </div>
 
         

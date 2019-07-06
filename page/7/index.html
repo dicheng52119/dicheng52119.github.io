@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/18/Hexo-Blog搭建步骤详解/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/volatile关键字学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -336,7 +336,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/18/Hexo-Blog搭建步骤详解/" itemprop="url">Hexo Blog搭建步骤详解</a></h1>
+                <a class="post-title-link" href="/2018/01/07/volatile关键字学习笔记/" itemprop="url">volatile关键字学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -348,8 +348,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-18T21:42:07+08:00">
-                2017-12-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:22:12+08:00">
+                2018-01-07
               </time>
             
 
@@ -371,8 +371,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Hexo/" itemprop="url" rel="index">
-                    <span itemprop="name">Hexo</span>
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
                   </a>
                 </span>
 
@@ -402,7 +402,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  756
+                  3,730
                 </span>
               
 
@@ -418,7 +418,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  14
                 </span>
               
             </div>
@@ -440,41 +440,26 @@
 
       
         
-          <h3 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤:"></a>搭建步骤:</h3><ul>
-<li><p>申请github账号,步骤此处省略一万字</p>
+          <h3 id="并发编程中的三个概念"><a href="#并发编程中的三个概念" class="headerlink" title="并发编程中的三个概念"></a>并发编程中的三个概念</h3><ul>
+<li><p><strong>原子性</strong> </p>
+<p>  原子性：即一个操作或者多个操作 要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。</p>
 </li>
-<li><p>新建仓库，仓库名称定义格式:访问主页时的用户名.github.io</p>
+<li><p><strong>可见性</strong></p>
+<p>  可见性是指当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值。</p>
 </li>
-<li><p>仓库添加README.md文件，修改为index.html,添加内容”hello world”</p>
-</li>
-<li><p>访问步骤二定义的地址，即<a href="https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成" target="_blank" rel="noopener">https://用户名.github.io,如果出现步骤三中的效果，则说明第一部分的设置已经成功完成</a></p>
-</li>
-<li><p>访问hexo官网，可按照步骤进行创建本地hexo项目，也可继续按照本篇文档继续完成设置</p>
-</li>
-<li><p>安装nvm和npm,步骤此处省略一万字，安装完成后，可通过命令行指令nvm -v 和npm -v查看是否安装成功</p>
-</li>
-<li><p>命令行运行npm install hexo-cli -g，运行命令hexo -v查看安装是否成功</p>
-</li>
-<li><p>选择一个目录位置，运行hexo init blog 命令，创建hexo项目文件，cd blog进入项目</p>
-</li>
-<li><p>使用文本编辑器，这里推荐使用vscode,打开blog项目，修改根目录下的config配置文件，将title和author自定义进行修改，将文件最下方的发布信息type的值修改为git,添加属性repo，并赋值为第二步你所定义的仓库地址</p>
-</li>
-<li><p>命令行运行npm install hexo-deployer-git —save 命令</p>
-</li>
-<li><p>运行hexo &amp;&amp; hexo g &amp;&amp; hexo s在本地运行，查看博客的部署情况</p>
-</li>
-<li><p>运行hexo clean &amp;&amp; hexo g &amp;&amp; hexo d,分别代表着hexo clean，hexo generate，hexo deploy，hexo server，部署到github 上进行运行，访问第二步你所定义的仓库名称，查看效果</p>
-</li>
-<li><p>hexo官网已开源大量主题，可根据需要进行使用，进入相关主题的github项目中，复制仓库地址，进入本地blog项目的theme文件夹中，clone 复制的仓库地址，然后在根配置文件中修改theme的值，为clone下来的主题文件夹名称，至于不同主题下的详细配置，这里不再做一一介绍，详见每个主题的配置说明。配置完成后，同样使用步骤12的命令查看效果</p>
-</li>
-<li><p>运行hexo new “文章名称”命令进行创建新的文章</p>
-</li>
-<li><p>如果不想博文在首页全部显示, 并能出现阅读全文按钮效果, 需要在你想在首页显示的部分下添加 <code>&lt;!--more--&gt;</code></p>
+<li><p><strong>有序性</strong></p>
+<p>  有序性：即程序执行的顺序按照代码的先后顺序执行。</p>
 </li>
 </ul>
+<h3 id="深入剖析volatile关键字"><a href="#深入剖析volatile关键字" class="headerlink" title="深入剖析volatile关键字"></a>深入剖析volatile关键字</h3><ul>
+<li><p><strong>volatile关键字的两层语义</strong></p>
+<p>  一旦一个共享变量（类的成员变量、类的静态成员变量）被volatile修饰之后，那么就具备了两层语义：</p>
+<p>  1）保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，这新值对其他线程来说是立即可见的。</p>
+<p>  2）禁止进行指令重排序。</p>
+<p>  先看一段代码，假如线程1先执行，线程2后执行：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/18/Hexo-Blog搭建步骤详解/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/volatile关键字学习笔记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -527,7 +512,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/18/Git常用命令总结/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/多条件condition学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -546,7 +531,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/18/Git常用命令总结/" itemprop="url">Git常用命令总结(自己总结 超实用)</a></h1>
+                <a class="post-title-link" href="/2018/01/07/多条件condition学习笔记/" itemprop="url">多条件condition学习笔记(生产者消费者模式实例)</a></h1>
         
 
         <div class="post-meta">
@@ -558,8 +543,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-18T21:28:31+08:00">
-                2017-12-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:16:03+08:00">
+                2018-01-07
               </time>
             
 
@@ -581,8 +566,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Git/" itemprop="url" rel="index">
-                    <span itemprop="name">Git</span>
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
                   </a>
                 </span>
 
@@ -612,7 +597,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  691
+                  1,026
                 </span>
               
 
@@ -628,7 +613,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  5
                 </span>
               
             </div>
@@ -650,29 +635,13 @@
 
       
         
-          <h3 id="将本地代码关联到远程git仓库步骤："><a href="#将本地代码关联到远程git仓库步骤：" class="headerlink" title="将本地代码关联到远程git仓库步骤："></a>将本地代码关联到远程git仓库步骤：</h3><ul>
-<li><p>初始化一个仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>将github上项目与本地项目进行关联</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote add origin github仓库地址</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>添加本地代码到暂存区</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git add .</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>提交本地代码到本地</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git commit -m <span class="string">"提交信息"</span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>拉取远程仓库代码</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git pull origin 分支名称（如果报错的话，就添加后缀--allow unrelated histories）</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>提交本地代码到远程仓库</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git push -u origin 分支名称</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
+          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Java 并发包下的提供Lock，Lock相对于Synchronized可以更好的解决线程同步问题，更加的灵活和高效，并且ReadWriteLock锁还能实现读、写的分离。但线程间仅仅互斥是不够的，还需要通信，本篇的内容是基于上篇之上，使用Lock如何处理线程通信。阻塞队列(BlockingQueue)就是使用condition的和lock实现的。</p>
+<h3 id="Condition介绍"><a href="#Condition介绍" class="headerlink" title="Condition介绍"></a>Condition介绍</h3><p>那么引入本篇的主角，Condition，Condition 将 Object的通信方法（wait、notify 和 notifyAll）分解成截然不同的对象，以便通过将这些对象与任意 Lock 实现组合使用，为每个对象提供多个等待 set （wait-set）。其中，Lock 替代了 synchronized 方法和语句的使用，Condition 替代了 Object 通信方法的使用。</p>
+<p>在Condition中，用await()替换wait()，用signal()替换notify()，用signalAll()替换notifyAll()，传统线程的通信方式，Condition都可以实现，这里注意，Condition是被绑定到Lock上的，要创建一个Lock的Condition必须用newCondition()方法。</p>
+<p>Condition的强大之处在于它可以为多个线程间建立不同的Condition， 使用synchronized/wait()只有一个阻塞队列，notifyAll会唤起所有阻塞队列下的线程，而使用lock/condition，可以实现多个阻塞队列，signalAll只会唤起某个阻塞队列下的阻塞线程。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/18/Git常用命令总结/#more" rel="contents">
+            <a class="btn" href="/2018/01/07/多条件condition学习笔记/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -725,7 +694,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/16/地铁随笔/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/阻塞队列BlockingQueue学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -744,7 +713,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/16/地铁随笔/" itemprop="url">地铁随笔</a></h1>
+                <a class="post-title-link" href="/2018/01/07/阻塞队列BlockingQueue学习笔记/" itemprop="url">阻塞队列BlockingQueue学习笔记</a></h1>
         
 
         <div class="post-meta">
@@ -756,8 +725,414 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-16T22:56:39+08:00">
-                2017-12-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T19:08:04+08:00">
+                2018-01-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,709
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h3 id="阻塞队列-BlockingQueue-介绍"><a href="#阻塞队列-BlockingQueue-介绍" class="headerlink" title="阻塞队列 (BlockingQueue)介绍"></a>阻塞队列 (BlockingQueue)介绍</h3><p>阻塞队列 (BlockingQueue)是Java util.concurrent包下重要的数据结构，BlockingQueue提供了线程安全的队列访问方式：当阻塞队列进行插入数据时，如果队列已满，线程将会阻塞等待直到队列非满；从阻塞队列取数据时，如果队列已空，线程将会阻塞等待直到队列非空。并发包下很多高级同步类的实现都是基于BlockingQueue实现的。</p>
+<h3 id="BlockingQueue-的操作方法"><a href="#BlockingQueue-的操作方法" class="headerlink" title="BlockingQueue 的操作方法"></a>BlockingQueue 的操作方法</h3><p>BlockingQueue 具有 4 组不同的方法用于插入、移除以及对队列中的元素进行检查。如果请求的操作不能得到立即执行的话，每个方法的表现也不同。这些方法如下： </p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>抛异常</th>
+<th>特定值</th>
+<th>阻塞</th>
+<th>超时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插入</td>
+<td>add(o)</td>
+<td>offer(o)</td>
+<td>put(o)</td>
+<td>offer(o,timeout,timeunit)</td>
+</tr>
+<tr>
+<td>移除</td>
+<td>remove(o)</td>
+<td>poll(o)</td>
+<td>take(o)</td>
+<td>poll(timeout,timeunit)</td>
+</tr>
+<tr>
+<td>检查</td>
+<td>element(o)</td>
+<td>peek(o)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>四组不同的行为方式解释：</p>
+<ul>
+<li>抛异常：如果试图的操作无法立即执行，抛一个异常。</li>
+<li>特定值：如果试图的操作无法立即执行，返回一个特定的值(常常是 true / false)。</li>
+<li>阻塞：如果试图的操作无法立即执行，该方法调用将会发生阻塞，直到能够执行。</li>
+<li>超时：如果试图的操作无法立即执行，该方法调用将会发生阻塞，直到能够执行，但等待时间不会超过给定值。返回一个特定值以告知该操作是否成功(典型的是true / false)。</li>
+</ul>
+<p>无法向一个 BlockingQueue 中插入 null。如果你试图插入 null，BlockingQueue 将会抛出一个 NullPointerException。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/07/阻塞队列BlockingQueue学习笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/07/Lock学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/01/07/Lock学习笔记/" itemprop="url">Lock学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T18:32:11+08:00">
+                2018-01-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Thread/" itemprop="url" rel="index">
+                    <span itemprop="name">Thread</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,325
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="API说明"><a href="#API说明" class="headerlink" title="API说明"></a>API说明</h2><ul>
+<li><h3 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a>Lock</h3><p>  Lock是一个接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Condition <span class="title">newCondition</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h3 id="Lock接口中方法的说明与使用"><a href="#Lock接口中方法的说明与使用" class="headerlink" title="Lock接口中方法的说明与使用"></a>Lock接口中方法的说明与使用</h3><p>  lock()方法是平常使用得最多的一个方法，就是用来获取锁。如果锁已被其他线程获取，则进行等待。</p>
+<p>  如果采用Lock，必须主动去释放锁，并且在发生异常时，不会自动释放锁。因此一般来说，使用Lock必须在try{}catch{}块中进行，并且将释放锁的操作放在finally块中进行，以保证锁一定被被释放，防止死锁的发生。通常使用Lock来进行同步的话，是以下面这种形式去使用的：</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/01/07/Lock学习笔记/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/24/一花一世界/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/24/一花一世界/" itemprop="url">一花一世界</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-24T12:44:38+08:00">
+                2017-12-24
               </time>
             
 
@@ -810,7 +1185,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  997
+                  268
                 </span>
               
 
@@ -826,7 +1201,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  3
+                  1
                 </span>
               
             </div>
@@ -848,18 +1223,15 @@
 
       
         
-          <p>掐指一算，来北京已经有两年时光。恍惚间，头顶多了几根白发，少了一撮黑发。</p>
-<p>这是一趟开往北京南站的列车，此行的任务是接待本人媳妇的闺蜜，可谓是任重而道远。</p>
-<p>对于一个刚踏入社会，即将开启北漂生活的妹子来说，这简直可以说是一种天上掉馅饼被爽死的幸福。行李托运、温馨提示、行程导航、美食招待、住所安排、行李托管、安全护送…</p>
-<p>一切的一切，让本人的眼光不再清澈，恍然间，回到过去的某个时刻。</p>
-<p>遥想铖哥当年，回到了解放前的某一天，也就是两年前的那一天，本人携内人初来帝都，可谓是人生地不熟，行李放到一个不靠谱的托管处，然后凭借高德地图强大的导航能力，拖着坐酸了一夜的老腰，来到了帝都恢弘气势的天安门广场。</p>
-<p>匆匆过客，来不及欣赏百年沉淀的文化，便已踏入寻房苦途，经过了一番折腾和斗智斗勇的完美体验后，与次日凌晨入驻几平的小房间，期间包括与房东一窝战斗的情形，与中介讨价还价的心跳，这里不必细谈，因为均以战败告终。一把伤心泪，从此，开启了梦幻的北漂之旅。</p>
-<p>房间的憋屈，环境的脏乱，地铁的拥堵，人与人之间的嫌弃，人心的浮躁，工作的忙碌等等，使得生活在这个灯红酒绿城市的人们看似没有光鲜亮丽外表的美好，使得人生观一度发生改变和扭曲。</p>
-<p>时间在流逝，世界在变化！这个世界难道就因此而变得不美好了吗？答案是你知道。</p>
-<p>细数一下，短短两年时光，住所已更换了数次，在每一次的迭代更新中，都慢慢熟悉了这里面满满的套路，经济实惠舒适的房子已然出现（相对而言)。十九大的顺利召开，蓝天白云不再是普通人心目中的完美车标，奢饰品你也值得拥有！每日运载上千万乘客的庞大地铁系统，承载了太多太多人的辛勤和汗水，共同维护着这座城中城。童叟无欺，主动让出身边的座位时常发生。同事的帮助和关怀，让你感觉自己不是一个人在奋斗！皎洁月光下的深夜，是如此的宁静，宁静的可以听到工位上微微的心跳，向仍在此刻奋斗的同僚们致敬！你们是专业的，你们是敬业的，你们是爱业的！沉淀自己，你们会成功的！</p>
+          <p>闲来无事，总想写点东西，不知这种感觉你是否也从拥有。</p>
+<p>其实，这种感觉并非空穴来风，而是源自你内心深处最真实的想法。这可能就是所谓的感由心生。</p>
+<p>最近，爱上了一种安静，甚至可以说是宁静，时常地思考或者回忆，浮现出一幅幅画面，不知这种喜欢你是否也感同深受。</p>
+<p>其实，这种喜欢并非妙不可言，而是情感的变化凸显了这种微妙。这可能就是所谓的境由情生。</p>
+<p>很多时候，梦境中的情形似曾相识，在某年某月某日的某个时刻，你就是梦境中的主人公。</p>
+<p>其实，这种情景是对美好生活的极度渴望和向往。如果，梦不再那么模糊，梦中的细节得以延续，那将会是另一个世界。这可能就是所谓的一花一世界。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/12/16/地铁随笔/#more" rel="contents">
+            <a class="btn" href="/2017/12/24/一花一世界/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -899,173 +1271,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/12/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mr.CrazyDC">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyIT">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/12/12/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-12T17:48:39+08:00">
-                2017-12-12
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  74
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  1
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<!--将languages目录下面的zh-Hans.yml修改为zh-CN.yml或者按照文档中的修改根目录配置文件也行。-->
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1115,7 +1325,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1126,7 +1336,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1137,7 +1347,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">60</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1277,7 +1487,7 @@
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共69.8k字</span>
+  <span class="post-count">博客全站共90.8k字</span>
 </div>
 
         
