@@ -317,187 +317,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/JVM内存结构解析/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Mr.CrazyDC">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CrazyIT">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/07/06/JVM内存结构解析/" itemprop="url">JVM内存结构解析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-06T16:40:00+08:00">
-                2019-07-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index">
-                    <span itemprop="name">JVM</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  3,251
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  11
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Jvm的内存结构是由《java虚拟机规范》制定的，《java虚拟机规范》只负责制定标准，具体的实现多种多样，比如：sun公司的HotSpot、BEA的JRockit、IBM的J9（前两个目前都已被Oracle收购），另外Apache、Google、微软等组织或公司都有自己的java虚拟机实现。只是我们目前开发比较常用的是HotSpot。</p>
-<p>《java虚拟机规范》与具体的java虚拟机的关系，有点类似于接口和实现类。《java虚拟机规范》负责制定接口，具体的java虚拟机去实现这些接口。我们编写的java代码最终会被编译成class文件，通过java虚拟机解析加载执行。Java语句的“跨平台性”，其实就是通过java虚拟机实现的，不同的平台需要实现不同jvm版本（windows版、linux版等）。我们业务代码只需要开发一份，编译成同一份class文件，却可以在windows、linux等不同的操作系统中执行。</p>
-<p>这里提到的class文件的格式、规范也是由《java虚拟机规范》制定的。换句话讲不管采用什么语言编写的程序，只要按照《java虚拟机规范》编译成class文件就可以在java虚拟机中执行。比如现在常见的可以在jvm（等同java虚拟机）上运行的语言：Scala、Groovy、Jython等等数十种语言（笔者只使用过这里列出三种）。这是jvm虚拟机除了“跨平台性”之外的另一个强大之处—“跨语言性”。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2019/07/06/JVM内存结构解析/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/Git Flow的使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -862,7 +681,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/Java类加载机制解析/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/Redis主从，哨兵，以及redis cluster解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Mr.CrazyDC">
@@ -881,7 +700,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/07/06/Java类加载机制解析/" itemprop="url">Java 的类加载机制解析</a></h1>
+                <a class="post-title-link" href="/2019/07/06/Redis主从，哨兵，以及redis cluster解析/" itemprop="url">Redis主从，哨兵，以及redis cluster解析</a></h1>
         
 
         <div class="post-meta">
@@ -916,8 +735,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index">
-                    <span itemprop="name">JVM</span>
+                  <a href="/categories/Redis/" itemprop="url" rel="index">
+                    <span itemprop="name">Redis</span>
                   </a>
                 </span>
 
@@ -947,7 +766,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,009
+                  1,029
                 </span>
               
 
@@ -963,7 +782,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  4
                 </span>
               
             </div>
@@ -985,14 +804,190 @@
 
       
         
-          <h3 id="字节码"><a href="#字节码" class="headerlink" title="字节码"></a>字节码</h3><p>在聊 Java 类加载机制之前，需要先了解一下 Java 字节码，因为它和类加载机制息息相关。</p>
-<p>计算机只认识 0 和 1，所以任何语言编写的程序都需要编译成机器码才能被计算机理解，然后执行，Java 也不例外。</p>
-<p>Java 在诞生的时候喊出了一个非常牛逼的口号：“Write Once, Run Anywhere”，为了达成这个目的，Sun 公司发布了许多可以在不同平台（Windows、Linux）上运行的 Java 虚拟机（JVM）——负责载入和执行 Java 编译后的字节码。</p>
-<p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/java-base/java%E5%AD%97%E8%8A%82%E7%A0%81%E8%BD%AC%E6%8D%A2.jpg?raw=true" alt=""></p>
-<p>到底 Java 字节码是什么样子，我们借助一段简单的代码来看一看。</p>
+          <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>高性能就是做分片（可以类比为分库分表，将数据分到不同服务器上），在Kafka中叫分区，在mongodb中叫shard，在HDFS上叫DataNode。而保证高可用的方式就是做交叉备份。然后我很好奇Redis是怎么部署的。一个Redis实例其实有很多问题，最起码Redis崩了就没法提供服务了，而且单机能够承载的QPS在上万到几万不等。</p>
+<h3 id="replication（复制）"><a href="#replication（复制）" class="headerlink" title="replication（复制）"></a>replication（复制）</h3><p>如果业务要承载的QPS在几十万，单机是不可能做到的，此时就可以用到复制。做一个主从架构，一主多从，master节点负责写，slave节点负责读，假如说一个节点可以承载的5w读QPS，那么两个节点就可以承载10w的读QPS，水平扩容非常方便。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/07/06/Java类加载机制解析/#more" rel="contents">
+            <a class="btn" href="/2019/07/06/Redis主从，哨兵，以及redis cluster解析/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/06/MySQL binlog 主从同步解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr.CrazyDC">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CrazyIT">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/07/06/MySQL binlog 主从同步解析/" itemprop="url">MySQL binlog 主从同步解析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-06T16:40:00+08:00">
+                2019-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,956
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/mysql/mysqlbinlog%E4%BB%8B%E7%BB%8D%E5%9B%BE.jpg?raw=true" alt=""></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/07/06/MySQL binlog 主从同步解析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
