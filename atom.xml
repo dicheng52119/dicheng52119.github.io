@@ -185,6 +185,35 @@
   </entry>
   
   <entry>
+    <title>Redis主从，哨兵，以及redis cluster解析</title>
+    <link href="http://yoursite.com/2019/07/06/Redis%E4%B8%BB%E4%BB%8E%EF%BC%8C%E5%93%A8%E5%85%B5%EF%BC%8C%E4%BB%A5%E5%8F%8Aredis%20cluster%E8%A7%A3%E6%9E%90/"/>
+    <id>http://yoursite.com/2019/07/06/Redis主从，哨兵，以及redis cluster解析/</id>
+    <published>2019-07-06T08:40:00.000Z</published>
+    <updated>2019-07-06T09:11:32.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>高性能就是做分片（可以类比为分库分表，将数据分到不同服务器上），在Kafka中叫分区，在mongodb中叫shard，在HDFS上叫DataNode。而保证高可用的方式就是做交叉备份。然后我很好奇Redis是怎么部署的。一个Redis实例其实有很多问题，最起码Redis崩了就没法提供服务了，而且单机能够承载的QPS在上万到几万不等。</p><h3 id="replication（复制）"><a href="#replication（复制）" class="headerlink" title="replication（复制）"></a>replication（复制）</h3><p>如果业务要承载的QPS在几十万，单机是不可能做到的，此时就可以用到复制。做一个主从架构，一主多从，master节点负责写，slave节点负责读，假如说一个节点可以承载的5w读QPS，那么两个节点就可以承载10w的读QPS，水平扩容非常方便。</p><a id="more"></a><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%E4%B8%BB%E4%BB%8E%E7%BB%93%E6%9E%84%E5%9B%BE.jpg?raw=true" alt=""></p><p>master节点挂太多slave节点会有性能问题，此时就可以在slave节点上挂slave节点</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B9.jpg?raw=true" alt=""></p><h3 id="redis-replication的核心机制"><a href="#redis-replication的核心机制" class="headerlink" title="redis replication的核心机制"></a>redis replication的核心机制</h3><ol><li>redis采用异步方式复制数据到slave node，不会block master node的正常工作</li><li>一个master node可以配置多个slave node，slave node也可以连接其他的slave node</li><li>slave node主要用来进行横向扩容，做读写分离，扩容的slave node可以提高读的吞吐量</li></ol><h3 id="主从复制的实现原理"><a href="#主从复制的实现原理" class="headerlink" title="主从复制的实现原理"></a>主从复制的实现原理</h3><ol><li>slave连接master，发送SYNC命令；</li><li>master接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令；</li><li>master BGSAVE执行完后，向slave发送快照文件，并在发送期间继续记录被执行的写命令；</li><li>slave收到快照文件后丢弃所有旧数据，载入收到的快照；</li><li>master快照发送完毕后开始向salve发送缓冲区中的写命令；</li><li>slave完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令；</li></ol><h3 id="sentine（哨兵）"><a href="#sentine（哨兵）" class="headerlink" title="sentine（哨兵）"></a>sentine（哨兵）</h3><p>主从架构有一个缺点就是如果master节点挂了，那么写服务是不可用的，因为slave节点默认是只读的，这时就重启master节点或者重新配置主从，有没有更好的方案呢？类似zookeeper的组件，能自动完成主从切换。在Redis中还真有，就是sentinel节点，当master节点发生故障能自动完成主从切换。</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/reids%20sentinel%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6.jpg?raw=true" alt=""></p><p>当master节点挂掉时，sentinel将一个slave节点变成master节点，当原先的master节点可用时，以slave的角色加入集群。</p><p>一个高可用的系统是很忌讳有单点问题的。看到没，sentinel就是一个单点，如果sentinel挂了，主从切换也就没人做了。所以应该将sentinel也做成一个集群。</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/reids%20sentinel%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4.jpg?raw=true" alt=""></p><h3 id="哨兵的作用"><a href="#哨兵的作用" class="headerlink" title="哨兵的作用"></a>哨兵的作用</h3><ol><li>集群监控，负责监控redis master和slave进程是否正常工作</li><li>消息通知，如果某个redis实例有故障，那么哨兵负责发送消息作为报警通知给管理员</li><li>故障转移，如果master node挂掉了，会自动转移到slave node上</li><li>配置中心，客户端初始化时，通过哨兵获得master地址，如果故障转移发生了，通知客户端新的master地址</li></ol><h3 id="redis-cluster（集群）"><a href="#redis-cluster（集群）" class="headerlink" title="redis cluster（集群）"></a>redis cluster（集群）</h3><p>主从+哨兵，只能保证Redis的高可用，并不能保证Redis的高性能，因为一个master节点并不能放海量数据，而且单个Redis的实例过大时，会导致rdb文件过大，当执行主从同步时时间过长。</p><p>如果想做到高性能该怎么办？分片啊，我一开始就提到了，都是一个套路。redis搞几个节点，每个节点存储一部分数据。可想而之，此时查询和插入都得按照一定的分片策略，总不能查询一个数据把所有的redis节点遍历一遍吧。而这种操作不应该放在客户端，中间件兴起了，常见的有codis，twemproxy。</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%20codis%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.jpg?raw=true" alt=""></p><p>客户端不连接具体的Redis，而是连接Codis，2个Codis节点保证高可用，和Mycat一个套路。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h3&gt;&lt;p&gt;高性能就是做分片（可以类比为分库分表，将数据分到不同服务器上），在Kafka中叫分区，在mongodb中叫shard，在HDFS上叫DataNode。而保证高可用的方式就是做交叉备份。然后我很好奇Redis是怎么部署的。一个Redis实例其实有很多问题，最起码Redis崩了就没法提供服务了，而且单机能够承载的QPS在上万到几万不等。&lt;/p&gt;
+&lt;h3 id=&quot;replication（复制）&quot;&gt;&lt;a href=&quot;#replication（复制）&quot; class=&quot;headerlink&quot; title=&quot;replication（复制）&quot;&gt;&lt;/a&gt;replication（复制）&lt;/h3&gt;&lt;p&gt;如果业务要承载的QPS在几十万，单机是不可能做到的，此时就可以用到复制。做一个主从架构，一主多从，master节点负责写，slave节点负责读，假如说一个节点可以承载的5w读QPS，那么两个节点就可以承载10w的读QPS，水平扩容非常方便。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Redis" scheme="http://yoursite.com/categories/Redis/"/>
+    
+    
+      <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
+    
+      <category term="replication" scheme="http://yoursite.com/tags/replication/"/>
+    
+      <category term="cluster" scheme="http://yoursite.com/tags/cluster/"/>
+    
+      <category term="sentine" scheme="http://yoursite.com/tags/sentine/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Redis为什么是单线程且可以高并发</title>
     <link href="http://yoursite.com/2019/07/06/Redis%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%94%E5%8F%AF%E4%BB%A5%E9%AB%98%E5%B9%B6%E5%8F%91/"/>
     <id>http://yoursite.com/2019/07/06/Redis为什么是单线程且可以高并发/</id>
@@ -211,35 +240,6 @@
       <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
     
       <category term="epoll" scheme="http://yoursite.com/tags/epoll/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Redis主从，哨兵，以及redis cluster解析</title>
-    <link href="http://yoursite.com/2019/07/06/Redis%E4%B8%BB%E4%BB%8E%EF%BC%8C%E5%93%A8%E5%85%B5%EF%BC%8C%E4%BB%A5%E5%8F%8Aredis%20cluster%E8%A7%A3%E6%9E%90/"/>
-    <id>http://yoursite.com/2019/07/06/Redis主从，哨兵，以及redis cluster解析/</id>
-    <published>2019-07-06T08:40:00.000Z</published>
-    <updated>2019-07-06T09:11:32.000Z</updated>
-    
-    <content type="html"><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>高性能就是做分片（可以类比为分库分表，将数据分到不同服务器上），在Kafka中叫分区，在mongodb中叫shard，在HDFS上叫DataNode。而保证高可用的方式就是做交叉备份。然后我很好奇Redis是怎么部署的。一个Redis实例其实有很多问题，最起码Redis崩了就没法提供服务了，而且单机能够承载的QPS在上万到几万不等。</p><h3 id="replication（复制）"><a href="#replication（复制）" class="headerlink" title="replication（复制）"></a>replication（复制）</h3><p>如果业务要承载的QPS在几十万，单机是不可能做到的，此时就可以用到复制。做一个主从架构，一主多从，master节点负责写，slave节点负责读，假如说一个节点可以承载的5w读QPS，那么两个节点就可以承载10w的读QPS，水平扩容非常方便。</p><a id="more"></a><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%E4%B8%BB%E4%BB%8E%E7%BB%93%E6%9E%84%E5%9B%BE.jpg?raw=true" alt=""></p><p>master节点挂太多slave节点会有性能问题，此时就可以在slave节点上挂slave节点</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B9.jpg?raw=true" alt=""></p><h3 id="redis-replication的核心机制"><a href="#redis-replication的核心机制" class="headerlink" title="redis replication的核心机制"></a>redis replication的核心机制</h3><ol><li>redis采用异步方式复制数据到slave node，不会block master node的正常工作</li><li>一个master node可以配置多个slave node，slave node也可以连接其他的slave node</li><li>slave node主要用来进行横向扩容，做读写分离，扩容的slave node可以提高读的吞吐量</li></ol><h3 id="主从复制的实现原理"><a href="#主从复制的实现原理" class="headerlink" title="主从复制的实现原理"></a>主从复制的实现原理</h3><ol><li>slave连接master，发送SYNC命令；</li><li>master接收到SYNC命名后，开始执行BGSAVE命令生成RDB文件并使用缓冲区记录此后执行的所有写命令；</li><li>master BGSAVE执行完后，向slave发送快照文件，并在发送期间继续记录被执行的写命令；</li><li>slave收到快照文件后丢弃所有旧数据，载入收到的快照；</li><li>master快照发送完毕后开始向salve发送缓冲区中的写命令；</li><li>slave完成对快照的载入，开始接收命令请求，并执行来自主服务器缓冲区的写命令；</li></ol><h3 id="sentine（哨兵）"><a href="#sentine（哨兵）" class="headerlink" title="sentine（哨兵）"></a>sentine（哨兵）</h3><p>主从架构有一个缺点就是如果master节点挂了，那么写服务是不可用的，因为slave节点默认是只读的，这时就重启master节点或者重新配置主从，有没有更好的方案呢？类似zookeeper的组件，能自动完成主从切换。在Redis中还真有，就是sentinel节点，当master节点发生故障能自动完成主从切换。</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/reids%20sentinel%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6.jpg?raw=true" alt=""></p><p>当master节点挂掉时，sentinel将一个slave节点变成master节点，当原先的master节点可用时，以slave的角色加入集群。</p><p>一个高可用的系统是很忌讳有单点问题的。看到没，sentinel就是一个单点，如果sentinel挂了，主从切换也就没人做了。所以应该将sentinel也做成一个集群。</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/reids%20sentinel%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4.jpg?raw=true" alt=""></p><h3 id="哨兵的作用"><a href="#哨兵的作用" class="headerlink" title="哨兵的作用"></a>哨兵的作用</h3><ol><li>集群监控，负责监控redis master和slave进程是否正常工作</li><li>消息通知，如果某个redis实例有故障，那么哨兵负责发送消息作为报警通知给管理员</li><li>故障转移，如果master node挂掉了，会自动转移到slave node上</li><li>配置中心，客户端初始化时，通过哨兵获得master地址，如果故障转移发生了，通知客户端新的master地址</li></ol><h3 id="redis-cluster（集群）"><a href="#redis-cluster（集群）" class="headerlink" title="redis cluster（集群）"></a>redis cluster（集群）</h3><p>主从+哨兵，只能保证Redis的高可用，并不能保证Redis的高性能，因为一个master节点并不能放海量数据，而且单个Redis的实例过大时，会导致rdb文件过大，当执行主从同步时时间过长。</p><p>如果想做到高性能该怎么办？分片啊，我一开始就提到了，都是一个套路。redis搞几个节点，每个节点存储一部分数据。可想而之，此时查询和插入都得按照一定的分片策略，总不能查询一个数据把所有的redis节点遍历一遍吧。而这种操作不应该放在客户端，中间件兴起了，常见的有codis，twemproxy。</p><p><img src="https://github.com/dicheng52119/Picture-Repository/blob/master/study/redis/redis%20codis%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.jpg?raw=true" alt=""></p><p>客户端不连接具体的Redis，而是连接Codis，2个Codis节点保证高可用，和Mycat一个套路。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h3&gt;&lt;p&gt;高性能就是做分片（可以类比为分库分表，将数据分到不同服务器上），在Kafka中叫分区，在mongodb中叫shard，在HDFS上叫DataNode。而保证高可用的方式就是做交叉备份。然后我很好奇Redis是怎么部署的。一个Redis实例其实有很多问题，最起码Redis崩了就没法提供服务了，而且单机能够承载的QPS在上万到几万不等。&lt;/p&gt;
-&lt;h3 id=&quot;replication（复制）&quot;&gt;&lt;a href=&quot;#replication（复制）&quot; class=&quot;headerlink&quot; title=&quot;replication（复制）&quot;&gt;&lt;/a&gt;replication（复制）&lt;/h3&gt;&lt;p&gt;如果业务要承载的QPS在几十万，单机是不可能做到的，此时就可以用到复制。做一个主从架构，一主多从，master节点负责写，slave节点负责读，假如说一个节点可以承载的5w读QPS，那么两个节点就可以承载10w的读QPS，水平扩容非常方便。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Redis" scheme="http://yoursite.com/categories/Redis/"/>
-    
-    
-      <category term="technology" scheme="http://yoursite.com/tags/technology/"/>
-    
-      <category term="replication" scheme="http://yoursite.com/tags/replication/"/>
-    
-      <category term="cluster" scheme="http://yoursite.com/tags/cluster/"/>
-    
-      <category term="sentine" scheme="http://yoursite.com/tags/sentine/"/>
     
   </entry>
   
